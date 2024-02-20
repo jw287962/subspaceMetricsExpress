@@ -1,4 +1,4 @@
-Functions derived from https://github.com/irbujam/ss_log_event_monitor written in Powershell.
+Parsing Functions derived from https://github.com/irbujam/ss_log_event_monitor written in Powershell.
 
 # subspaceMetricsExpress
 
