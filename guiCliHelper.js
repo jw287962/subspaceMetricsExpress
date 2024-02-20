@@ -101,7 +101,7 @@ const guiCliHelper = {
      getFarmerPCStatusOutput: function getTableName(farmer,currentUser){
          let holder = ""
          holder += `${this.dasher}\n`;
-         holder += `\x1b[96m ${currentUser} Status: ${farmer.farmerIsRunning === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'}, `;
+         holder += `\x1b[96m${currentUser} Status: ${farmer.farmerIsRunning === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'}, `;
          holder += `\x1b[96mHostname: \x1b[93m${farmer.farmerIp}\x1b[0m, `;
          this.guiLogger(holder)
      },
