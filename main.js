@@ -42,12 +42,6 @@ app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
 
-
-
-
-
-
-
 const functions = {
    guiLogger: function guiLogger(message) {
         console.log(message);
@@ -186,21 +180,17 @@ diskPlotETA: function diskPlotETA(remaining_sectors,minutes_per_sector_data_disp
         nodeString += `\x1b[96mHostname: \x1b[93m${data.nodeDisplayData.nodeIp}, \x1b[0m`;
         nodeString += `\x1b[96mSynced: ${data.nodeDisplayData.nodeSyncState === '0' ? '\x1b[92mYes\x1b[0m' : '\x1b[31mNo\x1b[0m'}, `;
         nodeString += `\x1b[96mPeers: \x1b[93m${data.nodeDisplayData.nodePeersConnected},\x1b[0m`;
-        
         this.guiLogger(nodeString);
-        
         this.guiLogger(dasher);
         try{
             data.farmerDisplaySector.forEach((farmer1,indexxx) => {
-                if(indexxx > 0){
-                    outputTelegram += "\n\n"
-                }
+                if(indexxx > 0) outputTelegram += "\n\n"
+        
                let currentUser = this.getHostUser(indexxx);
                outputTelegram += currentUser;
 
                 farmer1.forEach((farmer) => {
                         // Farmerstring2 is group status  2nd row (uptime, sector time, rewards for entire PC)
-                    
                          // PC status 1st LINE of data
                     this.getFarmerPCStatusOutput(farmer,currentUser) // PC status 1st LINE
 
@@ -209,14 +199,12 @@ diskPlotETA: function diskPlotETA(remaining_sectors,minutes_per_sector_data_disp
                     this.printsFarmerPCmetricsOutput(data)
                           // send telegram notification too
                     this.sendTelegramPCmetrics(data)
-                    
+            
                     this.guiLogger(dasher);
-                    
                           // TABLE HEADER TEXT
                     this.guiLogger(this.getFarmerTableHeaderOutput())
                     this.guiLogger(dasher);
-                    
-                    
+
                         // INDIVIDUAL TABLE DISK DATA 
                     farmer.Performance.forEach((data,index) => {
                         let dataString = ""
@@ -226,33 +214,68 @@ diskPlotETA: function diskPlotETA(remaining_sectors,minutes_per_sector_data_disp
                         dataString += `${discData.ETA.toString().padEnd(8)} `;
                         dataString += `|${data.SectorsPerHour.toString().padEnd(10)}|${data.MinutesPerSector.toString().padEnd(10)}`
                         dataString += `|${(farmer.Rewards[index]?.Rewards.toString()|| '0').padEnd(6)}|${'0'.padEnd(4)}|` 
-    
                         this.guiLogger(dataString)
                     })
                   })    
-          })
-          this.guiLogger(dasher+ '\n');
-        parseData.sendTelegramNotification(outputTelegram)
-        // 1000 milliseconds = 1 second
-        
-        this.guiLogger((`\x1b[93m Last saved to: ${filePath} \x1b[92m ${dateLastOutput.format('YYYY-MM-DD HH:mm:ss')} \x1b[0m  \n` ));
+            })
+            this.guiLogger(dasher+ '\n');
+            parseData.sendTelegramNotification(outputTelegram)
+            // 1000 milliseconds = 1 second
+            
+            this.guiLogger((`\x1b[93m Last saved to: ${filePath} \x1b[92m ${dateLastOutput.format('YYYY-MM-DD HH:mm:ss')} \x1b[0m  \n` ));
 
 
-        setTimeout(() => {
-        countdownToRefresh();
-        }, 2000); 
+            setTimeout(() => {
+            countdownToRefresh();
+            }, 2000); 
 
         }catch(error){
                 console.log('error displayData',error);
         }
         
         
-    }
-
+    },
+    countdownToRefresh: function countdownToRefresh() {
+        timeToRefresh--;
+        loader = '';
+        switch(timeToRefresh%4){
+            case 0:{
+                loader='—'
+                break
+            } 
+            case 1:{
+                loader='/'
+                break
+            } 
+            case 2:{
+                loader="|";
+                break
+            } 
+            default:{
+                loader= '\\'
+                break;
+            }
+        }
+      
+            if (timeToRefresh < 1) {
+                // Trigger data refresh when countdown reaches 0
+                process.stdout.clearLine();
+                timeToRefresh = config.Refresh
+                return;
+            } else {
+                process.stdout.clearLine();
+                process.stdout.cursorTo(0);
+                process.stdout.write(` ${loader} Refreshing in ${timeToRefresh} seconds`);
+                
+                setTimeout(countdownToRefresh, 1000); // Update countdown every second
+            }
+        }
 }    
+let timeToRefresh = config.Refresh
 
 
 
+// MAIN FUNCTION
 const getAllData = async function () {
    
     try {
@@ -314,51 +337,16 @@ const getAllData = async function () {
     }
 };
 
-let timeToRefresh = config.Refresh
 
 
-function countdownToRefresh() {
-    timeToRefresh--;
-    loader = '';
-    switch(timeToRefresh%4){
-        case 0:{
-            loader='—'
-            break
-        } 
-        case 1:{
-            loader='/'
-            break
-        } 
-        case 2:{
-            loader="|";
-            break
-        } 
-        default:{
-            loader= '\\'
-            break;
-        }
-    }
-  
-        if (timeToRefresh < 1) {
-            // Trigger data refresh when countdown reaches 0
-            process.stdout.clearLine();
-            timeToRefresh = config.Refresh
-            return;
-        } else {
-            process.stdout.clearLine();
-            process.stdout.cursorTo(0);
-            process.stdout.write(` ${loader} Refreshing in ${timeToRefresh} seconds`);
-            
-            setTimeout(countdownToRefresh, 1000); // Update countdown every second
-        }
-    }
+
+// MAIN FUNCTION: GETALLDATA
 getAllData()
     // Call getAllData immediately
-    refreshInterval = setInterval(() => {
+refreshInterval = setInterval(() =>{
         process.stdout.clearLine()
         getAllData()
-    }
-        , (config.Refresh+1)*1000)
+     }, (config.Refresh+1)*1000)
 
 
 // Call getAllData at intervals defined by config.Refresh (in seconds)
