@@ -3,10 +3,13 @@ const moment = require('moment');
 const parseData = require('./parseData')
 const config = require('./config.json')
 
-clearLog = config.Clear || true;
+clearLog = config.Clear ;
 
 const filePath = './data.json';
 let timeToRefresh = config.Refresh
+
+
+
 
 
 const guiCliHelper = {
@@ -127,9 +130,9 @@ const guiCliHelper = {
      printsFarmerPCmetricsOutput: function printsFamerPCmetricsOutput(data){
          let farmerString2 ="";
          farmerString2 += `\x1b[93m${data.sectorTime}\x1b[0m Min/Sect:| `
-         farmerString2 += `\x1b[93m${data.sectorHrAvg}\x1b[0mSectors/Hr(avg):| `
+         farmerString2 += `\x1b[93m${data.sectorHrAvg}\x1b[0m Sectors/Hr(avg):| `
          farmerString2 += `\x1b[93m${data.rewards }\x1b[0m Rewards| `;
-         farmerString2 += `\x1b[93m${data.totalSize } \x1b[0m| `;
+         farmerString2 += `\x1b[93m${data.totalSize }\x1b[0m TB |`;
          this.guiLogger(farmerString2)
      },
      sendTelegramPCmetrics: function sendTelegramPCmetrics(data){
@@ -161,7 +164,8 @@ const guiCliHelper = {
                 let currentUser =this.getHostUser(indexxx);
                 outputTelegram += currentUser;
                 currentUser = "Name: \x1b[0m" + currentUser
- 
+            if(Array.isArray(farmer1)){
+
                  farmer1.forEach((farmer) => {
                          // Farmerstring2 is group status  2nd row (uptime, sector time, rewards for entire PC)
                           // PC status 1st LINE of data
@@ -190,8 +194,10 @@ const guiCliHelper = {
                          dataString += `|${(farmer.Rewards[index]?.Rewards.toString()|| '0').padEnd(6)}|${'0'.padEnd(4)}|` 
                          this.guiLogger(dataString)
                      })
-                   })    
+                   })   
+                }
              })
+            
              this.guiLogger(dasher+ '\n');
              parseData.sendTelegramNotification(outputTelegram)
              // 1000 milliseconds = 1 second

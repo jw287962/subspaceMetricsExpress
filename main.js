@@ -70,13 +70,15 @@ const getAllData = async function () {
       
         const farmersArrIp = config.Farmers;
         const farmerDisplaySector = [];
-
+        let statusDownTotal = ""
         for (const farmer of farmersArrIp) {
             let farmerProcessArr = await parseData.getProcessState("farmer", farmer, farmer);
+           
             // console.log(farmerProcessArr)
             const farmerMetricsRaw = farmerProcessArr[0];
             const farmerIsRunning = farmerProcessArr[1];
             if(farmerIsRunning === false){
+              statusDownTotal += farmerMetricsRaw + '\n'
                 const farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr= [],farmer,farmerIsRunning);
                 farmerDisplaySector.push(farmerSectorPerformance);
             }else{
@@ -87,6 +89,17 @@ const getAllData = async function () {
 
             }
         }
+        console.log(statusDownTotal)
+        if(statusDownTotal.length != 0) {
+          try {
+            console.log('status offline')
+            parseData.sendTelegramNotification(statusDownTotal)
+            // await this.sendTelegramNotification(alertText);
+        } catch (error) {
+            console.error('Error sending Telegram notification:', error);
+        }
+        }
+        
         const currentDate = moment();
 
         // FILE OUTPUT

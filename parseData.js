@@ -36,20 +36,16 @@ const parseData = {
             const resp = await this.pingMetricsUrl(ioHostIp); // Assuming pingMetricsUrl is already defined
             if (resp == undefined) {
                 const alertText = `${ioProcessType} status: Stopped, Hostname: ${ioHostname}`;
-                try {
-                    console.log('status offline')
-                    await this.sendTelegramNotification(alertText);
-                } catch (error) {
-                    console.error('Error sending Telegram notification:', error);
-                }
+               
+                respProcessStateArr.push(alertText);
                 bProcessRunningState = false;
             } else {
                 bProcessRunningState = true;
+                respProcessStateArr.push(resp);
+                // console.log(resp)
             }
-    
-            respProcessStateArr.push(resp);
-            // console.log(resp)
             respProcessStateArr.push(bProcessRunningState);
+            
         } catch (error) {
             console.error('Error fetching process state:', error);
             // Handle the error accordingly
@@ -253,6 +249,7 @@ const parseData = {
         let uptime_seconds = 0;
         let total_sectors_plot_time_seconds = 0;
         let total_disk_per_farmer = 0;
+        let total_size_per_farmer = 0;
     
         let farmer_disk_id_rewards = "";
         let farmer_disk_proving_success_count = 0;
@@ -365,10 +362,10 @@ const parseData = {
             resp_plots_remaining_arr.sort((a, b) => a.Id.localeCompare(b.Id));
 
             // creates total size on farmer
-            console.log(resp_plots_remaining_arr)
+            // console.log(resp_plots_remaining_arr)
             total_size_per_farmer = (resp_plots_remaining_arr.reduce((a,b) => a+1*b.Sectors, 0)
              + resp_plots_completed_arr.reduce((a,b) => a+1*b.Sectors, 0))
-             total_size_per_farmer = (total_size_per_farmer/1000).toFixed(2)+ 'TB'
+             total_size_per_farmer = (total_size_per_farmer/1000).toFixed(2)
 
             let disk_sector_perf = {
                 Id: "overall",
@@ -396,7 +393,7 @@ const parseData = {
             return resp_disk_metrics_arr;
             // return disk_metrics
         }else{
-        
+       
             let disk_sector_perf = {
                 Id: "overall",
                 TotalSectors: total_sectors_plot_count,
@@ -418,7 +415,7 @@ const parseData = {
                 FarmerIp: farmerIp,
                 FarmerIsRunning: farmerIsRunning
             };
-            return disk_metrics
+            return [disk_metrics];
         }
     }catch(error){
         console.log( "getDiskSectorPerformance", error)
