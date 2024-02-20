@@ -139,7 +139,6 @@ const guiCliHelper = {
          outputTelegram += `\n   <b>${data.sectorHr}</b> Sectors Total, `
          outputTelegram += `\n   <b>${data.sectorHrAvg}</b> Sectors/Hour (avg/disk), `				
          outputTelegram += `\n   <b>${data.rewards}</b> Total Rewards`
- 
          return outputTelegram
      },
      dasher: "------------------------------------------------------------------------------------------",
@@ -159,8 +158,9 @@ const guiCliHelper = {
              data.farmerDisplaySector.forEach((farmer1,indexxx) => {
                  if(indexxx > 0) outputTelegram += "\n\n"
          
-                let currentUser = "Name: \x1b[0m" + this.getHostUser(indexxx);
+                let currentUser =this.getHostUser(indexxx);
                 outputTelegram += currentUser;
+                currentUser = "Name: \x1b[0m" + currentUser
  
                  farmer1.forEach((farmer) => {
                          // Farmerstring2 is group status  2nd row (uptime, sector time, rewards for entire PC)
@@ -168,10 +168,10 @@ const guiCliHelper = {
                      this.getFarmerPCStatusOutput(farmer,currentUser) // PC status 1st LINE
  
                           // PC METRICS & DATA 2nd LINE
-                     data = this.getFarmerPCMetricsOutput(farmer.Performance.disk_sector_perf,farmer.Id) // PC METRICS & DATA 2nd LINE
-                     this.printsFarmerPCmetricsOutput(data)
+                     dataOutput = this.getFarmerPCMetricsOutput(farmer.Performance.disk_sector_perf,farmer.Id) // PC METRICS & DATA 2nd LINE
+                     this.printsFarmerPCmetricsOutput(dataOutput)
                            // send telegram notification too
-                     this.sendTelegramPCmetrics(data)
+                    outputTelegram += this.sendTelegramPCmetrics(dataOutput)
              
                      this.guiLogger(dasher);
                            // TABLE HEADER TEXT
