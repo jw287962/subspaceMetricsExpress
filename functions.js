@@ -47,7 +47,6 @@ app.listen(3000, () => {
 
 
 
-
 const helper = {
     pingMetricsUrl:  async function pingMetricsUrl(ioUrl) {
         let responseText;
@@ -478,7 +477,9 @@ const helper = {
 };
 
 const functions = {
-
+   guiLogger: function guiLogger(message) {
+        console.log(message);
+    },
     getHostUser: function getHostUser(index){
         switch (index) {
             case 1:
@@ -570,7 +571,7 @@ diskPlotETA: function diskPlotETA(remaining_sectors,minutes_per_sector_data_disp
         holder += `${this.dasher}\n`;
         holder += `\x1b[96m ${currentUser} Status: ${farmer.farmerIsRunning === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'}, `;
         holder += `\x1b[96mHostname: \x1b[93m${farmer.farmerIp}\x1b[0m, `;
-        console.log(holder)
+        this.guiLogger(holder)
     },
     getFarmerPCMetricsOutput: function getTable(disk_sector_perf,farmerId){
         let sectorHr = (disk_sector_perf.TotalSectors/disk_sector_perf.Uptime*3600).toFixed(2)
@@ -588,7 +589,7 @@ diskPlotETA: function diskPlotETA(remaining_sectors,minutes_per_sector_data_disp
         farmerString2 += `Sector Time: ${data.sectorTime}|`
         farmerString2 += `Sectors/Hr (avg): ${data.sectorHrAvg} | `
         farmerString2 += `Rewards: ${data.rewards } | `;
-        console.log(farmerString2)
+        this.guiLogger(farmerString2)
 
     },
     sendTelegramPCmetrics: function sendTelegramPCmetrics(data){
@@ -614,9 +615,9 @@ diskPlotETA: function diskPlotETA(remaining_sectors,minutes_per_sector_data_disp
         nodeString += `\x1b[96mSynced: ${data.nodeDisplayData.nodeSyncState === '0' ? '\x1b[92mYes\x1b[0m' : '\x1b[31mNo\x1b[0m'}, `;
         nodeString += `\x1b[96mPeers: \x1b[93m${data.nodeDisplayData.nodePeersConnected},\x1b[0m`;
         
-        console.log(nodeString);
+        this.guiLogger(nodeString);
         
-        console.log(dasher);
+        this.guiLogger(dasher);
         try{
             data.farmerDisplaySector.forEach((farmer1,indexxx) => {
                 if(indexxx > 0){
@@ -637,34 +638,33 @@ diskPlotETA: function diskPlotETA(remaining_sectors,minutes_per_sector_data_disp
                           // send telegram notification too
                     this.sendTelegramPCmetrics(data)
                     
-                    console.log(dasher);
+                    this.guiLogger(dasher);
                     
                           // TABLE HEADER TEXT
-                    console.log(this.getFarmerTableHeaderOutput())
-                    console.log(dasher);
+                    this.guiLogger(this.getFarmerTableHeaderOutput())
+                    this.guiLogger(dasher);
                     
                     
                         // INDIVIDUAL TABLE DISK DATA 
                     farmer.Performance.forEach((data,index) => {
                         let dataString = ""
                         const discData = this.discDataMetrics(farmer,data.MinutesPerSector,index);
-                        console.log(discData)
                         dataString += `|${farmer.Id[index].Id.padEnd(27)}|${discData.discDataMetrics.toString().padEnd(8)}|`
                         dataString += `${discData.completePercent.toString().padEnd(8)}|`
                         dataString += `${discData.ETA.toString().padEnd(8)} `;
                         dataString += `|${data.SectorsPerHour.toString().padEnd(10)}|${data.MinutesPerSector.toString().padEnd(10)}`
                         dataString += `|${(farmer.Rewards[index]?.Rewards.toString()|| '0').padEnd(6)}|${'0'.padEnd(4)}|` 
     
-                        console.log(dataString)
+                        this.guiLogger(dataString)
                     })
                   })    
           })
-        console.log(dasher);
-        console.log('');
+          this.guiLogger(dasher+ '\n');
         helper.sendTelegramNotification(outputTelegram)
         // 1000 milliseconds = 1 second
         
-        console.log('\x1b[93m Last saved to:', filePath + ' on \x1b[92m' +  dateLastOutput.format('YYYY-MM-DD HH:mm:ss')  +'\x1b[0m');
+        this.guiLogger((`\x1b[93m Last saved to: ${filePath} \x1b[92m ${dateLastOutput.format('YYYY-MM-DD HH:mm:ss')} \x1b[0m  \n` ));
+
 
         setTimeout(() => {
         countdownToRefresh();
