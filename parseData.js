@@ -25,17 +25,6 @@ const parseData = {
         return responseText;
     },
 
-    // pingNodeURL: async function pingNodeURL(url) {
-    //     try {
-    //         const nodeData = await this.pingMetricsUrl(url);
-    //         console.log('node Data', nodeData); // Handle the response data
-    //         return nodeData;
-    //     } catch (error) {
-    //         console.error('Error:', error); // Handle any errors
-    //         throw error; // Rethrow the error to handle it in the calling code
-    //     }
-    // },
-
     getProcessState: async function getProcessState(ioProcessType, ioHostIp, ioHostname) {
         const respProcessStateArr = [];
     
@@ -243,6 +232,7 @@ const parseData = {
        
     },
     
+    
     getDiskSectorPerformance: function GetDiskSectorPerformance(io_farmer_metrics_arr = [], farmerIp,farmerIsRunning) {
     try{
         let resp_disk_metrics_arr = [];
@@ -367,7 +357,6 @@ const parseData = {
                 }
             }
             
-            
             resp_UUId_arr.sort((a, b) => a.Id.localeCompare(b.Id));
            resp_sector_perf_arr.sort((a, b) => a.Id.localeCompare(b.Id));
              resp_rewards_arr.sort((a, b) => a.Id.localeCompare(b.Id));
@@ -375,13 +364,18 @@ const parseData = {
             resp_plots_completed_arr.sort((a, b) => a.Id.localeCompare(b.Id));
             resp_plots_remaining_arr.sort((a, b) => a.Id.localeCompare(b.Id));
 
+            // creates total size on farmer
+            console.log(resp_plots_remaining_arr)
+            total_size_per_farmer = (resp_plots_remaining_arr.reduce((a,b) => a+1*b.Sectors, 0)
+             + resp_plots_completed_arr.reduce((a,b) => a+1*b.Sectors, 0))
+             total_size_per_farmer = (total_size_per_farmer/1000).toFixed(2)+ 'TB'
 
-            
             let disk_sector_perf = {
                 Id: "overall",
                 TotalSectors: total_sectors_plot_count,
                 TotalSeconds: total_sectors_plot_time_seconds,
                 TotalDisks: total_disk_per_farmer,
+                TotalSize: total_size_per_farmer,
                 Uptime: uptime_seconds,
                 TotalRewards: total_rewards_per_farmer
             };
@@ -394,8 +388,8 @@ const parseData = {
                 Misses: resp_misses_arr,
                 PlotsCompleted: resp_plots_completed_arr,
                 PlotsRemaining: resp_plots_remaining_arr,
-                farmerIp: farmerIp,
-                farmerIsRunning: farmerIsRunning
+                FarmerIp: farmerIp,
+                FarmerIsRunning: farmerIsRunning
             };
             // console.log('test',disk_metrics.PlotsCompleted, disk_metrics.PlotsRemaining)
             resp_disk_metrics_arr.push(disk_metrics);
@@ -408,6 +402,7 @@ const parseData = {
                 TotalSectors: total_sectors_plot_count,
                 TotalSeconds: total_sectors_plot_time_seconds,
                 TotalDisks: total_disk_per_farmer,
+                TotalSize: total_size_per_farmer,
                 Uptime: uptime_seconds,
                 TotalRewards: total_rewards_per_farmer
             };
@@ -420,8 +415,8 @@ const parseData = {
                 Misses: resp_misses_arr,
                 PlotsCompleted: resp_plots_completed_arr,
                 PlotsRemaining: resp_plots_remaining_arr,
-                farmerIp: farmerIp,
-                farmerIsRunning: farmerIsRunning
+                FarmerIp: farmerIp,
+                FarmerIsRunning: farmerIsRunning
             };
             return disk_metrics
         }

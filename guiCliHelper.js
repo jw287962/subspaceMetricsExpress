@@ -3,6 +3,7 @@ const moment = require('moment');
 const parseData = require('./parseData')
 const config = require('./config.json')
 
+clearLog = config.Clear || true;
 
 const filePath = './data.json';
 let timeToRefresh = config.Refresh
@@ -24,20 +25,24 @@ const guiCliHelper = {
      },
  
      formatTime: function formatTime(seconds) {
-         const duration = moment.duration(seconds, 'seconds');
-         const minutes = Math.floor(duration.asMinutes());
-         const remainingSeconds = duration.seconds();
-         return `${minutes} min: ${remainingSeconds} sec`;
-     },
+        const duration = moment.duration(seconds, 'seconds');
+        const minutes = Math.floor(duration.asMinutes());
+        const remainingSeconds = duration.seconds();
+    
+        // Add leading zero if the number is less than 10
+        const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+        const formattedSeconds = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+    
+        return `${formattedMinutes}:${formattedSeconds}`;
+    },    
  
      convertSecondsDays: function convertSecondsDays(seconds){
          try{
              const days = Math.floor(seconds / (3600 * 24));
              const hours = Math.floor((seconds % (3600 * 24)) / 3600);
              const minutes = Math.floor((seconds % 3600) / 60);
-             const remainingSeconds = seconds % 60;
-         
-             const formattedTime = `${days}D ${hours}H ${minutes}M ${remainingSeconds}S`;
+             const second = Math.floor(seconds % 60)
+             const formattedTime = `${days}D ${hours}H ${minutes}M ${second}S`;
              return formattedTime;
          
          }catch(err){
@@ -83,9 +88,10 @@ const guiCliHelper = {
  
      discDataMetrics: function discDataMetrics(farmer,minPerSector,index){
  
-         const discDataMetrics = (farmer.PlotsCompleted[index].Sectors*1+1*farmer.PlotsRemaining[index].Sectors)/100
-         const completePercent = ((farmer.PlotsCompleted[index].Sectors)/discDataMetrics).toFixed(2)
+         const discDataMetrics = (farmer.PlotsCompleted[index].Sectors*1+1*farmer.PlotsRemaining[index].Sectors)/1000
+         const completePercent = ((farmer.PlotsCompleted[index].Sectors/10)/discDataMetrics).toFixed(2)
          const ETA = this.diskPlotETA(farmer.PlotsRemaining[index].Sectors,minPerSector,index)
+
          return {discDataMetrics,completePercent,ETA}
      },
      getFarmerTableHeaderOutput: function getTableHeader(){
@@ -101,28 +107,30 @@ const guiCliHelper = {
      getFarmerPCStatusOutput: function getTableName(farmer,currentUser){
          let holder = ""
          holder += `${this.dasher}\n`;
-         holder += `\x1b[96m${currentUser} Status: ${farmer.farmerIsRunning === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'}, `;
-         holder += `\x1b[96mHostname: \x1b[93m${farmer.farmerIp}\x1b[0m, `;
+         holder += `\x1b[96m${currentUser} \x1b[96mStatus: ${farmer.FarmerIsRunning === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'} for `;
+         holder += `\x1b[0m${this.convertSecondsDays(farmer.Performance.disk_sector_perf.Uptime)} `
+         holder += `\x1b[96mHostname: \x1b[93m${farmer.FarmerIp}\x1b[0m, `;
+
          this.guiLogger(holder)
      },
      getFarmerPCMetricsOutput: function getTable(disk_sector_perf,farmerId){
-         let sectorHr = (disk_sector_perf.TotalSectors/disk_sector_perf.Uptime*3600).toFixed(2)
-         let upTime = this.convertSecondsDays(disk_sector_perf.Uptime);
+        let upTime = disk_sector_perf.Uptime
+         let sectorHr = (disk_sector_perf.TotalSectors/upTime*3600).toFixed(2)
          let sectorTime = this.formatTime(60/sectorHr*60);
          let sectorHrAvg = (sectorHr/(farmerId.length)).toFixed(2)
          let rewards = disk_sector_perf.TotalRewards;
+         let totalSize = disk_sector_perf.TotalSize
  
-       return {sectorHr,sectorTime,sectorHrAvg,upTime,rewards}
+       return {sectorHr,sectorTime,sectorHrAvg,upTime,rewards,totalSize}
         
      },
      printsFarmerPCmetricsOutput: function printsFamerPCmetricsOutput(data){
          let farmerString2 ="";
-         farmerString2 += `Uptime: ${data.upTime} | `;
-         farmerString2 += `Sector Time: ${data.sectorTime}|`
-         farmerString2 += `Sectors/Hr (avg): ${data.sectorHrAvg} | `
-         farmerString2 += `Rewards: ${data.rewards } | `;
+         farmerString2 += `\x1b[93m${data.sectorTime}\x1b[0m Min/Sect:| `
+         farmerString2 += `\x1b[93m${data.sectorHrAvg}\x1b[0mSectors/Hr(avg):| `
+         farmerString2 += `\x1b[93m${data.rewards }\x1b[0m Rewards| `;
+         farmerString2 += `\x1b[93m${data.totalSize } \x1b[0m| `;
          this.guiLogger(farmerString2)
- 
      },
      sendTelegramPCmetrics: function sendTelegramPCmetrics(data){
          let outputTelegram = "";
@@ -136,7 +144,7 @@ const guiCliHelper = {
      },
      dasher: "------------------------------------------------------------------------------------------",
      displayData: function displayData(data, dateLastOutput) {
-         clear();
+         if(clearLog) clear();
          let outputTelegram = ""
          let nodeString = '';
  
@@ -147,12 +155,11 @@ const guiCliHelper = {
          nodeString += `\x1b[96mSynced: ${data.nodeDisplayData.nodeSyncState === '0' ? '\x1b[92mYes\x1b[0m' : '\x1b[31mNo\x1b[0m'}, `;
          nodeString += `\x1b[96mPeers: \x1b[93m${data.nodeDisplayData.nodePeersConnected},\x1b[0m`;
          this.guiLogger(nodeString);
-         this.guiLogger(dasher);
          try{
              data.farmerDisplaySector.forEach((farmer1,indexxx) => {
                  if(indexxx > 0) outputTelegram += "\n\n"
          
-                let currentUser = "Name: " + this.getHostUser(indexxx);
+                let currentUser = "Name: \x1b[0m" + this.getHostUser(indexxx);
                 outputTelegram += currentUser;
  
                  farmer1.forEach((farmer) => {
@@ -174,6 +181,7 @@ const guiCliHelper = {
                          // INDIVIDUAL TABLE DISK DATA 
                      farmer.Performance.forEach((data,index) => {
                          let dataString = ""
+                        //  will add a grouping of all disk data in parsing
                          const discData = this.discDataMetrics(farmer,data.MinutesPerSector,index);
                          dataString += `|${farmer.Id[index].Id.padEnd(27)}|${discData.discDataMetrics.toString().padEnd(8)}|`
                          dataString += `${discData.completePercent.toString().padEnd(8)}|`
