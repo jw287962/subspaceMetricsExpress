@@ -152,7 +152,7 @@ const guiCliHelper = {
              data.farmerDisplaySector.forEach((farmer1,indexxx) => {
                  if(indexxx > 0) outputTelegram += "\n\n"
          
-                let currentUser = this.getHostUser(indexxx);
+                let currentUser = "Name: " + this.getHostUser(indexxx);
                 outputTelegram += currentUser;
  
                  farmer1.forEach((farmer) => {
