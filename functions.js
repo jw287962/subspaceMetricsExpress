@@ -473,7 +473,30 @@ const helper = {
     }catch(error){
         console.log( "getDiskSectorPerformance", error)
     }
+    }
+
+};
+
+const functions = {
+
+    getHostUser: function getHostUser(index){
+        switch (index) {
+            case 1:
+                return "ROG STRIX Jas";
+            case 2:
+                return "Windows RogStrix";
+            default:
+               return "AMD 7950X";
+        }
     },
+
+    formatTime: function formatTime(seconds) {
+        const duration = moment.duration(seconds, 'seconds');
+        const minutes = Math.floor(duration.asMinutes());
+        const remainingSeconds = duration.seconds();
+        return `${minutes} min: ${remainingSeconds} sec`;
+    },
+
     convertSecondsDays: function convertSecondsDays(seconds){
         try{
             const days = Math.floor(seconds / (3600 * 24));
@@ -488,11 +511,8 @@ const helper = {
             console.log('Error: convertSecondsDays', err)
         }
        
-    }
+    },
 
-};
-
-const functions = {
     getNodeDisplayData: function getNodeDisplayData(nodeMetricsArr = [],nodeIsRunningOk = false,nodeIp = '0.0.0.0'){
         try{
 
@@ -517,41 +537,77 @@ const functions = {
     
     },
 
-formatTime: function formatTime(seconds) {
-    const duration = moment.duration(seconds, 'seconds');
-    const minutes = Math.floor(duration.asMinutes());
-    const remainingSeconds = duration.seconds();
-    return `${minutes} min: ${remainingSeconds} sec`;
+    
+diskPlotETA: function diskPlotETA(remaining_sectors,minutes_per_sector_data_disp){
+    try{
+        if (minutes_per_sector_data_disp !== "-") {
+            let eta = (((parseFloat(minutes_per_sector_data_disp) * 1*remaining_sectors)) / (60*24)).toFixed(2);
+            return eta.toString();
+        }}catch(err){
+            console.log('DiskPlotETA err ', err)
+        }
 },
 
-diskPlotETA: function diskPlotETA(farmer,minutes_per_sector_data_disp,index){
-    
-            let remaining_sectors = parseInt(farmer.PlotsRemaining[index].Sectors);
-            let completed_sectors = parseInt(farmer.PlotsCompleted[index].Sectors);
-            let total_sectors_GiB = completed_sectors + remaining_sectors;
-            let total_disk_sectors_TiB = (total_sectors_GiB / 1000).toFixed(2) + " TiB";
-    
-            let plotting_percent_complete, plotting_percent_complete_disp;
-            if (total_sectors_GiB !== 0) {
-                plotting_percent_complete = ((completed_sectors / total_sectors_GiB) * 100).toFixed(1);
-                plotting_percent_complete_disp = plotting_percent_complete + "%";
-            }
-    
-            let eta_disp;
-            if (minutes_per_sector_data_disp !== "-") {
-                let eta = (((parseFloat(minutes_per_sector_data_disp) * remaining_sectors)) / (60*24)).toFixed(2);
-                eta_disp = eta.toString();
-            }
-    
-            return eta_disp
-        // b_printed_size_metrics = true;
-        },
+    discDataMetrics: function discDataMetrics(farmer,minPerSector,index){
 
+        const discDataMetrics = (farmer.PlotsCompleted[index].Sectors*1+1*farmer.PlotsRemaining[index].Sectors)/100
+        const completePercent = ((farmer.PlotsCompleted[index].Sectors)/discDataMetrics).toFixed(2)
+        const ETA = functions.diskPlotETA(farmer.PlotsRemaining[index].Sectors,minPerSector,index)
+        return {discDataMetrics,completePercent,ETA}
+    },
+    getFarmerTableHeaderOutput: function getTableHeader(){
+        try{
+            let label =`|${'Disk Id'.padEnd(27)}|${'Size(TB)'.padEnd(8)}|`
+            label += `${'% Comp'.padEnd(8)}|${'ETA(Days)'.padEnd(7)}|`
+            label += `${'Sectors/Hr'.padEnd(8)}|${'Min/Sector'.padEnd(8)}|${'Reward|Miss'.padEnd(8)}|`;
+            return label;
+        }catch(err){
+            console.log('getFarmerTableHeaderOutput err ',err)
+        }
+    },
+    getFarmerPCStatusOutput: function getTableName(farmer,currentUser){
+        let holder = ""
+        holder += `${this.dasher}\n`;
+        holder += `\x1b[96m ${currentUser} Status: ${farmer.farmerIsRunning === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'}, `;
+        holder += `\x1b[96mHostname: \x1b[93m${farmer.farmerIp}\x1b[0m, `;
+        console.log(holder)
+    },
+    getFarmerPCMetricsOutput: function getTable(disk_sector_perf,farmerId){
+        let sectorHr = (disk_sector_perf.TotalSectors/disk_sector_perf.Uptime*3600).toFixed(2)
+        let upTime = this.convertSecondsDays(disk_sector_perf.Uptime);
+        let sectorTime = this.formatTime(60/sectorHr*60);
+        let sectorHrAvg = (sectorHr/(farmerId.length)).toFixed(2)
+        let rewards = disk_sector_perf.TotalRewards;
+
+      return {sectorHr,sectorTime,sectorHrAvg,upTime,rewards}
+       
+    },
+    printsFarmerPCmetricsOutput: function printsFamerPCmetricsOutput(data){
+        let farmerString2 ="";
+        farmerString2 += `Uptime: ${data.upTime} | `;
+        farmerString2 += `Sector Time: ${data.sectorTime}|`
+        farmerString2 += `Sectors/Hr (avg): ${data.sectorHrAvg} | `
+        farmerString2 += `Rewards: ${data.rewards } | `;
+        console.log(farmerString2)
+
+    },
+    sendTelegramPCmetrics: function sendTelegramPCmetrics(data){
+        let outputTelegram = "";
+        outputTelegram += ` <b>${this.convertSecondsDays(data.upTime)}</b> Uptime, `						
+        outputTelegram += `\n   <b>${data.sectorTime}</b> Sector Time, `		
+        outputTelegram += `\n   <b>${data.sectorHr}</b> Sectors Total, `
+        outputTelegram += `\n   <b>${data.sectorHrAvg}</b> Sectors/Hour (avg/disk), `				
+        outputTelegram += `\n   <b>${data.rewards}</b> Total Rewards`
+
+        return outputTelegram
+    },
+    dasher: "------------------------------------------------------------------------------------------",
     displayData: function displayData(data, dateLastOutput) {
         clear();
         let outputTelegram = ""
-        let dasher = "------------------------------------------------------------------------------------------";
         let nodeString = '';
+
+        let dasher= this.dasher;
     
         nodeString += `\x1b[96mNode Status: ${data.nodeDisplayData.nodeIsRunningOk === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'}, `;
         nodeString += `\x1b[96mHostname: \x1b[93m${data.nodeDisplayData.nodeIp}, \x1b[0m`;
@@ -566,58 +622,36 @@ diskPlotETA: function diskPlotETA(farmer,minutes_per_sector_data_disp,index){
                 if(indexxx > 0){
                     outputTelegram += "\n\n"
                 }
-                switch (indexxx) {
-                    case 1:
-                        
-                        outputTelegram += "ROG STRIX Jas";
-                        break;
-                    case 2:
-                        outputTelegram += "Windows RogStrix";
-                        break;
-                    default:
-                        outputTelegram += "AMD 7950X";
-                        break;
-                }
+               let currentUser = this.getHostUser(indexxx);
+               outputTelegram += currentUser;
+
                 farmer1.forEach((farmer) => {
-                    let farmerString = '';
-                    let farmerString2 = "";
-                    let label ='';
-                    farmerString += `${dasher}\n`;
-                    farmerString += `\x1b[96mFarmer ${indexxx + 1} Status: ${farmer.farmerIsRunning === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'}, `;
-                    farmerString += `\x1b[96mHostname: \x1b[93m${farmer.farmerIp}\x1b[0m, `;
+                        // Farmerstring2 is group status  2nd row (uptime, sector time, rewards for entire PC)
                     
+                         // PC status 1st LINE of data
+                    this.getFarmerPCStatusOutput(farmer,currentUser) // PC status 1st LINE
+
+                         // PC METRICS & DATA 2nd LINE
+                    data = this.getFarmerPCMetricsOutput(farmer.Performance.disk_sector_perf,farmer.Id) // PC METRICS & DATA 2nd LINE
+                    this.printsFarmerPCmetricsOutput(data)
+                          // send telegram notification too
+                    this.sendTelegramPCmetrics(data)
                     
-                    // Farmerstring2 is uptime lane.
-                    let sectorHr = (farmer.Performance.disk_sector_perf.TotalSectors/farmer.Performance.disk_sector_perf.Uptime*3600).toFixed(2)
-                    let sectorTime = functions.formatTime(60/sectorHr*60);
-                    let sectorHrAvg = (sectorHr/(farmer.Id.length)).toFixed(2)
-                    
-                    farmerString2 += `Uptime: ${helper.convertSecondsDays(farmer.Performance.disk_sector_perf.Uptime)} | `;
-                    farmerString2 += `Sector Time: ${sectorTime}|`
-                    farmerString2 += `Sectors/Hr (avg): ${sectorHrAvg} | `
-                    farmerString2 += `Rewards: ${farmer.Performance.disk_sector_perf.TotalRewards} | `;
-                    console.log(`${farmerString}`);
-                    console.log(farmerString2)
                     console.log(dasher);
                     
-                    label +=`|${'Disk Id'.padEnd(27)}|${'Size '.padEnd(8)}|${'% Comp'.padEnd(8)}|${'ETA(Days)'.padEnd(7)}|`
-                    label += `${'Sectors/Hr'.padEnd(8)}|${'Min/Sector'.padEnd(8)}|${'Reward|Miss'.padEnd(8)}|`;
-                    console.log(label)
+                          // TABLE HEADER TEXT
+                    console.log(this.getFarmerTableHeaderOutput())
                     console.log(dasher);
                     
-                    outputTelegram += ` <b>${helper.convertSecondsDays(farmer.Performance.disk_sector_perf.Uptime)}</b> Uptime, `						
-                    outputTelegram += `\n   <b>${sectorTime}</b> Sector Time, `		
-                    outputTelegram += `\n   <b>${sectorHrAvg}</b> Sectors/Hour (avg/disk), `				
-                    outputTelegram += `\n   <b>${farmer.Performance.disk_sector_perf.TotalRewards}</b> Total Rewards`
-    
+                    
+                        // INDIVIDUAL TABLE DISK DATA 
                     farmer.Performance.forEach((data,index) => {
                         let dataString = ""
-                        const totalSpaceTB = (farmer.PlotsCompleted[index].Sectors*1 + 1*farmer.PlotsRemaining[index].Sectors)
-                        const completePercent = ((farmer.PlotsCompleted[index].Sectors)/totalSpaceTB*100).toFixed(2)
-                        const ETA = functions.diskPlotETA(farmer,data.MinutesPerSector,index)
-                        dataString += `|${farmer.Id[index].Id.padEnd(27)}|${'-'.padEnd(8)}|`
-                        dataString += `${completePercent.toString().padEnd(8)}|`
-                        dataString += `${ETA.toString().padEnd(8)} `;
+                        const discData = this.discDataMetrics(farmer,data.MinutesPerSector,index);
+                        console.log(discData)
+                        dataString += `|${farmer.Id[index].Id.padEnd(27)}|${discData.discDataMetrics.toString().padEnd(8)}|`
+                        dataString += `${discData.completePercent.toString().padEnd(8)}|`
+                        dataString += `${discData.ETA.toString().padEnd(8)} `;
                         dataString += `|${data.SectorsPerHour.toString().padEnd(10)}|${data.MinutesPerSector.toString().padEnd(10)}`
                         dataString += `|${(farmer.Rewards[index]?.Rewards.toString()|| '0').padEnd(6)}|${'0'.padEnd(4)}|` 
     
