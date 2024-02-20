@@ -8,6 +8,7 @@ const cors = require('cors')
 const app = express();
 const clear = require('console-clear')
 const moment = require('moment');
+const { error } = require('console');
 
 
 const filePath = './data.json';
@@ -59,7 +60,7 @@ const helper = {
                 throw new Error('Network response was not ok');
             }else 
             if (response) {
-				responseText = response.text()
+				responseText = (await response.text()).toString()
 			}
             
         } catch (error) {
@@ -103,6 +104,7 @@ const helper = {
             }
     
             respProcessStateArr.push(resp);
+            // console.log(resp)
             respProcessStateArr.push(bProcessRunningState);
         } catch (error) {
             console.error('Error fetching process state:', error);
@@ -114,7 +116,8 @@ const helper = {
     
 
     parseMetricsToObj: function parseMetricsToObj(ioRestStr) {
-        const restArr = ioRestStr.split("# HELP");
+        try{
+            const restArr = ioRestStr.split("# HELP");
         const responseMetrics = [];
     
         for (let i = 0; i < restArr.length; i++) {
@@ -130,7 +133,7 @@ const helper = {
                     const valueArr = type.trim('#').split(' ');
                     const valueName = valueArr[2];
                     const labelName = valueArr[1];
-                    const labelValue = null;
+                    let labelValue = null;
                     const value = valueArr[3];
     
                     const metric = {
@@ -144,8 +147,8 @@ const helper = {
     
                     const dataValueArr = part.split(' ');
                     const dataValueName = dataValueArr[0];
-                    const dataLabelName = null;
-                    const dataLabelValue = null;
+                    let dataLabelName = null;
+                    let dataLabelValue = null;
                     const dataValue = dataValueArr[1];
     
                     const dataMetric = {
@@ -158,8 +161,8 @@ const helper = {
                     responseMetrics.push(dataMetric);
                 } else if (part.trim() !== "" && part.toLowerCase().indexOf("eof") < 0) {
                     const valueArr = part.split(/[{}]/).map(item => item.trim());
-    
-                    if (valueArr.length !== 1) {
+                        // console.log(valueArr)
+                    if (valueArr.length != 1) {
                         const valueName = valueArr[0];
                         const labelArr = valueArr[1].split("=");
                         const labelName = labelArr[0];
@@ -179,8 +182,8 @@ const helper = {
                     } else if (part.indexOf("#") < 0) {
                         const valueArr = part.split(' ');
                         const valueName = valueArr[0];
-                        const labelName = null;
-                        const labelValue = null;
+                        let labelName = null;
+                        let labelValue = null;
                         const value = valueArr[1];
     
                         const metric = {
@@ -195,7 +198,7 @@ const helper = {
                         const valueArr = part.trim('#').split(' ');
                         const valueName = valueArr[2];
                         const labelName = valueArr[1];
-                        const labelValue = null;
+                        let labelValue = null;
                         const value = valueArr[3];
     
                         const metric = {
@@ -211,6 +214,11 @@ const helper = {
             }
         }
         return responseMetrics;
+
+        }catch(err){
+            console.log('Error parseMetricstoObj ', err)
+        }
+        
     },
     sendTelegramNotification: async function sendTelegramNotification(message) {
         try {
@@ -222,7 +230,7 @@ const helper = {
             });
 
             if (response.status === 200) {
-                console.log(`Telegram Request was successful: ${response.status}`)
+                console.log(`Telegram Request was successful: Code ${response.status}`)
             } else {
                 console.log(`Telegram Request failed: ${response}`)
             }
@@ -234,49 +242,54 @@ const helper = {
     ,
 
     getNodeMetrics: function getNodeMetrics(io_node_metrics_arr) {
-        let resp_node_metrics_arr = [];
+        try{
+            let resp_node_metrics_arr = [];
     
-        let node_sync_obj;
-        let node_peers_obj
+            let node_sync_obj;
+            let node_peers_obj
+        
+            let chain_id_sync = "";
+            let chain_id_peer = "";
+            let node_sync_status = 0;
+            let node_peer_count = 0;
+        
+            for (let metrics_obj of io_node_metrics_arr) {
+                if (metrics_obj.Name.includes("substrate_sub_libp2p_is_major_syncing") && metrics_obj.Name.includes("chain")) {
+                    node_sync_status = metrics_obj.Value;
+                    chain_id_sync = metrics_obj.Instance;
+                    let node_sync_info = {
+                        Id: chain_id_sync,
+                        State: node_sync_status
+                    };
     
-        let chain_id_sync = "";
-        let chain_id_peer = "";
-        let node_sync_status = 0;
-        let node_peer_count = 0;
-    
-        for (let metrics_obj of io_node_metrics_arr) {
-            if (metrics_obj.Name.includes("substrate_sub_libp2p_is_major_syncing") && metrics_obj.Name.includes("chain")) {
-                node_sync_status = metrics_obj.Value;
-                chain_id_sync = metrics_obj.Instance;
-                let node_sync_info = {
-                    Id: chain_id_sync,
-                    State: node_sync_status
-                };
-
-                node_sync_obj = node_sync_info;
-            } else if (metrics_obj.Name.includes("substrate_sub_libp2p_peers_count") && metrics_obj.Name.includes("chain")) {
-                node_peer_count = metrics_obj.Value;
-                chain_id_peer = metrics_obj.Instance;
-                let node_peer_info = {
-                    Id: chain_id_peer,
-                    Connected: node_peer_count
-                };
-                node_peers_obj = node_peer_info;
+                    node_sync_obj = node_sync_info;
+                } else if (metrics_obj.Name.includes("substrate_sub_libp2p_peers_count") && metrics_obj.Name.includes("chain")) {
+                    node_peer_count = metrics_obj.Value;
+                    chain_id_peer = metrics_obj.Instance;
+                    let node_peer_info = {
+                        Id: chain_id_peer,
+                        Connected: node_peer_count
+                    };
+                    node_peers_obj = node_peer_info;
+                }
             }
+        
+            let node_metrics = {
+                Sync: node_sync_obj,
+                Peers: node_peers_obj
+            };
+            resp_node_metrics_arr.push(node_metrics);
+            // console.log(_resp_node_metrics_arr[0].Peers,_resp_node_metrics_arr[0].Sync)
+            // console.log(_resp_node_metrics_arr)
+            return resp_node_metrics_arr;
+        }catch(err){
+            console.log('getNodeMetrics Error', err)
         }
-    
-        let node_metrics = {
-            Sync: node_sync_obj,
-            Peers: node_peers_obj
-        };
-        resp_node_metrics_arr.push(node_metrics);
-        // console.log(_resp_node_metrics_arr[0].Peers,_resp_node_metrics_arr[0].Sync)
-        // console.log(_resp_node_metrics_arr)
-        return resp_node_metrics_arr;
+       
     },
     
-    getDiskSectorPerformance: function fGetDiskSectorPerformance(io_farmer_metrics_arr = [], farmerIp,farmerIsRunning) {
-        try{
+    getDiskSectorPerformance: function GetDiskSectorPerformance(io_farmer_metrics_arr = [], farmerIp,farmerIsRunning) {
+    try{
         let resp_disk_metrics_arr = [];
 
         let resp_UUId_arr = [];
@@ -303,30 +316,29 @@ const helper = {
         if(farmerIsRunning){
         
             for (let metrics_obj of io_farmer_metrics_arr) {
-                if (metrics_obj.Name.indexOf("subspace_farmer_sectors_total_sectors") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
-                    let plot_id = (metrics_obj.Instance.split(","))[0];
-                    let plot_state = metrics_obj.Criteria.toString().trim('"');
-                    let sectors = metrics_obj.Value;
+                if (metrics_obj.Name.indexOf("_farmer_sectors_total_sectors") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
+                    const plot_id = ((metrics_obj.Instance?.split(","))[0]);
+                    const plot_state = metrics_obj.Criteria.trim().split('"')[1];
+                    const sectors = metrics_obj.Value;
         
                     let plots_info = {
                         Id: plot_id,
                         PlotState: plot_state,
                         Sectors: sectors
                     };
-        
-                    if (plot_state.toLowerCase() === "notplotted") {
+                    if (plot_state.toLowerCase() == "notplotted") {
                         resp_plots_remaining_arr.push(plots_info);
                     } else if (plot_state.toLowerCase() === "plotted") {
                         resp_plots_completed_arr.push(plots_info);
                     }
-                } else if (metrics_obj.Name.indexOf("subspace_farmer_auditing_time_seconds_count") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
+                } else if (metrics_obj.Name.indexOf("_farmer_auditing_time_seconds_count") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
                     uptime_seconds = metrics_obj.Value;
                     unique_farm_id = metrics_obj.Instance;
                     let farm_id_info = {
                         Id: unique_farm_id
                     };
                     resp_UUId_arr.push(farm_id_info);
-                } else if (metrics_obj.Name.indexOf("subspace_farmer_sector_plotting_time_seconds") >= 0) {
+                } else if (metrics_obj.Name.indexOf("_farmer_sector_plotting_time_seconds") >= 0) {
                     if (metrics_obj.Id.toLowerCase().indexOf("unit") >= 0 || metrics_obj.Id.toLowerCase().indexOf("type") >= 0) {
                         unit_type = metrics_obj.Value.toLowerCase();
                         farmer_disk_id = "";
@@ -362,14 +374,14 @@ const helper = {
                             let disk_sector_perf = {
                                 Id: farmer_disk_id,
                                 SectorsPerHour: sectors_per_hour,
-                                MinutesPerSector: minutes_per_sector
+                                MinutesPerSector: minutes_per_sector,
                             };
                             resp_sector_perf_arr.push(disk_sector_perf);
                         }
                     }
-                } else if (metrics_obj.Name.indexOf("subspace_farmer_sector_plotted_counter_sectors_total") >= 0) {
+                } else if (metrics_obj.Name.indexOf("_farmer_sector_plotted_counter_sectors_total") >= 0) {
                     total_sectors_plot_count = parseInt(metrics_obj.Value);
-                } else if (metrics_obj.Name.indexOf("subspace_farmer_proving_time_seconds") >= 0) {
+                } else if (metrics_obj.Name.indexOf("_farmer_proving_time_seconds") >= 0) {
                     if (metrics_obj.Id.toLowerCase().indexOf("unit") >= 0 || metrics_obj.Id.toLowerCase().indexOf("type") >= 0) {
                         farmer_disk_id_rewards = "";
                     } else if (metrics_obj.Id.indexOf("farm_id") >= 0 && metrics_obj.Name.toLowerCase().indexOf("count") >= 0) {
@@ -399,8 +411,17 @@ const helper = {
                     }
                 }
             }
-        
-        
+            
+            
+            resp_UUId_arr.sort((a, b) => a.Id.localeCompare(b.Id));
+           resp_sector_perf_arr.sort((a, b) => a.Id.localeCompare(b.Id));
+             resp_rewards_arr.sort((a, b) => a.Id.localeCompare(b.Id));
+            resp_misses_arr.sort((a, b) => a.Id.localeCompare(b.Id));
+            resp_plots_completed_arr.sort((a, b) => a.Id.localeCompare(b.Id));
+            resp_plots_remaining_arr.sort((a, b) => a.Id.localeCompare(b.Id));
+
+
+            
             let disk_sector_perf = {
                 Id: "overall",
                 TotalSectors: total_sectors_plot_count,
@@ -421,12 +442,12 @@ const helper = {
                 farmerIp: farmerIp,
                 farmerIsRunning: farmerIsRunning
             };
+            // console.log('test',disk_metrics.PlotsCompleted, disk_metrics.PlotsRemaining)
             resp_disk_metrics_arr.push(disk_metrics);
             return resp_disk_metrics_arr;
             // return disk_metrics
         }else{
         
-
             let disk_sector_perf = {
                 Id: "overall",
                 TotalSectors: total_sectors_plot_count,
@@ -454,39 +475,78 @@ const helper = {
     }
     },
     convertSecondsDays: function convertSecondsDays(seconds){
-        const days = Math.floor(seconds / (3600 * 24));
-    const hours = Math.floor((seconds % (3600 * 24)) / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = seconds % 60;
-
-    const formattedTime = `${days}D ${hours}H ${minutes}M ${remainingSeconds}S`;
-    return formattedTime;
-
+        try{
+            const days = Math.floor(seconds / (3600 * 24));
+            const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const remainingSeconds = seconds % 60;
+        
+            const formattedTime = `${days}D ${hours}H ${minutes}M ${remainingSeconds}S`;
+            return formattedTime;
+        
+        }catch(err){
+            console.log('Error: convertSecondsDays', err)
+        }
+       
     }
-    
-    
 
 };
 
 const functions = {
     getNodeDisplayData: function getNodeDisplayData(nodeMetricsArr = [],nodeIsRunningOk = false,nodeIp = '0.0.0.0'){
-        if(!nodeIsRunningOk){
-            const nodeDisplayData = {nodeSyncState: "", nodePeersConnected: ""}
-            nodeDisplayData.nodeSyncState = 'N/A'
-            nodeDisplayData.nodePeersConnected= 'N/A'
-            nodeDisplayData.nodeIp = nodeIp 
-            nodeDisplayData.nodeIsRunningOk = nodeIsRunningOk 
-            return nodeDisplayData;
-        }else{
-            const nodeDisplayData = {nodeSyncState: "", nodePeersConnected: ""}
-            nodeDisplayData.nodeSyncState = nodeMetricsArr[0].Sync.State
-            nodeDisplayData.nodePeersConnected= nodeMetricsArr[0].Peers.Connected 
-            nodeDisplayData.nodeIp = nodeIp 
-            nodeDisplayData.nodeIsRunningOk = nodeIsRunningOk
-            return nodeDisplayData;
+        try{
+
+            if(!nodeIsRunningOk){
+                const nodeDisplayData = {nodeSyncState: "", nodePeersConnected: ""}
+                nodeDisplayData.nodeSyncState = 'N/A'
+                nodeDisplayData.nodePeersConnected= 'N/A'
+                nodeDisplayData.nodeIp = nodeIp 
+                nodeDisplayData.nodeIsRunningOk = nodeIsRunningOk 
+                return nodeDisplayData;
+            }else{
+                const nodeDisplayData = {nodeSyncState: "", nodePeersConnected: ""}
+                nodeDisplayData.nodeSyncState = nodeMetricsArr[0].Sync.State
+                nodeDisplayData.nodePeersConnected= nodeMetricsArr[0].Peers.Connected 
+                nodeDisplayData.nodeIp = nodeIp 
+                nodeDisplayData.nodeIsRunningOk = nodeIsRunningOk
+                return nodeDisplayData;
+            }
+        }catch(err){
+            console.log('getNodedisplayData Error', error)
         }
     
     },
+
+formatTime: function formatTime(seconds) {
+    const duration = moment.duration(seconds, 'seconds');
+    const minutes = Math.floor(duration.asMinutes());
+    const remainingSeconds = duration.seconds();
+    return `${minutes} min: ${remainingSeconds} sec`;
+},
+
+diskPlotETA: function diskPlotETA(farmer,minutes_per_sector_data_disp,index){
+    
+            let remaining_sectors = parseInt(farmer.PlotsRemaining[index].Sectors);
+            let completed_sectors = parseInt(farmer.PlotsCompleted[index].Sectors);
+            let total_sectors_GiB = completed_sectors + remaining_sectors;
+            let total_disk_sectors_TiB = (total_sectors_GiB / 1000).toFixed(2) + " TiB";
+    
+            let plotting_percent_complete, plotting_percent_complete_disp;
+            if (total_sectors_GiB !== 0) {
+                plotting_percent_complete = ((completed_sectors / total_sectors_GiB) * 100).toFixed(1);
+                plotting_percent_complete_disp = plotting_percent_complete + "%";
+            }
+    
+            let eta_disp;
+            if (minutes_per_sector_data_disp !== "-") {
+                let eta = (((parseFloat(minutes_per_sector_data_disp) * remaining_sectors)) / (60*24)).toFixed(2);
+                eta_disp = eta.toString();
+            }
+    
+            return eta_disp
+        // b_printed_size_metrics = true;
+        },
+
     displayData: function displayData(data, dateLastOutput) {
         clear();
         let outputTelegram = ""
@@ -527,47 +587,55 @@ const functions = {
                     farmerString += `\x1b[96mHostname: \x1b[93m${farmer.farmerIp}\x1b[0m, `;
                     
                     
+                    // Farmerstring2 is uptime lane.
+                    let sectorHr = (farmer.Performance.disk_sector_perf.TotalSectors/farmer.Performance.disk_sector_perf.Uptime*3600).toFixed(2)
+                    let sectorTime = functions.formatTime(60/sectorHr*60);
+                    let sectorHrAvg = (sectorHr/(farmer.Id.length)).toFixed(2)
                     
                     farmerString2 += `Uptime: ${helper.convertSecondsDays(farmer.Performance.disk_sector_perf.Uptime)} | `;
-                    farmerString2 += `Rewards: ${farmer.Performance.disk_sector_perf.TotalRewards} | `;
-                    let sectorHr = (farmer.Performance.disk_sector_perf.TotalSectors/farmer.Performance.disk_sector_perf.Uptime*3600).toFixed(2)
-                    farmerString2 += `Sectors/Hour: ${sectorHr} | `
-                    let sectorHrAvg = (sectorHr/(farmer.Id.length)).toFixed(2)
+                    farmerString2 += `Sector Time: ${sectorTime}|`
                     farmerString2 += `Sectors/Hr (avg): ${sectorHrAvg} | `
+                    farmerString2 += `Rewards: ${farmer.Performance.disk_sector_perf.TotalRewards} | `;
                     console.log(`${farmerString}`);
                     console.log(farmerString2)
                     console.log(dasher);
                     
-                    label +=`|${'Disk Id'.padEnd(27)}|${'Size'.padEnd(8)}|${'% Comp'.padEnd(8)}|${'ETA(Hrs)'.padEnd(7)}|`
+                    label +=`|${'Disk Id'.padEnd(27)}|${'Size '.padEnd(8)}|${'% Comp'.padEnd(8)}|${'ETA(Days)'.padEnd(7)}|`
                     label += `${'Sectors/Hr'.padEnd(8)}|${'Min/Sector'.padEnd(8)}|${'Reward|Miss'.padEnd(8)}|`;
                     console.log(label)
                     console.log(dasher);
                     
                     outputTelegram += ` <b>${helper.convertSecondsDays(farmer.Performance.disk_sector_perf.Uptime)}</b> Uptime, `						
-                    outputTelegram += `\n   <b>${sectorHr}</b> Sectors/Hour, `		
+                    outputTelegram += `\n   <b>${sectorTime}</b> Sector Time, `		
                     outputTelegram += `\n   <b>${sectorHrAvg}</b> Sectors/Hour (avg/disk), `				
                     outputTelegram += `\n   <b>${farmer.Performance.disk_sector_perf.TotalRewards}</b> Total Rewards`
     
                     farmer.Performance.forEach((data,index) => {
                         let dataString = ""
-                        dataString += `|${farmer.Id[index].Id.padEnd(27)}|${'-'.padEnd(8)}|${'-'.padEnd(8)}|${'-'.padEnd(7)} `;
+                        const totalSpaceTB = (farmer.PlotsCompleted[index].Sectors*1 + 1*farmer.PlotsRemaining[index].Sectors)
+                        const completePercent = ((farmer.PlotsCompleted[index].Sectors)/totalSpaceTB*100).toFixed(2)
+                        const ETA = functions.diskPlotETA(farmer,data.MinutesPerSector,index)
+                        dataString += `|${farmer.Id[index].Id.padEnd(27)}|${'-'.padEnd(8)}|`
+                        dataString += `${completePercent.toString().padEnd(8)}|`
+                        dataString += `${ETA.toString().padEnd(8)} `;
                         dataString += `|${data.SectorsPerHour.toString().padEnd(10)}|${data.MinutesPerSector.toString().padEnd(10)}`
                         dataString += `|${(farmer.Rewards[index]?.Rewards.toString()|| '0').padEnd(6)}|${'0'.padEnd(4)}|` 
     
                         console.log(dataString)
                     })
                   })    
-            })
-            console.log(dasher);
+          })
+        console.log(dasher);
         console.log('');
         helper.sendTelegramNotification(outputTelegram)
         // 1000 milliseconds = 1 second
         
         console.log('\x1b[93m Last saved to:', filePath + ' on \x1b[92m' +  dateLastOutput.format('YYYY-MM-DD HH:mm:ss')  +'\x1b[0m');
+
         setTimeout(() => {
         countdownToRefresh();
-        // Code to be executed after 1 second
-        }, 1000); 
+        }, 2000); 
+
         }catch(error){
                 console.log('error displayData',error);
         }
@@ -605,12 +673,14 @@ const getAllData = async function () {
 
         for (const farmer of farmersArrIp) {
             let farmerProcessArr = await helper.getProcessState("farmer", farmer, farmer);
-            const farmerIsRunning = farmerProcessArr[1];
+            // console.log(farmerProcessArr)
             const farmerMetricsRaw = farmerProcessArr[0];
+            const farmerIsRunning = farmerProcessArr[1];
             if(farmerIsRunning === false){
                 const farmerSectorPerformance = await helper.getDiskSectorPerformance(parsedFarmerDataArr= [],farmer,farmerIsRunning);
                 farmerDisplaySector.push(farmerSectorPerformance);
             }else{
+                // console.log('metrics', farmerMetricsRaw)
                 const parsedFarmerDataArr = helper.parseMetricsToObj(farmerMetricsRaw);
                 const farmerSectorPerformance = await helper.getDiskSectorPerformance(parsedFarmerDataArr,farmer,farmerIsRunning);
                 farmerDisplaySector.push(farmerSectorPerformance);
@@ -642,6 +712,7 @@ let timeToRefresh = config.Refresh
 
 
 function countdownToRefresh() {
+    timeToRefresh--;
     loader = '';
     switch(timeToRefresh%4){
         case 0:{
@@ -661,26 +732,27 @@ function countdownToRefresh() {
             break;
         }
     }
-
-        process.stdout.clearLine();
-        process.stdout.cursorTo(0);
-        process.stdout.write(` ${loader} Refreshing in ${timeToRefresh} seconds`);
-        if (timeToRefresh < 0) {
+  
+        if (timeToRefresh < 1) {
             // Trigger data refresh when countdown reaches 0
             process.stdout.clearLine();
+            timeToRefresh = config.Refresh
             return;
         } else {
-            timeToRefresh--;
+            process.stdout.clearLine();
+            process.stdout.cursorTo(0);
+            process.stdout.write(` ${loader} Refreshing in ${timeToRefresh} seconds`);
+            
             setTimeout(countdownToRefresh, 1000); // Update countdown every second
         }
     }
 getAllData()
     // Call getAllData immediately
     refreshInterval = setInterval(() => {
-        process.stdout.write('new Interval')
+        process.stdout.clearLine()
         getAllData()
     }
-        , (config.Refresh-1)*1000)
+        , (config.Refresh+1)*1000)
 
 
 // Call getAllData at intervals defined by config.Refresh (in seconds)
