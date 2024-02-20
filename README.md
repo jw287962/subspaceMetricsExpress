@@ -1,7 +1,9 @@
+Functions derived from https://github.com/irbujam/ss_log_event_monitor written in Powershell.
+
 # subspaceMetricsExpress
 
 rename config file to  config.json
-and update config.json to your ip addresses
+and update config.json to your correct data.
 type in terminal:
 ```
 node ./functions.js
