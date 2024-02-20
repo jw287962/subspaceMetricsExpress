@@ -36,7 +36,7 @@ const guiCliHelper = {
         const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
         const formattedSeconds = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
     
-        return `${formattedMinutes}:${formattedSeconds}`;
+        return `${this.replaceWithDash(formattedMinutes)}:${this.replaceWithDash(formattedSeconds)}`;
     },    
  
      convertSecondsDays: function convertSecondsDays(seconds){
@@ -127,10 +127,18 @@ const guiCliHelper = {
        return {sectorHr,sectorTime,sectorHrAvg,upTime,rewards,totalSize}
         
      },
+     replaceWithDash: function replaceWithDash(string){
+        if(isNaN(string)){
+            return '-'
+        }else{
+            return string
+        }
+
+     },
      printsFarmerPCmetricsOutput: function printsFamerPCmetricsOutput(data){
          let farmerString2 ="";
          farmerString2 += `\x1b[93m${data.sectorTime}\x1b[0m Min/Sect:| `
-         farmerString2 += `\x1b[93m${data.sectorHrAvg}\x1b[0m Sectors/Hr(avg):| `
+         farmerString2 += `\x1b[93m${this.replaceWithDash(data.sectorHrAvg)}\x1b[0m Sectors/Hr(avg):| `
          farmerString2 += `\x1b[93m${data.rewards }\x1b[0m Rewards| `;
          farmerString2 += `\x1b[93m${data.totalSize }\x1b[0m TB |`;
          this.guiLogger(farmerString2)
