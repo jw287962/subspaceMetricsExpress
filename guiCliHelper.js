@@ -1,9 +1,9 @@
-const clear = require('console-clear')
+
 const moment = require('moment');
 const parseData = require('./parseData')
 const config = require('./config.json')
 
-clearLog = config.Clear ;
+
 
 const filePath = './data.json';
 let timeToRefresh = config.Refresh
@@ -107,24 +107,30 @@ const guiCliHelper = {
              console.log('getFarmerTableHeaderOutput err ',err)
          }
      },
+
+    //  line1 & PRINT
      getFarmerPCStatusOutput: function getTableName(farmer,currentUser){
          let holder = ""
          holder += `${this.dasher}\n`;
          holder += `\x1b[96m${currentUser} \x1b[96mStatus: ${farmer.FarmerIsRunning === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'} for `;
-         holder += `\x1b[0m${this.convertSecondsDays(farmer.Performance.disk_sector_perf.Uptime)} `
+         holder += `\x1b[0m${this.convertSecondsDays(farmer.SummaryData.Uptime)} `
          holder += `\x1b[96mHostname: \x1b[93m${farmer.FarmerIp}\x1b[0m, `;
 
          this.guiLogger(holder)
      },
-     getFarmerPCMetricsOutput: function getTable(disk_sector_perf,farmerId){
-        let upTime = disk_sector_perf.Uptime
-         let sectorHr = (disk_sector_perf.TotalSectors/upTime*3600).toFixed(2)
-         let sectorTime = this.formatTime(60/sectorHr*60);
+
+    //  line2 OUTPUT
+     getFarmerPCMetricsOutput: function getTable(summaryData,farmerId){
+        let upTime = summaryData.Uptime
+         let sectorHr = (summaryData.TotalSectors/upTime*3600).toFixed(2)
+         let sectorTime = this.formatTime(summaryData.TotalMinutesPerSector);
          let sectorHrAvg = (sectorHr/(farmerId.length)).toFixed(2)
-         let rewards = disk_sector_perf.TotalRewards;
-         let totalSize = disk_sector_perf.TotalSize
+         let rewards = summaryData.TotalRewards;
+         let totalSize = summaryData.TotalSize
+         let totalETA = summaryData.TotalETA
+         let totalPercentComplete = summaryData.TotalPercentComplete
  
-       return {sectorHr,sectorTime,sectorHrAvg,upTime,rewards,totalSize}
+       return {totalPercentComplete,totalETA,sectorHr,sectorTime,sectorHrAvg,upTime,rewards,totalSize}
         
      },
      replaceWithDash: function replaceWithDash(string){
@@ -135,12 +141,15 @@ const guiCliHelper = {
         }
 
      },
-     printsFarmerPCmetricsOutput: function printsFamerPCmetricsOutput(data){
+    //   LINE 2 PRINT
+     printsFarmerPCmetricsOutput: function printsFarmerPCmetricsOutput(data){
          let farmerString2 ="";
          farmerString2 += `\x1b[93m${data.sectorTime}\x1b[0m Min/Sect:| `
          farmerString2 += `\x1b[93m${this.replaceWithDash(data.sectorHrAvg)}\x1b[0m Sectors/Hr(avg):| `
          farmerString2 += `\x1b[93m${data.rewards }\x1b[0m Rewards| `;
          farmerString2 += `\x1b[93m${data.totalSize }\x1b[0m TB |`;
+         farmerString2 += `\x1b[93m${data.totalETA}\x1b[0m  ETA |`;
+         farmerString2 += `\x1b[93m${data.totalPercentComplete}\x1b[0m% |`;
          this.guiLogger(farmerString2)
      },
      sendTelegramPCmetrics: function sendTelegramPCmetrics(data){
@@ -154,7 +163,6 @@ const guiCliHelper = {
      },
      dasher: "------------------------------------------------------------------------------------------",
      displayData: function displayData(data, dateLastOutput) {
-         if(clearLog) clear();
          let outputTelegram = ""
          let nodeString = '';
  
@@ -180,7 +188,7 @@ const guiCliHelper = {
                      this.getFarmerPCStatusOutput(farmer,currentUser) // PC status 1st LINE
  
                           // PC METRICS & DATA 2nd LINE
-                     dataOutput = this.getFarmerPCMetricsOutput(farmer.Performance.disk_sector_perf,farmer.Id) // PC METRICS & DATA 2nd LINE
+                     dataOutput = this.getFarmerPCMetricsOutput(farmer.SummaryData,farmer.Id) // PC METRICS & DATA 2nd LINE
                      this.printsFarmerPCmetricsOutput(dataOutput)
                            // send telegram notification too
                     outputTelegram += this.sendTelegramPCmetrics(dataOutput)

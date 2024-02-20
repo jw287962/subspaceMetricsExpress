@@ -1,4 +1,5 @@
 // server.js
+
 const express = require('express');
 const config = require('./config.json')
 const fs = require('fs');
@@ -7,12 +8,14 @@ const cors = require('cors')
 const app = express();
 const moment = require('moment');
 
+const clear = require('console-clear')
+const clearLog = config.Clear ;
 
+// MY JS
 const guiCliHelper = require('./guiCliHelper')
 const parseData = require('./parseData')
 
 const filePath = './data.json';
-
 
 app.use(cors({
     origin: 'http://localhost:5173'
@@ -77,16 +80,16 @@ const getAllData = async function () {
             // console.log(farmerProcessArr)
             const farmerMetricsRaw = farmerProcessArr[0];
             const farmerIsRunning = farmerProcessArr[1];
-            if(farmerIsRunning === false){
+
+           if (farmerIsRunning === true){
+              // console.log('metrics', farmerMetricsRaw)
+              const parsedFarmerDataArr = parseData.parseMetricsToObj(farmerMetricsRaw);
+              const farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr,farmer,farmerIsRunning);
+              farmerDisplaySector.push(farmerSectorPerformance);
+            }else if(farmerIsRunning === false){
               statusDownTotal += farmerMetricsRaw + '\n'
                 const farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr= [],farmer,farmerIsRunning);
                 farmerDisplaySector.push(farmerSectorPerformance);
-            }else{
-                // console.log('metrics', farmerMetricsRaw)
-                const parsedFarmerDataArr = parseData.parseMetricsToObj(farmerMetricsRaw);
-                const farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr,farmer,farmerIsRunning);
-                farmerDisplaySector.push(farmerSectorPerformance);
-
             }
         }
         console.log(statusDownTotal)
@@ -125,9 +128,11 @@ const getAllData = async function () {
 
 
 // MAIN FUNCTION: GETALLDATA
+if(clearLog) clear();
 getAllData()
     // Call getAllData immediately
 refreshInterval = setInterval(() =>{
+      if(clearLog) clear();
         process.stdout.clearLine()
         getAllData()
      }, (config.Refresh+1)*1000)
