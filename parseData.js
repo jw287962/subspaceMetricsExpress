@@ -1,3 +1,7 @@
+
+const axios = require('axios')
+const config = require('./config.json')
+
 // PARSES DATA TO BE USED BY MAIN 
 const parseData = {
     pingMetricsUrl:  async function pingMetricsUrl(ioUrl) {
@@ -187,7 +191,7 @@ const parseData = {
             }
 
         } catch (error) {
-            console.error('Error:', 'error log is off');
+            console.error('Error:', error);
         }
     }
     ,
