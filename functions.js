@@ -276,6 +276,7 @@ const helper = {
     },
     
     getDiskSectorPerformance: function fGetDiskSectorPerformance(io_farmer_metrics_arr = [], farmerIp,farmerIsRunning) {
+        try{
         let resp_disk_metrics_arr = [];
 
         let resp_UUId_arr = [];
@@ -424,26 +425,7 @@ const helper = {
             return resp_disk_metrics_arr;
             // return disk_metrics
         }else{
-             // return  {
-            //     Id: 'N/A',
-            //     Performance: {
-            //         disk_sector_perf: 
-            //     {
-            //         Id: 'N/A',
-            //         TotalSectors: 'N/A',
-            //         TotalSeconds: 'N/A',
-            //         TotalDisks: 'N/A',
-            //         Uptime: 'N/A',
-            //         TotalRewards: 'N/A'
-            //     },
-            // },
-            //     Rewards: 'N/A',
-            //     Misses: 'N/A',
-            //     PlotsCompleted: 'N/A',
-            //     PlotsRemaining: 'N/A',
-            //     farmerIp: farmerIp,
-            //     farmerIsRunning: farmerIsRunning
-            // };
+        
 
             let disk_sector_perf = {
                 Id: "overall",
@@ -453,21 +435,23 @@ const helper = {
                 Uptime: uptime_seconds,
                 TotalRewards: total_rewards_per_farmer
             };
-            resp_sector_perf_obj['disk_sector_perf'] = disk_sector_perf;
+            resp_sector_perf_arr['disk_sector_perf'] = disk_sector_perf;
         
             let disk_metrics = {
-                Id: resp_UUId_obj,
-                Performance: resp_sector_perf_obj,
-                Rewards: resp_rewards_obj,
-                Misses: resp_misses_obj,
-                PlotsCompleted: resp_plots_completed_obj,
-                PlotsRemaining: resp_plots_remaining_obj,
+                Id: resp_UUId_arr,
+                Performance: resp_sector_perf_arr,
+                Rewards: resp_rewards_arr,
+                Misses: resp_misses_arr,
+                PlotsCompleted: resp_plots_completed_arr,
+                PlotsRemaining: resp_plots_remaining_arr,
                 farmerIp: farmerIp,
                 farmerIsRunning: farmerIsRunning
             };
             return disk_metrics
         }
-        
+    }catch(error){
+        console.log( "getDiskSectorPerformance", error)
+    }
     },
     convertSecondsDays: function convertSecondsDays(seconds){
         const days = Math.floor(seconds / (3600 * 24));
@@ -517,63 +501,64 @@ const functions = {
         console.log(nodeString);
         
         console.log(dasher);
-        data.farmerDisplaySector.forEach((farmer1,indexxx) => {
-            if(indexxx > 0){
-                outputTelegram += "\n\n"
-            }
-            switch (indexxx) {
-                case 1:
+        try{
+            data.farmerDisplaySector.forEach((farmer1,indexxx) => {
+                if(indexxx > 0){
+                    outputTelegram += "\n\n"
+                }
+                switch (indexxx) {
+                    case 1:
+                        
+                        outputTelegram += "ROG STRIX Jas";
+                        break;
+                    case 2:
+                        outputTelegram += "Windows RogStrix";
+                        break;
+                    default:
+                        outputTelegram += "AMD 7950X";
+                        break;
+                }
+                farmer1.forEach((farmer) => {
+                    let farmerString = '';
+                    let farmerString2 = "";
+                    let label ='';
+                    farmerString += `${dasher}\n`;
+                    farmerString += `\x1b[96mFarmer ${indexxx + 1} Status: ${farmer.farmerIsRunning === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'}, `;
+                    farmerString += `\x1b[96mHostname: \x1b[93m${farmer.farmerIp}\x1b[0m, `;
                     
-                    outputTelegram += "ROG STRIX Jas";
-                    break;
-                case 2:
-                    outputTelegram += "Windows RogStrix";
-                    break;
-                default:
-                    outputTelegram += "AMD 7950X";
-                    break;
-            }
-            farmer1.forEach((farmer) => {
-                let farmerString = '';
-                let farmerString2 = "";
-                let label ='';
-                farmerString += `${dasher}\n`;
-                farmerString += `\x1b[96mFarmer ${indexxx + 1} Status: ${farmer.farmerIsRunning === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'}, `;
-                farmerString += `\x1b[96mHostname: \x1b[93m${farmer.farmerIp}\x1b[0m, `;
-                
-                
-                
-                farmerString2 += `Uptime: ${helper.convertSecondsDays(farmer.Performance.disk_sector_perf.Uptime)} | `;
-                farmerString2 += `Rewards: ${farmer.Performance.disk_sector_perf.TotalRewards} | `;
-                let sectorHr = (farmer.Performance.disk_sector_perf.TotalSectors/farmer.Performance.disk_sector_perf.Uptime*3600).toFixed(2)
-                farmerString2 += `Sectors/Hour: ${sectorHr} | `
-                let sectorHrAvg = (sectorHr/(farmer.Id.length)).toFixed(2)
-                farmerString2 += `Sectors/Hr (avg): ${sectorHrAvg} | `
-                console.log(`${farmerString}`);
-                console.log(farmerString2)
-                console.log(dasher);
-                
-                label +=`|${'Disk Id'.padEnd(27)}|${'Size'.padEnd(8)}|${'% Comp'.padEnd(8)}|${'ETA(Hrs)'.padEnd(7)}|`
-                label += `${'Sectors/Hr'.padEnd(8)}|${'Min/Sector'.padEnd(8)}|${'Reward|Miss'.padEnd(8)}|`;
-                console.log(label)
-                console.log(dasher);
-                
-                outputTelegram += ` <b>${helper.convertSecondsDays(farmer.Performance.disk_sector_perf.Uptime)}</b> Uptime, `						
-                outputTelegram += `\n   <b>${sectorHr}</b> Sectors/Hour, `		
-                outputTelegram += `\n   <b>${sectorHrAvg}</b> Sectors/Hour (avg/disk), `				
-                outputTelegram += `\n   <b>${farmer.Performance.disk_sector_perf.TotalRewards}</b> Total Rewards`
-
-                farmer.Performance.forEach((data,index) => {
-                    let dataString = ""
-                    dataString += `|${farmer.Id[index].Id.padEnd(27)}|${'-'.padEnd(8)}|${'-'.padEnd(8)}|${'-'.padEnd(7)} `;
-                    dataString += `|${data.SectorsPerHour.toString().padEnd(10)}|${data.MinutesPerSector.toString().padEnd(10)}`
-                    dataString += `|${farmer.Rewards[index].Rewards.toString().padEnd(6)}|${'0'.padEnd(4)}|` 
-
-                    console.log(dataString)
-                })
-              })    
-        })
-        console.log(dasher);
+                    
+                    
+                    farmerString2 += `Uptime: ${helper.convertSecondsDays(farmer.Performance.disk_sector_perf.Uptime)} | `;
+                    farmerString2 += `Rewards: ${farmer.Performance.disk_sector_perf.TotalRewards} | `;
+                    let sectorHr = (farmer.Performance.disk_sector_perf.TotalSectors/farmer.Performance.disk_sector_perf.Uptime*3600).toFixed(2)
+                    farmerString2 += `Sectors/Hour: ${sectorHr} | `
+                    let sectorHrAvg = (sectorHr/(farmer.Id.length)).toFixed(2)
+                    farmerString2 += `Sectors/Hr (avg): ${sectorHrAvg} | `
+                    console.log(`${farmerString}`);
+                    console.log(farmerString2)
+                    console.log(dasher);
+                    
+                    label +=`|${'Disk Id'.padEnd(27)}|${'Size'.padEnd(8)}|${'% Comp'.padEnd(8)}|${'ETA(Hrs)'.padEnd(7)}|`
+                    label += `${'Sectors/Hr'.padEnd(8)}|${'Min/Sector'.padEnd(8)}|${'Reward|Miss'.padEnd(8)}|`;
+                    console.log(label)
+                    console.log(dasher);
+                    
+                    outputTelegram += ` <b>${helper.convertSecondsDays(farmer.Performance.disk_sector_perf.Uptime)}</b> Uptime, `						
+                    outputTelegram += `\n   <b>${sectorHr}</b> Sectors/Hour, `		
+                    outputTelegram += `\n   <b>${sectorHrAvg}</b> Sectors/Hour (avg/disk), `				
+                    outputTelegram += `\n   <b>${farmer.Performance.disk_sector_perf.TotalRewards}</b> Total Rewards`
+    
+                    farmer.Performance.forEach((data,index) => {
+                        let dataString = ""
+                        dataString += `|${farmer.Id[index].Id.padEnd(27)}|${'-'.padEnd(8)}|${'-'.padEnd(8)}|${'-'.padEnd(7)} `;
+                        dataString += `|${data.SectorsPerHour.toString().padEnd(10)}|${data.MinutesPerSector.toString().padEnd(10)}`
+                        dataString += `|${(farmer.Rewards[index]?.Rewards.toString()|| '0').padEnd(6)}|${'0'.padEnd(4)}|` 
+    
+                        console.log(dataString)
+                    })
+                  })    
+            })
+            console.log(dasher);
         console.log('');
         helper.sendTelegramNotification(outputTelegram)
         // 1000 milliseconds = 1 second
@@ -583,6 +568,11 @@ const functions = {
         countdownToRefresh();
         // Code to be executed after 1 second
         }, 1000); 
+        }catch(error){
+                console.log('error displayData',error);
+        }
+        
+        
     }
 
 }    
@@ -672,21 +662,25 @@ function countdownToRefresh() {
         }
     }
 
-    process.stdout.clearLine();
-    process.stdout.cursorTo(0);
-    process.stdout.write(` ${loader} Refreshing in ${timeToRefresh} seconds`);
-    if (timeToRefresh < 0) {
-         // Trigger data refresh when countdown reaches 0
-    } else {
-        timeToRefresh--;
-        setTimeout(countdownToRefresh, 1000); // Update countdown every second
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
+        process.stdout.write(` ${loader} Refreshing in ${timeToRefresh} seconds`);
+        if (timeToRefresh < 0) {
+            // Trigger data refresh when countdown reaches 0
+            process.stdout.clearLine();
+            return;
+        } else {
+            timeToRefresh--;
+            setTimeout(countdownToRefresh, 1000); // Update countdown every second
+        }
     }
-}
 getAllData()
-// Call getAllData immediately
-setInterval(() => {
-    getAllData()}
-    , (config.Refresh-1)*1000)
+    // Call getAllData immediately
+    refreshInterval = setInterval(() => {
+        process.stdout.write('new Interval')
+        getAllData()
+    }
+        , (config.Refresh-1)*1000)
 
 
 // Call getAllData at intervals defined by config.Refresh (in seconds)
