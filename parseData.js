@@ -370,7 +370,7 @@ const parseData = {
            
             const totalMinutesPerSector = 60/totalSectorPerHour*60
             const totalETADays = ((totalPlotsRemaining/totalSectorPerHour)/(24)).toFixed(1);
-            const totalETA = totalETADays < 1 ? `${totalETADays * 24} Hrs` : `${totalETADays} Days`;
+            const totalETA = totalETADays < 1 ? `${(totalETADays * 24).toFixed(1)} Hrs` : `${totalETADays} Days`;
             const totalPercentComplete =((totalPlotsCompleted/(totalPlotsCompleted+totalPlotsRemaining))*100).toFixed(1);
             const totalFarmerDiskSize = ((totalPlotsRemaining + totalPlotsCompleted)/1000).toFixed(2)
 
