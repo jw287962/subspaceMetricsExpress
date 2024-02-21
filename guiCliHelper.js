@@ -134,7 +134,8 @@ const guiCliHelper = {
         //  display uptime if it's running, otherwise display STOPPED 
          if(farmer.FarmerIsRunning === true)
             holder +=`\x1b[92m✔ ${this.convertSecondsDays(farmer.SummaryData.Uptime)} \x1b[0m`
-         else `\x1b[31m❌ STOPPED\x1b[0m'}`
+         else
+             holder +=`\x1b[31m❌ STOPPED\x1b[0m'}`
              holder += `\x1b[96mHostname: \x1b[93m${farmer.FarmerIp}\x1b[0m, `;
 
          this.guiLogger(holder)
@@ -231,7 +232,7 @@ const guiCliHelper = {
                          dataString += `|${id.Id.padEnd(27)}|${discData.discDataMetrics.toString().padEnd(8)}|`
                          dataString += `${discData.completePercent.toString().padEnd(8)}|`
                          dataString += `${discData.ETA.toString().padEnd(8)} `;
-                         dataString += `|${data?.SectorsPerHour.toString().padEnd(10) || 'N/A'}|${data?.MinutesPerSector.toString().padEnd(10) || 'N/A'}`
+                         dataString += `|${(data?.SectorsPerHour|| 'N/A').toString().padEnd(10) }|${(data?.MinutesPerSector || 'N/A').toString().padEnd(10)}`
                          dataString += `|${(farmer.Rewards[index]?.Rewards.toString()|| '0').padEnd(6)}|${'0'.padEnd(4)}|` 
                          this.guiLogger(dataString)
                      })
