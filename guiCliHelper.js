@@ -171,12 +171,12 @@ const guiCliHelper = {
     //   LINE 2 PRINT
      printsFarmerPCmetricsOutput: function printsFarmerPCmetricsOutput(data){
          let farmerString2 ="";
-         farmerString2 += `\x1b[93m${data.sectorTime}\x1b[0m Min/Sect| `
-         farmerString2 += `\x1b[93m${this.replaceWithDash(data.sectorHrAvg)}\x1b[0m Sectors/Hr(avg)| `
-         farmerString2 += `\x1b[93m${data.rewards }\x1b[0m Rewards| `;
-         farmerString2 += `\x1b[93m${data.totalSize }\x1b[0m TB |`;
-         farmerString2 += `\x1b[93m${data.totalETA}\x1b[0m Remain |`;
-         farmerString2 += `\x1b[93m${data.totalPercentComplete}%\x1b[0m Comp.|`;
+         farmerString2 += `|\x1b[93m${data.sectorTime} \x1b[0mMin/Sect| `
+         farmerString2 += `|\x1b[93m${this.replaceWithDash(data.sectorHrAvg)}\x1b[0m Sectors/Hr(avg)| `
+         farmerString2 += `|\x1b[93m${data.rewards }\x1b[0m Rewards| `;
+         farmerString2 += `|\x1b[93m${data.totalSize }\x1b[0m TiB | \n`;
+         farmerString2 += `|\x1b[93m${data.totalETA}\x1b[0m Remain |`;
+         farmerString2 += `|\x1b[93m${data.totalPercentComplete}%\x1b[0m Comp.|\x1b[49m`;
          this.guiLogger(farmerString2)
      },
      sendTelegramPCmetrics: function sendTelegramPCmetrics(data){
