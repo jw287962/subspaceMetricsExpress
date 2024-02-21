@@ -359,7 +359,6 @@ const parseData = {
                     }
                 }
             }
-                console.log(resp_UUId_arr)
             resp_UUId_arr.sort((a, b) => a.Id.localeCompare(b.Id));
             resp_sector_perf_arr.sort((a, b) => a.Id.localeCompare(b.Id));
              resp_rewards_arr.sort((a, b) => a.Id.localeCompare(b.Id));
