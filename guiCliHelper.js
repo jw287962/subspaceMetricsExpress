@@ -185,9 +185,10 @@ const guiCliHelper = {
          farmerString2 += `|\x1b[92mSector\x1b[93m Time: \x1b[0m${data.totalSectorTime} `
          farmerString2 += `\x1b[0m|\x1b[93m${this.replaceWithDash(data.sectorHrAvg)}\x1b[0m Sectors per Hr `
          farmerString2 += `|\x1b[92mRewards: \x1b[93m${data.rewards} \x1b[0mtotal, \x1b[93m${data.totalRewardsPerHour}\x1b[0m per Hr, \x1b[93m${(data.totalRewardsPerHour*24).toFixed(2)} \x1b[0mper Day\x1b[49m |\n`;
-         farmerString2 += `|\x1b[93m${data.totalETA}\x1b[0m Remain`;
-         farmerString2 += `|\x1b[93m${data.totalPercentComplete}%\x1b[0m Complete|\x1b[49m`;
+         farmerString2 += `|\x1b[0mRemain: \x1b[93m${data.totalETA} \x1b[0m`;
+         farmerString2 += `|\x1b[93m${data.totalPercentComplete}%\x1b[0m Complete\x1b[49m `;
          farmerString2 += `|\x1b[93m${data.totalSize }\x1b[0mTiB `;
+         farmerString2 += `|`;
          
          this.guiLogger(farmerString2)
      },
