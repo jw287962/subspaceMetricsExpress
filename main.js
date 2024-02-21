@@ -95,7 +95,7 @@ const getAllData = async function () {
         console.log(statusDownTotal)
         if(statusDownTotal.length != 0) {
           try {
-            console.log('status offline')
+            // console.log('status offline')
             parseData.sendTelegramNotification(statusDownTotal)
             // await this.sendTelegramNotification(alertText);
         } catch (error) {
