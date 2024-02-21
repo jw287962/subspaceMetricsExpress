@@ -222,7 +222,6 @@ const guiCliHelper = {
                            // TABLE HEADER TEXT
                      this.guiLogger(this.getFarmerTableHeaderOutput())
                      this.guiLogger(dasher);
- 
                          // INDIVIDUAL TABLE DISK DATA 
                      farmer.Id.forEach((id,index) => {
                             const data = farmer?.Performance[index]
@@ -232,7 +231,7 @@ const guiCliHelper = {
                          dataString += `|${id.Id.padEnd(27)}|${discData.discDataMetrics.toString().padEnd(8)}|`
                          dataString += `${discData.completePercent.toString().padEnd(8)}|`
                          dataString += `${discData.ETA.toString().padEnd(8)} `;
-                         dataString += `|${data?.SectorsPerHour.toString().padEnd(10)}|${data?.MinutesPerSector.toString().padEnd(10)}`
+                         dataString += `|${data?.SectorsPerHour.toString().padEnd(10) || 'N/A'}|${data?.MinutesPerSector.toString().padEnd(10) || 'N/A'}`
                          dataString += `|${(farmer.Rewards[index]?.Rewards.toString()|| '0').padEnd(6)}|${'0'.padEnd(4)}|` 
                          this.guiLogger(dataString)
                      })

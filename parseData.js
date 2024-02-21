@@ -271,7 +271,11 @@ const parseData = {
                         Sectors: sectors
                     };
                     if (plot_state.toLowerCase() == "notplotted") {
+                    
                         resp_plots_remaining_arr.push(plots_info);
+                        if(plots_info.Sectors == "0"){
+                            resp_sector_perf_arr.push({Id: plots_info.Id, SectorsPerHour: '0', MinutesPerSector: '0'})
+                        }
                     } else if (plot_state.toLowerCase() === "plotted") {
                         resp_plots_completed_arr.push(plots_info);
                     }
@@ -355,7 +359,7 @@ const parseData = {
                     }
                 }
             }
-            
+                console.log(resp_UUId_arr)
             resp_UUId_arr.sort((a, b) => a.Id.localeCompare(b.Id));
             resp_sector_perf_arr.sort((a, b) => a.Id.localeCompare(b.Id));
              resp_rewards_arr.sort((a, b) => a.Id.localeCompare(b.Id));
