@@ -167,7 +167,7 @@ const guiCliHelper = {
          farmerString2 += `\x1b[93m${data.rewards }\x1b[0m Rewards| `;
          farmerString2 += `\x1b[93m${data.totalSize }\x1b[0m TB |`;
          farmerString2 += `\x1b[93m${data.totalETA}\x1b[0m Remain |`;
-         farmerString2 += `\x1b[93m${data.totalPercentComplete}\x1b[0m% Comp.|`;
+         farmerString2 += `\x1b[93m${data.totalPercentComplete}%\x1b[0m Comp.|`;
          this.guiLogger(farmerString2)
      },
      sendTelegramPCmetrics: function sendTelegramPCmetrics(data){
@@ -176,7 +176,7 @@ const guiCliHelper = {
          outputTelegram += `\n   <b>${data.sectorTime}</b> Sector Time, `		
          outputTelegram += `\n   <b>${data.sectorHr}</b> Sectors Total, `
          outputTelegram += `\n   <b>${data.rewards}</b> Total Rewards`
-         outputTelegram +=  `\n   <b>${data.totalPercentComplete}</b> % Complete \n`
+         outputTelegram +=  `\n   <b>${data.totalPercentComplete}%</b>  Complete \n`
          return outputTelegram
      },
      dasher: "------------------------------------------------------------------------------------------",
