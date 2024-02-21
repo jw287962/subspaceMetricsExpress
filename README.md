@@ -1,7 +1,7 @@
-Parsing Functions derived from https://github.com/irbujam/ss_log_event_monitor written in Powershell.
+Parsing Functions derived from https://github.com/irbujam/ss_log_event_monitor written in Powershell
+But i have added my own for new summaryData that I wanted.
 
 # subspaceMetricsExpress
-
 
 1) remember to npm install and install node to run JS
 
@@ -18,8 +18,17 @@ node ./functions.js
  
  Auto start
  
+## Frontend
+1)you can get the data from GET REQUEST: 
+- 'http://localhost:3000/api/data'
+2)Add your IP to the cors for Front-End Website
+```
+app.use(cors({
+    origin: 'http://localhost:5173'
+  }));
+```
 
-# SAMPLE DATA
+## SAMPLE DATA
 ```{
   "nodeDisplayData": {
     "nodeSyncState": "0",
