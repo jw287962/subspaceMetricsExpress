@@ -130,9 +130,12 @@ const guiCliHelper = {
      getFarmerPCStatusOutput: function getTableName(farmer,currentUser){
          let holder = ""
          holder += `${this.dasher}\n`;
-         holder += `\x1b[96m${currentUser} \x1b[96mStatus: ${farmer.FarmerIsRunning === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'} for `;
-         holder += `\x1b[92m${this.convertSecondsDays(farmer.SummaryData.Uptime)} `
-         holder += `\x1b[96mHostname: \x1b[93m${farmer.FarmerIp}\x1b[0m, `;
+         holder += `\x1b[96m${currentUser} \x1b[96mStatus:`
+        //  display uptime if it's running, otherwise display STOPPED 
+         if(farmer.FarmerIsRunning === true)
+            holder +=`\x1b[92m✔ ${this.convertSecondsDays(farmer.SummaryData.Uptime)} \x1b[0m`
+         else `\x1b[31m❌ STOPPED\x1b[0m'}`
+             holder += `\x1b[96mHostname: \x1b[93m${farmer.FarmerIp}\x1b[0m, `;
 
          this.guiLogger(holder)
      },
