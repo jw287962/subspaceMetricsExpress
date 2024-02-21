@@ -56,6 +56,17 @@ const guiCliHelper = {
     
         return `${this.replaceWithDash(formattedMinutes)}:${this.replaceWithDash(formattedSeconds)}`;
     },    
+    convertSecondsMinutes: function convertSecondsMinutes(seconds){
+        try{
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const second = Math.floor(seconds % 60)
+            const formattedTime = `${minutes}m ${second}S`;
+            return formattedTime;
+        
+        }catch(err){
+            console.log('Error: convertSecondsDays', err)
+        }
+    },
  
      convertSecondsDays: function convertSecondsDays(seconds){
          try{
@@ -154,14 +165,14 @@ const guiCliHelper = {
             try{
                 let upTime = summaryData.Uptime
                 let sectorHr = (summaryData.TotalSectors/upTime*3600).toFixed(2)
-                let sectorTime = this.formatTime(summaryData.TotalMinutesPerSector);
+                let totalSectorTime = this.convertSecondsMinutes(summaryData.TotalSectorTime);
                 let sectorHrAvg = (sectorHr/(farmerId.length)).toFixed(2)
                 let rewards = summaryData.TotalRewards;
                 let totalSize = summaryData.TotalSize
                 let totalETA = summaryData.TotalETA
                 let totalPercentComplete = summaryData.TotalPercentComplete
                 let totalRewardsPerHour = summaryData.TotalRewardsPerHour
-              return {totalRewardsPerHour,totalPercentComplete,totalETA,sectorHr,sectorTime,sectorHrAvg,upTime,rewards,totalSize}
+              return {totalRewardsPerHour,totalPercentComplete,totalETA,sectorHr,totalSectorTime,sectorHrAvg,upTime,rewards,totalSize}
                
             }catch(err){
                 console.log('getFarmerPCMetrics error ', err)
@@ -171,8 +182,8 @@ const guiCliHelper = {
     //   LINE 2 PRINT
      printsFarmerPCmetricsOutput: function printsFarmerPCmetricsOutput(data){
          let farmerString2 ="";
-         farmerString2 += `|\x1b[93m${data.sectorTime} \x1b[0mMin/Sect `
-         farmerString2 += `|\x1b[93m${this.replaceWithDash(data.sectorHrAvg)}\x1b[0m Sectors/Hr(avg) `
+         farmerString2 += `|\x1b[0mSector Time: \x1b[93m${data.totalSectorTime} `
+         farmerString2 += `\x1b[0m|\x1b[93m${this.replaceWithDash(data.sectorHrAvg)}\x1b[0m Sectors/Hr(avg) `
          farmerString2 += `|Rewards: \x1b[93m${data.rewards} \x1b[0mtotal, \x1b[93m${data.totalRewardsPerHour}\x1b[0m per Hr, \x1b[93m${(data.totalRewardsPerHour*24).toFixed(2)} \x1b[0mper Day\x1b[49m |\n`;
          farmerString2 += `|\x1b[93m${data.totalETA}\x1b[0m Remain`;
          farmerString2 += `|\x1b[93m${data.totalPercentComplete}%\x1b[0m Complete|\x1b[49m`;

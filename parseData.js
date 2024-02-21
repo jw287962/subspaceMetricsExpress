@@ -371,7 +371,7 @@ const parseData = {
             const totalPlotsCompleted = (resp_plots_completed_arr.reduce((a,b) => a+1*b.Sectors, 0))
             const totalSectorPerHour = resp_sector_perf_arr.reduce((acc,val) => val.SectorsPerHour*1+acc,0)
            
-            const totalMinutesPerSector = 60/totalSectorPerHour*60
+            const sectorTime = 60/totalSectorPerHour*60
             const totalETADays = ((totalPlotsRemaining/totalSectorPerHour)/(24));
             const totalETA = totalETADays < 1 ? `${(totalETADays * 24).toFixed(1)} Hrs` : `${Math.floor(totalETADays)} Days ${Math.floor((totalETADays% 1)*24)} HR ${Math.floor(((totalETADays * 24) % 1) * 60)} Min`;
             const totalPercentComplete =((totalPlotsCompleted/(totalPlotsCompleted+totalPlotsRemaining))*100).toFixed(1);
@@ -383,7 +383,7 @@ const parseData = {
                 TotalSectors: total_sectors_plot_count,
                 TotalSeconds: total_sectors_plot_time_seconds,
                 TotalSize: totalFarmerDiskSize,
-                TotalMinutesPerSector: totalMinutesPerSector,
+                TotalSectorTime: sectorTime,
                 TotalETA: totalETA,
                 TotalPercentComplete: totalPercentComplete,
                 TotalDisks: total_disk_per_farmer,
