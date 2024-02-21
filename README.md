@@ -24,7 +24,7 @@ node ./functions.js
 2)Add your IP to the cors for Front-End Website
 ```
 app.use(cors({
-    origin: 'http://localhost:5173'
+    origin: 'http://localhost:0000'
   }));
 ```
 
