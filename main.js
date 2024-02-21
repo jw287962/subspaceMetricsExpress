@@ -1,13 +1,15 @@
 // server.js
 
 const express = require('express');
-const config = require('./config.json')
-const fs = require('fs');
-// const fs = require('fs').promises;
+const path = require('path');
 const cors = require('cors')
 const app = express();
+
+const config = require('./config.json')
+const fs = require('fs');
 const moment = require('moment');
 
+// console clear
 const clear = require('console-clear')
 const clearLog = config.Clear ;
 
@@ -17,10 +19,14 @@ const parseData = require('./parseData')
 
 const filePath = './data.json';
 
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+
 app.use(cors({
     origin: 'http://localhost:5173'
   }));
 
+  
 app.get('/api/data', (req, res) => {
     fs.readFile('data.json', 'utf-8', (err, data) => {
       if (err) {
@@ -39,6 +45,11 @@ app.get('/api/data', (req, res) => {
       }
     });
   });
+
+  app.get('/', (req, res) => {
+    res.render('index', { title: 'Express with Pug', message: 'Hello from Pug!' });
+});
+
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
