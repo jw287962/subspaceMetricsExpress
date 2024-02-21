@@ -14,7 +14,7 @@ node ./functions.js
 ```
  (bad name... ik) and it should start
  
- 
+![CLI IMG](https://raw.githubusercontent.com/jw287962/subspaceMetricsExpress/main/CLI.png)
  
  Auto start
  
