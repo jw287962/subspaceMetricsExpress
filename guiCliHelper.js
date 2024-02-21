@@ -141,42 +141,43 @@ const guiCliHelper = {
          this.guiLogger(holder)
      },
 
-    //  line2 OUTPUT
-     getFarmerPCMetricsOutput: function getTable(summaryData,farmerId){
-        try{
-            let upTime = summaryData.Uptime
-            let sectorHr = (summaryData.TotalSectors/upTime*3600).toFixed(2)
-            let sectorTime = this.formatTime(summaryData.TotalMinutesPerSector);
-            let sectorHrAvg = (sectorHr/(farmerId.length)).toFixed(2)
-            let rewards = summaryData.TotalRewards;
-            let totalSize = summaryData.TotalSize
-            let totalETA = summaryData.TotalETA
-            let totalPercentComplete = summaryData.TotalPercentComplete
-    
-          return {totalPercentComplete,totalETA,sectorHr,sectorTime,sectorHrAvg,upTime,rewards,totalSize}
-           
-        }catch(err){
-            console.log('getFarmerPCMetrics error ', err)
-        }
-       
-     },
      replaceWithDash: function replaceWithDash(string){
-        if(isNaN(string)){
-            return '-'
-        }else{
-            return string
-        }
-
-     },
+         if(isNaN(string)){
+             return '-'
+            }else{
+                return string
+            }
+            
+        },
+        //  line2 OUTPUT
+         getFarmerPCMetricsOutput: function getTable(summaryData,farmerId){
+            try{
+                let upTime = summaryData.Uptime
+                let sectorHr = (summaryData.TotalSectors/upTime*3600).toFixed(2)
+                let sectorTime = this.formatTime(summaryData.TotalMinutesPerSector);
+                let sectorHrAvg = (sectorHr/(farmerId.length)).toFixed(2)
+                let rewards = summaryData.TotalRewards;
+                let totalSize = summaryData.TotalSize
+                let totalETA = summaryData.TotalETA
+                let totalPercentComplete = summaryData.TotalPercentComplete
+                let totalRewardsPerHour = summaryData.TotalRewardsPerHour
+              return {totalRewardsPerHour,totalPercentComplete,totalETA,sectorHr,sectorTime,sectorHrAvg,upTime,rewards,totalSize}
+               
+            }catch(err){
+                console.log('getFarmerPCMetrics error ', err)
+            }
+           
+         },
     //   LINE 2 PRINT
      printsFarmerPCmetricsOutput: function printsFarmerPCmetricsOutput(data){
          let farmerString2 ="";
          farmerString2 += `|\x1b[93m${data.sectorTime} \x1b[0mMin/Sect `
          farmerString2 += `|\x1b[93m${this.replaceWithDash(data.sectorHrAvg)}\x1b[0m Sectors/Hr(avg) `
-         farmerString2 += `|\x1b[93m${data.rewards }\x1b[0m Rewards `;
-         farmerString2 += `|\x1b[93m${data.totalSize }\x1b[0mTiB \n`;
+         farmerString2 += `|Rewards: \x1b[93m${data.rewards} \x1b[0mtotal, \x1b[93m${data.totalRewardsPerHour}\x1b[0m per Hr, \x1b[93m${(data.totalRewardsPerHour*24).toFixed(2)} \x1b[0mper Day\x1b[49m |\n`;
          farmerString2 += `|\x1b[93m${data.totalETA}\x1b[0m Remain`;
          farmerString2 += `|\x1b[93m${data.totalPercentComplete}%\x1b[0m Complete|\x1b[49m`;
+         farmerString2 += `|\x1b[93m${data.totalSize }\x1b[0mTiB `;
+         
          this.guiLogger(farmerString2)
      },
      sendTelegramPCmetrics: function sendTelegramPCmetrics(data){

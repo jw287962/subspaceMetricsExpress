@@ -377,6 +377,7 @@ const parseData = {
             const totalPercentComplete =((totalPlotsCompleted/(totalPlotsCompleted+totalPlotsRemaining))*100).toFixed(1);
             const totalFarmerDiskSize = ((totalPlotsRemaining + totalPlotsCompleted)/1000).toFixed(2)
 
+            const totalRewardsPerHour = (total_rewards_per_farmer/(uptime_seconds/(60*60))).toFixed(2);
             let summaryData = {
                 Id: "Overall",
                 TotalSectors: total_sectors_plot_count,
@@ -388,6 +389,7 @@ const parseData = {
                 TotalDisks: total_disk_per_farmer,
                 Uptime: uptime_seconds,
                 TotalRewards: total_rewards_per_farmer,
+                TotalRewardsPerHour: totalRewardsPerHour
             }
             // resp_sector_perf_arr['disk_sector_perf'] = disk_sector_perf;
         
