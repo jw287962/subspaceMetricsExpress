@@ -26,6 +26,24 @@ const guiCliHelper = {
                 return "AMD 7950X";
          }
      },
+     checkGitVersion: async function CheckGitNewVersion() {
+        try {
+            const gitVersionArr = [];
+            const response = await fetch("https://api.github.com/repos/subspace/subspace/releases/latest");
+            if (response.ok) {
+                const gitVersionCurrObj = await response.json();
+                if (gitVersionCurrObj) {
+                    gitVersionArr.push(gitVersionCurrObj.tag_name);
+                    const gitNewVersionReleaseDate = new Date(gitVersionCurrObj.published_at);
+                    gitVersionArr.push(gitNewVersionReleaseDate.toLocaleString());
+                }
+            }
+            return gitVersionArr;
+        } catch (error) {
+            console.error("Error fetching Git version:", error);
+            return [];
+        }
+    },    
  
      formatTime: function formatTime(seconds) {
         const duration = moment.duration(seconds, 'seconds');
@@ -113,7 +131,7 @@ const guiCliHelper = {
          let holder = ""
          holder += `${this.dasher}\n`;
          holder += `\x1b[96m${currentUser} \x1b[96mStatus: ${farmer.FarmerIsRunning === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'} for `;
-         holder += `\x1b[0m${this.convertSecondsDays(farmer.SummaryData.Uptime)} `
+         holder += `\x1b[92m${this.convertSecondsDays(farmer.SummaryData.Uptime)} `
          holder += `\x1b[96mHostname: \x1b[93m${farmer.FarmerIp}\x1b[0m, `;
 
          this.guiLogger(holder)
@@ -144,12 +162,12 @@ const guiCliHelper = {
     //   LINE 2 PRINT
      printsFarmerPCmetricsOutput: function printsFarmerPCmetricsOutput(data){
          let farmerString2 ="";
-         farmerString2 += `\x1b[93m${data.sectorTime}\x1b[0m Min/Sect:| `
-         farmerString2 += `\x1b[93m${this.replaceWithDash(data.sectorHrAvg)}\x1b[0m Sectors/Hr(avg):| `
+         farmerString2 += `\x1b[93m${data.sectorTime}\x1b[0m Min/Sect| `
+         farmerString2 += `\x1b[93m${this.replaceWithDash(data.sectorHrAvg)}\x1b[0m Sectors/Hr(avg)| `
          farmerString2 += `\x1b[93m${data.rewards }\x1b[0m Rewards| `;
          farmerString2 += `\x1b[93m${data.totalSize }\x1b[0m TB |`;
-         farmerString2 += `\x1b[93m${data.totalETA}\x1b[0m  ETA |`;
-         farmerString2 += `\x1b[93m${data.totalPercentComplete}\x1b[0m% |`;
+         farmerString2 += `\x1b[93m${data.totalETA}\x1b[0m Remain |`;
+         farmerString2 += `\x1b[93m${data.totalPercentComplete}\x1b[0m% Comp.|`;
          this.guiLogger(farmerString2)
      },
      sendTelegramPCmetrics: function sendTelegramPCmetrics(data){
@@ -157,8 +175,8 @@ const guiCliHelper = {
          outputTelegram += ` <b>${this.convertSecondsDays(data.upTime)}</b> Uptime, `						
          outputTelegram += `\n   <b>${data.sectorTime}</b> Sector Time, `		
          outputTelegram += `\n   <b>${data.sectorHr}</b> Sectors Total, `
-         outputTelegram += `\n   <b>${data.sectorHrAvg}</b> Sectors/Hour (avg/disk), `				
          outputTelegram += `\n   <b>${data.rewards}</b> Total Rewards`
+         outputTelegram +=  `\n   <b>${data.totalPercentComplete}</b> % Complete \n`
          return outputTelegram
      },
      dasher: "------------------------------------------------------------------------------------------",
@@ -214,12 +232,31 @@ const guiCliHelper = {
                 }
              })
             
-             this.guiLogger(dasher+ '\n');
-             parseData.sendTelegramNotification(outputTelegram)
-             // 1000 milliseconds = 1 second
+
+             this.checkGitVersion().then((data) =>{
+             let gitVersion
+
+                const hoursDifference = dateLastOutput.diff(moment(data[1], 'M/D/YYYY, h:mm:ss A'), 'hours');
+                if(hoursDifference < 10){
+                    gitVersion = `<b>${data[0]} ${data[1]}</b>`;
+                    this.guiLogger(`\x1b[31m[1m${gitVersion} \n\x1b[0m`);
+                }else{
+                 gitVersion = `${data[0]} ${data[1]}`;
+                }
+                this.guiLogger(`\x1b[1m${gitVersion} \n\x1b[0m`);
+
+                outputTelegram += `V: ${data[0]}`
+                parseData.sendTelegramNotification(outputTelegram)
+             })
+
+             this.guiLogger(dasher);
              
+            
+            
+             // 1000 milliseconds = 1 second
              this.guiLogger((`\x1b[93m Last saved to: ${filePath} \x1b[92m ${dateLastOutput.format('YYYY-MM-DD HH:mm:ss')} \x1b[0m  \n` ));
  
+
  
              setTimeout(() => {
              this.countdownToRefresh();
