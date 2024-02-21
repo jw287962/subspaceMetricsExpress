@@ -60,7 +60,7 @@ const guiCliHelper = {
         try{
             const minutes = Math.floor((seconds % 3600) / 60);
             const second = Math.floor(seconds % 60)
-            const formattedTime = `${minutes}m ${second}S`;
+            const formattedTime = `${minutes}m ${second}s`;
             return formattedTime;
         
         }catch(err){
