@@ -14,8 +14,7 @@ node ./main.js
  (bad name... ik) and it should start
  
 ![CLI IMG](https://raw.githubusercontent.com/jw287962/subspaceMetricsExpress/main/picture/CLI.png)
- 
- Auto start
+
  
 ## Frontend
 1)you can get the data from GET REQUEST: 
@@ -30,17 +29,16 @@ app.use(cors({
 ```
 
 ## SAMPLE DATA
-Example:
-### NODE IS EASY
+#### NODE IS EASY:
 Data.nodeDisplayData.NodeIp
 
-### Summary/Overall Data per PC
+#### Summary/Overall Data per PC:
 Data.farmerDisplaySector[#].SummaryData
 Data.farmerDisplaySector[#].SummaryData.FarmerIsRunning
 Data.farmerDisplaySector[#].SummaryData.TotalDiskSize
 Data.farmerDisplaySector[#].SummaryData.TotalSectorTime.formattedSectorTime
-### Individual Disk Data
-I think in most languages you can loop through Objects?? not sure. but you can in JS. which is good for Front-end...
+#### Individual Disk Data
+Most languages you can loop through Objects. So should be easy to get all the data in one loop for Front End Design...
 Data.farmerDisplaySector[#].IndividualDiskDataObj['DISKID']
 .Rewards
 .Misses
