@@ -1,26 +1,8 @@
-body {
-
-    font-family: Arial, sans-serif;
-  }
   
-p{
-    margin: 3px;
+  
+  body {
+      font-family: Arial, sans-serif;
   }
-  .line1 {
-    justify-content: center;      
-  }
-
-  .line2{
-    display: flex;
-    flex-direction: column;
-    /* justify-content: center; */
-    align-items: center;
-  }
-  .line2>.row>p{
-    padding: 0px 10px;
-
-  }
-
   .center,.node-status, body{
     display: flex;
     flex-direction: column; 
@@ -29,22 +11,66 @@ p{
   .row, .node-status, .line1{
     display: flex;
     flex-direction: row;
-
   }
 
-  .node-status >p,
-  .farmer-details > div {
-    padding: 5px;
-    margin: 5px 0px;
+  .node-status{
+    border: 1px solid black;
+  }
+  .farmer-details  {
     border: 1px solid lightgrey;
+    margin: 4px;
   }
+  .farmer-details > .header {
+      flex-direction: row;
+justify-content: center;
+padding: 2px;
+  }
+  .header > h3{
+    padding: 0px 10px;
+  }
+  
+  p{
+      margin: 3px;
+    }
+
+    .header{
+    border-bottom: 1px solid grey;
+      
+    }
+  .line1 {
+    justify-content: center;      
+  }
+  .line2{
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    margin: 0px;
+  }
+  .row{
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  .line2>.row>p{
+    padding: 0px 10px;
+    border-right:black 2px solid;
+    margin: 0px;
+
+  }
+
+
   .tablediv{
     display: flex;
     flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 0px;
   }
   table { 
 
-    width: 90%;
+    width: 100%;
     border-collapse: collapse;
   }
   
@@ -68,5 +94,8 @@ p{
   
   .Disk-Id, .Size, .Percent-Complete, .ETA, .Sectors-Hr, .Min-Sector, .Reward, .Miss {
     text-align: center;
+  }
+  .Disk-Id{
+    min-width: 280px;
   }
   
