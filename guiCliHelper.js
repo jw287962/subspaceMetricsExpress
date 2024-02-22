@@ -93,11 +93,11 @@ const guiCliHelper = {
          }
  },
  
-     discDataMetrics: function discDataMetrics(farmer,minPerSector,index){
- 
-         const discDataMetrics = (farmer.PlotsCompleted[index].Sectors*1+1*farmer.PlotsRemaining[index].Sectors)/1000
-         const completePercent = ((farmer.PlotsCompleted[index].Sectors/10)/discDataMetrics).toFixed(2)
-         const ETA = this.diskPlotETA(farmer.PlotsRemaining[index].Sectors,minPerSector,index)
+     discDataMetrics: function discDataMetrics(farmer,minPerSector){
+         const discDataMetrics = (farmer.PlotsCompleted.Sectors*1+1*farmer.PlotsRemaining.Sectors)/1000
+         const completePercent = ((farmer.PlotsCompleted.Sectors/10)/discDataMetrics).toFixed(2)
+
+         const ETA = this.diskPlotETA(farmer.PlotsRemaining.Sectors,minPerSector)
 
          return {discDataMetrics,completePercent,ETA}
      },
@@ -113,13 +113,13 @@ const guiCliHelper = {
      },
 
     //  line1 & PRINT
-     getFarmerPCStatusOutput: function getTableName(farmer,currentUser){
+     getFarmerPCStatusOutput: function getTableName(farmer){
          let holder = ""
          holder += `${this.dasher}\n`;
-         holder += `\x1b[96m${currentUser} \x1b[96mStatus:`
+         holder += `\x1b[96m${farmer.Name} \x1b[96mStatus:`
         //  display uptime if it's running, otherwise display STOPPED 
          if(farmer.FarmerIsRunning === true)
-            holder +=`\x1b[92m✔ ${farmer.SummaryData.Uptime.FormattedTime} \x1b[0m`
+            holder +=`\x1b[92m✔ ${farmer.Uptime.FormattedTime} \x1b[0m`
          else
              holder +=`\x1b[31m❌ STOPPED\x1b[0m'}`
              holder += `\x1b[96mHostname: \x1b[93m${farmer.FarmerIp}\x1b[0m, `;
@@ -136,14 +136,14 @@ const guiCliHelper = {
             
         },
         //  line2 DATA OBJECT
-         getFarmerPCMetricsOutput: function getTable(summaryData,farmerId){
+         getFarmerPCMetricsOutput: function getTable(summaryData){
             try{
                 let upTime = summaryData.Uptime.FormattedTime
-                let sectorHr = (summaryData.TotalSectors/(summaryData.Uptime.Seconds)*3600).toFixed(2)
+                let sectorHr = (summaryData.TotalSectorsPerHour)
                 let totalSectorTime = summaryData.TotalSectorTime.formattedSectorTime;
-                let sectorHrAvg = (sectorHr)
+                let sectorHrAvg = ((sectorHr)/(summaryData.TotalDisks)).toFixed(2)
                 let rewards = summaryData.TotalRewards;
-                let totalSize = summaryData.TotalSize
+                let totalSize = summaryData.TotalDiskSize
                 let totalETA = summaryData.TotalETA
                 let totalPercentComplete = summaryData.TotalPercentComplete
                 let totalRewardsPerHour = summaryData.TotalRewardsPerHour
@@ -189,18 +189,21 @@ const guiCliHelper = {
          nodeString += `\x1b[96mPeers: \x1b[93m${data.nodeDisplayData.nodePeersConnected},\x1b[0m`;
          this.guiLogger(nodeString);
          try{
-             data.farmerDisplaySector.forEach((farmer1,indexxx) => {
+
+            
+             data.farmerDisplaySector.forEach((farmer,indexxx) => {
                  if(indexxx > 0) outputTelegram += "\n\n"
-                if(Array.isArray(farmer1)){
-                    farmer1.forEach((farmer) => {
+
+
+                // if(Array.isArray(farmer)){
 
                     outputTelegram += farmer.Name;;
                      currentUser = "Name: \x1b[0m" + farmer.Name;
                      
                      // Farmerstring2 is group status  2nd row (uptime, sector time, rewards for entire PC)
                      // PC status 1st LINE of data
-                     this.getFarmerPCStatusOutput(farmer,currentUser) // PC status 1st LINE
-                     if(farmer.FarmerIsRunning){
+                     this.getFarmerPCStatusOutput(farmer.SummaryData) // PC status 1st LINE
+                     if(farmer.SummaryData.FarmerIsRunning){
                           // PC METRICS & DATA 2nd LINE
                      dataOutput = this.getFarmerPCMetricsOutput(farmer.SummaryData,farmer.Id) // PC METRICS & DATA 2nd LINE
                      this.printsFarmerPCmetricsOutput(dataOutput)
@@ -212,23 +215,22 @@ const guiCliHelper = {
                      this.guiLogger(this.getFarmerTableHeaderOutput())
                      this.guiLogger(dasher);
                          // INDIVIDUAL TABLE DISK DATA 
-                     farmer.Id.forEach((id,index) => {
-                            const data = farmer?.Performance[index]
-                         let dataString = ""
+                         for (key in farmer.IndividualDiskDataObj){
+                        let dataString = ""
+                            const data = farmer.IndividualDiskDataObj[key] ;
                         //  will add a grouping of all disk data in parsing
-                         const discData = this.discDataMetrics(farmer,data?.MinutesPerSector,index);
-                         dataString += `|${id.Id.padEnd(27)}|${discData.discDataMetrics.toString().padEnd(8)}|`
-                         dataString += `${discData.completePercent.toString().padEnd(8)}|`
-                         dataString += `${discData.ETA.toString().padEnd(8)} `;
-                         dataString += `|${(data?.SectorsPerHour|| 'N/A').toString().padEnd(10) }|${(data?.MinutesPerSector || 'N/A').toString().padEnd(10)}`
-                         dataString += `|${(farmer.Rewards[index]?.Rewards.toString()|| '0').padEnd(6)}|${'0'.padEnd(4)}|` 
+                        //  const discData = this.discDataMetrics(data,data?.Performance.MinutesPerSector);
+                         dataString += `|${data.Id.padEnd(27)}|${data.Data.DiskSize.toString().padEnd(8)}|`
+                         dataString += `${data.Data.CompletePercent.toString().padEnd(8)}|`
+                         dataString += `${data.Data.ETA.toString().padEnd(8)} `;
+                         dataString += `|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(10) }|${(data?.Performance.MinutesPerSector || 'N/A').toString().padEnd(10)}`
+                         dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(6)}|${'0'.padEnd(4)}|` 
                          this.guiLogger(dataString)
-                     })
+                     }
                     }else{
                         
                     }
-                   })   
-                }
+                // }
              })
             
 

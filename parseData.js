@@ -429,32 +429,40 @@ const parseData = {
                     }
                 }
             }
-        }
-     
-        const summaryData = {
-            Id: "Overall",
-            TotalSectors: total_sectors_plot_count,
-            TotalSeconds: total_sectors_plot_time_seconds,
-            TotalDisks: total_disk_per_farmer,
-            Uptime: {
-                Seconds: uptime_seconds,
-                FormattedTime: this.convertSecondsDays(uptime_seconds)
-            },
 
-            TotalSectorsPerHour: 0,
-            TotalDiskSize: 0,
-            TotalPercentComplete: 0,
-            TotalRewards: 0,
-            TotalRewardsPerHour: 0,
-            TotalPlotsRemaining: 0,
-            TotalPlotsCompleted: 0,
-            TotalSectorTime: {
-                    sectorTime: 0,
-                    formattedSectorTime: '',
-                },
-            TotalETA: ""
+
+
         }
+        
+            const summaryData = {
+                Id: "Overall",
+                Name: farmerName,
+                TotalSectors: total_sectors_plot_count,
+                TotalSeconds: total_sectors_plot_time_seconds,
+                TotalDisks: total_disk_per_farmer,
+                Uptime: {
+                    Seconds: uptime_seconds,
+                    FormattedTime: this.convertSecondsDays(uptime_seconds)
+                },
+                FarmerIsRunning: farmerIsRunning,
+                FarmerIp: farmerIp,
+                TotalSectorsPerHour: 0,
+                TotalDiskSize: 0,
+                TotalPercentComplete: 0,
+                TotalRewards: 0,
+                TotalRewardsPerHour: 0,
+                TotalPlotsRemaining: 0,
+                TotalPlotsCompleted: 0,
+                TotalSectorTime: {
+                        sectorTime: 0,
+                        formattedSectorTime: '',
+                    },
+                TotalETA: ""
+            }
+
             for(key in individualDiskDataObj){
+
+                individualDiskDataObj[key]["Data"] = this.discDataMetrics(individualDiskDataObj[key])
                 summaryData.TotalRewards += individualDiskDataObj[key].Rewards.Rewards*1
                 summaryData.TotalPlotsRemaining += individualDiskDataObj[key].PlotsRemaining.Sectors*1
                 summaryData.TotalPlotsCompleted += individualDiskDataObj[key].PlotsCompleted.Sectors*1
@@ -482,7 +490,7 @@ const parseData = {
 
             summaryData.TotalRewardsPerHour = (summaryData.TotalRewards/(summaryData.Uptime.Seconds/(60*60))).toFixed(2);
 
-            const allData= summaryData
+            const allData = {SummaryData: summaryData}
             allData['IndividualDiskDataObj'] = individualDiskDataObj;
 
             return allData
@@ -517,6 +525,25 @@ const parseData = {
     }catch(error){
         console.log( "getDiskSectorPerformance", error)
     }
+    },
+
+    discDataMetrics: function discDataMetrics(farmer){
+        
+        const DiskSize = (farmer.PlotsCompleted.Sectors*1+1*farmer.PlotsRemaining.Sectors)/1000
+        const CompletePercent = ((farmer.PlotsCompleted.Sectors/10)/farmer?.Performance.MinutesPerSector).toFixed(2)
+
+        const ETA = this.diskPlotETA(farmer.PlotsRemaining.Sectors,farmer?.Performance.MinutesPerSector)
+
+        return {DiskSize,CompletePercent,ETA}
+    },
+    diskPlotETA: function diskPlotETA(remaining_sectors,minutes_per_sector_data_disp){
+        try{
+            if (minutes_per_sector_data_disp !== "-") {
+                let eta = (((parseFloat(minutes_per_sector_data_disp) * 1*remaining_sectors)) / (60*24)).toFixed(2);
+                return eta.toString();
+            }}catch(err){
+                console.log('DiskPlotETA err ', err)
+            }
     }
 
 };
