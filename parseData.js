@@ -257,7 +257,7 @@ const parseData = {
      },
     
     
-    getDiskSectorPerformance: function GetDiskSectorPerformance(io_farmer_metrics_arr = [], farmerIp,farmerIsRunning) {
+    getDiskSectorPerformance: function GetDiskSectorPerformance(io_farmer_metrics_arr = [], farmerIp,farmerIsRunning,farmerName) {
     try{
         let resp_disk_metrics_arr = [];
 
@@ -409,7 +409,10 @@ const parseData = {
                 TotalSectors: total_sectors_plot_count,
                 TotalSeconds: total_sectors_plot_time_seconds,
                 TotalSize: totalFarmerDiskSize,
-                TotalSectorTime: sectorTime,
+                TotalSectorTime: {
+                        sectorTime,
+                        formattedSectorTime: this.convertSecondsMinutes(sectorTime)
+                    },
                 TotalETA: totalETA,
                 TotalPercentComplete: totalPercentComplete,
                 TotalDisks: total_disk_per_farmer,
@@ -431,6 +434,7 @@ const parseData = {
                 PlotsRemaining: resp_plots_remaining_arr,
                 FarmerIp: farmerIp,
                 FarmerIsRunning: farmerIsRunning,
+                Name: farmerName,
                 SummaryData: summaryData
             };
             // console.log('test',disk_metrics.PlotsCompleted, disk_metrics.PlotsRemaining)

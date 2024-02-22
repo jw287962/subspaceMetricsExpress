@@ -1,29 +1,50 @@
 body {
+
     font-family: Arial, sans-serif;
   }
   
-  .line1 >p{
-      
+p{
+    margin: 3px;
+  }
+  .line1 {
+    justify-content: center;      
   }
 
   .line2{
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+  }
+  .line2>.row>p{
+    padding: 0px 10px;
 
   }
 
-  .node-status, .line1,.line2{
+  .center,.node-status, body{
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+  }
+  .row, .node-status, .line1{
     display: flex;
     flex-direction: row;
+
   }
 
-  .node-status p,
-  .farmer-details p {
+  .node-status >p,
+  .farmer-details > div {
     padding: 5px;
     margin: 5px 0px;
     border: 1px solid lightgrey;
   }
-  
-  table {
-    width: 100%;
+  .tablediv{
+    display: flex;
+    flex-direction: column;
+  }
+  table { 
+
+    width: 90%;
     border-collapse: collapse;
   }
   

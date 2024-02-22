@@ -16,16 +16,16 @@ const guiCliHelper = {
     guiLogger: function guiLogger(message) {
          console.log(message);
      },
-     getHostUser: function getHostUser(index){
-         switch (index) {
-             case 1:
-                 return "5800x Rog J";
-             case 2:
-                 return "5800x Rog W";
-             default:
-                return "AMD 7950X";
-         }
-     },
+    //  getHostUser: function getHostUser(index){
+    //      switch (index) {
+    //          case 1:
+    //              return "5800x Rog J";
+    //          case 2:
+    //              return "5800x Rog W";
+    //          default:
+    //             return "AMD 7950X";
+    //      }
+    //  },
      checkGitVersion: async function CheckGitNewVersion() {
         try {
             const gitVersionArr = [];
@@ -140,7 +140,7 @@ const guiCliHelper = {
             try{
                 let upTime = summaryData.Uptime.FormattedTime
                 let sectorHr = (summaryData.TotalSectors/(summaryData.Uptime.Seconds)*3600).toFixed(2)
-                let totalSectorTime = parseData.convertSecondsMinutes(summaryData.TotalSectorTime);
+                let totalSectorTime = summaryData.TotalSectorTime.formattedSectorTime;
                 let sectorHrAvg = (sectorHr)
                 let rewards = summaryData.TotalRewards;
                 let totalSize = summaryData.TotalSize
@@ -191,12 +191,12 @@ const guiCliHelper = {
          try{
              data.farmerDisplaySector.forEach((farmer1,indexxx) => {
                  if(indexxx > 0) outputTelegram += "\n\n"
-         
-                let currentUser =this.getHostUser(indexxx);
-                outputTelegram += currentUser;
-                currentUser = "Name: \x1b[0m" + currentUser
-            if(Array.isArray(farmer1)){
-                 farmer1.forEach((farmer) => {
+                if(Array.isArray(farmer1)){
+                    farmer1.forEach((farmer) => {
+
+                    outputTelegram += farmer.Name;;
+                     currentUser = "Name: \x1b[0m" + farmer.Name;
+                     
                      // Farmerstring2 is group status  2nd row (uptime, sector time, rewards for entire PC)
                      // PC status 1st LINE of data
                      this.getFarmerPCStatusOutput(farmer,currentUser) // PC status 1st LINE

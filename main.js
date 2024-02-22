@@ -89,23 +89,28 @@ const getAllData = async function () {
         }
       
         const farmersArrIp = config.Farmers;
+        const namesArr = config.Names;
+        
         const farmerDisplaySector = [];
         let statusDownTotal = ""
-        for (const farmer of farmersArrIp) {
-            let farmerProcessArr = await parseData.getProcessState("farmer", farmer, farmer);
+        // for (const farmer of farmersArrIp)
+        for (let i =0; i < farmersArrIp.length;i++)
+         {
+          
+            let farmer = {address:  farmersArrIp[i], name: namesArr[i] || "Unknown"}
+            let farmerProcessArr = await parseData.getProcessState("farmer", farmer.address, farmer.address);
            
             // console.log(farmerProcessArr)
             const farmerMetricsRaw = farmerProcessArr[0];
             const farmerIsRunning = farmerProcessArr[1];
-
            if (farmerIsRunning === true){
               // console.log('metrics', farmerMetricsRaw)
               const parsedFarmerDataArr = parseData.parseMetricsToObj(farmerMetricsRaw);
-              const farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr,farmer,farmerIsRunning);
+              const farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr,farmer.address,farmerIsRunning,farmer.name);
               farmerDisplaySector.push(farmerSectorPerformance);
             }else if(farmerIsRunning === false){
               statusDownTotal += farmerMetricsRaw + '\n'
-                const farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr= [],farmer,farmerIsRunning);
+                const farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr= [],farmer.address,farmerIsRunning, farmer.name);
                 farmerDisplaySector.push(farmerSectorPerformance);
             }
         }
