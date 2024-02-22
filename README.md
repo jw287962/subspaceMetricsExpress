@@ -9,7 +9,7 @@ Revised: The parsing functions, originally inspired by https://github.com/irbuja
 
 4) RUN: 
 ```
-node ./functions.js
+node ./main.js
 ```
  (bad name... ik) and it should start
  
