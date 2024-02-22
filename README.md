@@ -1,5 +1,32 @@
 Revised: The parsing functions, originally inspired by https://github.com/irbujam/ss_log_event_monitor and written in Powershell, have been revamped. Instead of generating multiple arrays that are mixed randomly as in the original parser function, I redesigned it to organize the data into objects. This modification simplifies the process of editing and accessing data across various modern programming languages. Consequently, designing a frontend, particularly in languages optimized for this purpose such as React, becomes much more straightforward.
 
+Copied Metric Functions (into JS):
+- Uptime
+- Sectors/Hr
+- Disk ID
+- Git Version
+
+
+Created Personal Metric calcuations for:
+- Per PC:
+ -- Sector Time
+ -- Sectors/Hr
+ -- % Complete
+ -- Rewards/Hr, Rewards/Day
+ -- ETA Remaining, 
+ -- Total Size
+ - Per Disk
+  -- % Complete
+  -- ETA
+  
+ Features:
+- Telegram Updates
+- CLI GUI Support (based on irbujam's design as well) 
+	- added new metrics as stated above
+ 
+  
+
+
 # subspaceMetricsExpress
 
 1) remember to npm install and install node to run JS

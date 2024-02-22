@@ -465,7 +465,6 @@ const parseData = {
                 individualDiskDataObj[key]["Data"] = this.discDataMetrics(individualDiskDataObj[key])
                 if(!individualDiskDataObj[key].Misses){
                     individualDiskDataObj[key].Misses = {Misses: 0}
-
                 }
                 summaryData.TotalRewards += individualDiskDataObj[key].Rewards.Rewards*1
                 summaryData.TotalPlotsRemaining += individualDiskDataObj[key].PlotsRemaining.Sectors*1
@@ -500,31 +499,40 @@ const parseData = {
             return allData
             // return disk_metrics
         }else{
-            let disk_sector_perf = {
-                Id: "overall",
+
+
+            const summaryData = {
+                Id: "Overall",
+                Name: farmerName,
                 TotalSectors: total_sectors_plot_count,
                 TotalSeconds: total_sectors_plot_time_seconds,
                 TotalDisks: total_disk_per_farmer,
-                TotalSize: totalFarmerDiskSize,
                 Uptime: {
-                        Seconds: uptime_seconds,
-                        FormattedTime: uptime_seconds
-                    },
-                TotalRewards: total_rewards_per_farmer
-            };
-            resp_sector_perf_arr['disk_sector_perf'] = disk_sector_perf;
-        
-            let disk_metrics = {
-                Id: individualDiskDataObj,
-                Performance: resp_sector_perf_arr,
-                Rewards: resp_rewards_arr,
-                Misses: resp_misses_arr,
-                PlotsCompleted: resp_plots_completed_arr,
-                PlotsRemaining: resp_plots_remaining_arr,
+                    Seconds: uptime_seconds,
+                    FormattedTime: this.convertSecondsDays(uptime_seconds)
+                },
+                FarmerIsRunning: farmerIsRunning,
                 FarmerIp: farmerIp,
-                FarmerIsRunning: farmerIsRunning
-            };
-            return [disk_metrics];
+                TotalSectorsPerHour: 0,
+                TotalDiskSize: 0,
+                TotalPercentComplete: 0,
+                TotalRewards: 0,
+                TotalRewardsPerHour: 0,
+                TotalPlotsRemaining: 0,
+                TotalPlotsCompleted: 0,
+                TotalSectorTime: {
+                        sectorTime: 0,
+                        formattedSectorTime: '',
+                    },
+                TotalETA: ""
+            }
+
+            const allData = {SummaryData: summaryData}
+            allData['IndividualDiskDataObj'] = individualDiskDataObj;
+
+            return allData
+            
+
         }
     }catch(error){
         console.log( "getDiskSectorPerformance", error)
