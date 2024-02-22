@@ -24,6 +24,8 @@ node ./functions.js
 - 'http://localhost:3000/api/data'
 2)Add your IP to the cors for Front-End Website
 ```
+main.js
+
 app.use(cors({
     origin: 'http://localhost:0000'
   }));
