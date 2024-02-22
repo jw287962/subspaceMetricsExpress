@@ -30,6 +30,25 @@ app.use(cors({
 ```
 
 ## SAMPLE DATA
+Example:
+### NODE IS EASY
+Data.nodeDisplayData.NodeIp
+
+### Summary/Overall Data per PC
+Data.farmerDisplaySector[#].SummaryData
+Data.farmerDisplaySector[#].SummaryData.FarmerIsRunning
+Data.farmerDisplaySector[#].SummaryData.TotalDiskSize
+Data.farmerDisplaySector[#].SummaryData.TotalSectorTime.formattedSectorTime
+### Individual Disk Data
+I think in most languages you can loop through Objects?? not sure. but you can in JS. which is good for Front-end...
+Data.farmerDisplaySector[#].IndividualDiskDataObj['DISKID']
+.Rewards
+.Misses
+.Performance
+.PlotsCompleted
+.PlotsRemaining
+
+Example OBJECT:
 ```
 {
   "nodeDisplayData": {

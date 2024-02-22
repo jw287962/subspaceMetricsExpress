@@ -20,14 +20,15 @@ html(lang="en")
 
     each pc in farmerDisplaySector
       .farmer-details
-        h2.center Name: #{pc.SummaryData.Name}
+        div.center.header
+          h3.center Name: #{pc.SummaryData.Name}
+          h3 Hostname: #{pc.SummaryData.FarmerIp}
         div.line1
             p Status: ✔ #{pc.SummaryData.Uptime.FormattedTime}
-            p Hostname: #{pc.FarmerIp}
         div.line2
           div.row
-            p Sector Time: #{pc.SummaryData.TotalSectorTime.formattedSectorTime}
-            p #{pc.SummaryData.TotalSectorsPerHour.toFixed(2)} Sectors per Hr 
+            p  Sector Time: #{pc.SummaryData.TotalSectorTime.formattedSectorTime} 
+            p #{pc.SummaryData.TotalSectorsPerHour.toFixed(2)} Sectors per Hr |
             p Rewards: #{pc.SummaryData.TotalRewards} total, 
             p #{pc.SummaryData.TotalRewardsPerHour} per Hr,
             p #{(pc.SummaryData.TotalRewardsPerHour * 24).toFixed(2)} per Day
