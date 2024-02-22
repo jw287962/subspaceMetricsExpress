@@ -193,9 +193,9 @@ const guiCliHelper = {
             // console.log(data.farmerDisplaySector[0])
              data.farmerDisplaySector.forEach((farmer,indexxx) => {
                  if(indexxx > 0) outputTelegram += "\n\n"
-                //  Use this incase farmer is not running.
-                    outputTelegram +=    config.Names[indexxx];
-                     currentUser = "Name: \x1b[0m" + config.Names[indexxx]                     ;
+
+                 outputTelegram += farmer.SummaryData.Name
+                    currentUser = "Name: \x1b[0m" + outputTelegram || "" ;
                      
                      // Farmerstring2 is group status  2nd row (uptime, sector time, rewards for entire PC)
                      // PC status 1st LINE of data
