@@ -1,9 +1,69 @@
 doctype html
 html(lang="en")
   head
+    link(rel="stylesheet" type="text/css" href="/styles.css")
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    title= title
-  body
-    h1= message
+    title Node Status
 
+  body
+    h1 Node Status
+
+    if nodeDisplayData
+      .node-status
+        p Node Status: Running
+        p Hostname: #{nodeDisplayData.nodeIp}
+        p Synced: #{nodeDisplayData.nodeSyncState ? 'Yes' : 'No'}
+        p Peers: #{nodeDisplayData.nodePeersConnected}
+
+    hr
+
+    each pc in farmerDisplaySector
+      each detail in pc
+        .farmer-details
+          div 
+          .line1
+            p Name: No Name
+            p Status: ✔ #{detail.SummaryData.Uptime.FormattedTime}
+            p Hostname: #{detail.FarmerIp}
+          div 
+          .line2
+            p Sector Time: #{detail.SummaryData.TotalSectorTime.toFixed(2)}
+            p #{detail.Performance[0].SectorsPerHour} Sectors per Hr 
+            p Rewards: #{detail.SummaryData.TotalRewards} total, 
+              p #{detail.SummaryData.TotalRewardsPerHour} per Hr,
+              p #{(detail.SummaryData.TotalRewardsPerHour * 24).toFixed(2)} per Day |
+            p Remain: #{detail.SummaryData.TotalETA} #{detail.SummaryData.TotalPercentComplete}% Complete |#{detail.SummaryData.TotalSize}TiB |
+
+          table
+            thead
+              tr
+                th.Disk-Id Disk Id
+                th.Size Size(TB)
+                th.Percent-Complete % Comp
+                th.ETA ETA(Days)
+                th.Sectors-Hr Sectors/Hr
+                th.Min-Sector Min/Sector
+                th.Reward Reward
+                th.Miss Miss
+            tbody
+              each plot in detail.PlotsCompleted
+                tr
+                  td= plot.Id
+                  td= plot.Size
+                  td= plot['% Comp']
+                  td= plot['ETA(Days)']
+                  td= plot['Sectors/Hr']
+                  td= plot['Min/Sector']
+                  td= plot.Reward
+                  td= plot.Miss
+              each plot in detail.PlotsRemaining
+                tr
+                  td= plot.Id
+                  td= plot.Size
+                  td= plot['% Comp']
+                  td= plot['ETA(Days)']
+                  td= plot['Sectors/Hr']
+                  td= plot['Min/Sector']
+                  td= plot.Reward
+                  td= plot.Miss

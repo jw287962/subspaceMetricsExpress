@@ -18,7 +18,7 @@ const guiCliHelper = require('./guiCliHelper')
 const parseData = require('./parseData')
 
 const filePath = './data.json';
-
+app.use(express.static(__dirname + '/public'))
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
@@ -26,30 +26,36 @@ app.use(cors({
     origin: 'http://localhost:5173'
   }));
 
-  
-app.get('/api/data', (req, res) => {
-    fs.readFile('data.json', 'utf-8', (err, data) => {
-      if (err) {
-        console.error('Error reading file:', err);
-        res.status(500).json({ error: 'Internal server error' });
-        return;
-      }
-      try {
-        const jsonData = JSON.parse(data);
-      console.log('send ')
-
-        res.json(jsonData);
-      } catch (error) {
-        console.error('Error parsing JSON:', error);
-        res.status(500).json({ error: 'Error parsing JSON' });
-      }
-    });
+// Function to read JSON data from file
+async function readJsonData() {
+  try {
+    const data = await fs.promises.readFile('data.json');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading or parsing JSON data:', error);
+    throw error; // Re-throw the error to handle it in the route handlers
+  }
+}
+app.get('/api/data', async (req, res) => {
+  try {
+    const jsonData = await readJsonData();
+    res.json(jsonData);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
   });
 
-  app.get('/', (req, res) => {
-    res.render('index', { title: 'Express with Pug', message: 'Hello from Pug!' });
-});
-
+  app.get('/', async (req, res) => {
+    try {
+      const jsonData = await readJsonData();
+      res.render('index', { 
+        nodeDisplayData: jsonData.nodeDisplayData, 
+        farmerDisplaySector: jsonData.farmerDisplaySector 
+      });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');

@@ -56,32 +56,7 @@ const guiCliHelper = {
     
         return `${this.replaceWithDash(formattedMinutes)}:${this.replaceWithDash(formattedSeconds)}`;
     },    
-    convertSecondsMinutes: function convertSecondsMinutes(seconds){
-        try{
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const second = Math.floor(seconds % 60)
-            const formattedTime = `${minutes}m ${second}s`;
-            return formattedTime;
-        
-        }catch(err){
-            console.log('Error: convertSecondsDays', err)
-        }
-    },
- 
-     convertSecondsDays: function convertSecondsDays(seconds){
-         try{
-             const days = Math.floor(seconds / (3600 * 24));
-             const hours = Math.floor((seconds % (3600 * 24)) / 3600);
-             const minutes = Math.floor((seconds % 3600) / 60);
-             const second = Math.floor(seconds % 60)
-             const formattedTime = `${days}D ${hours}H ${minutes}M ${second}S`;
-             return formattedTime;
-         
-         }catch(err){
-             console.log('Error: convertSecondsDays', err)
-         }
-        
-     },
+   
  
      getNodeDisplayData: function getNodeDisplayData(nodeMetricsArr = [],nodeIsRunningOk = false,nodeIp = '0.0.0.0'){
          try{
@@ -144,7 +119,7 @@ const guiCliHelper = {
          holder += `\x1b[96m${currentUser} \x1b[96mStatus:`
         //  display uptime if it's running, otherwise display STOPPED 
          if(farmer.FarmerIsRunning === true)
-            holder +=`\x1b[92m✔ ${this.convertSecondsDays(farmer.SummaryData.Uptime)} \x1b[0m`
+            holder +=`\x1b[92m✔ ${farmer.SummaryData.Uptime.FormattedTime} \x1b[0m`
          else
              holder +=`\x1b[31m❌ STOPPED\x1b[0m'}`
              holder += `\x1b[96mHostname: \x1b[93m${farmer.FarmerIp}\x1b[0m, `;
@@ -160,13 +135,13 @@ const guiCliHelper = {
             }
             
         },
-        //  line2 OUTPUT
+        //  line2 DATA OBJECT
          getFarmerPCMetricsOutput: function getTable(summaryData,farmerId){
             try{
-                let upTime = summaryData.Uptime
-                let sectorHr = (summaryData.TotalSectors/upTime*3600).toFixed(2)
-                let totalSectorTime = this.convertSecondsMinutes(summaryData.TotalSectorTime);
-                let sectorHrAvg = (sectorHr/(farmerId.length)).toFixed(2)
+                let upTime = summaryData.Uptime.FormattedTime
+                let sectorHr = (summaryData.TotalSectors/(summaryData.Uptime.Seconds)*3600).toFixed(2)
+                let totalSectorTime = parseData.convertSecondsMinutes(summaryData.TotalSectorTime);
+                let sectorHrAvg = (sectorHr)
                 let rewards = summaryData.TotalRewards;
                 let totalSize = summaryData.TotalSize
                 let totalETA = summaryData.TotalETA
@@ -194,8 +169,8 @@ const guiCliHelper = {
      },
      sendTelegramPCmetrics: function sendTelegramPCmetrics(data){
          let outputTelegram = "";
-         outputTelegram += ` <b>${this.convertSecondsDays(data.upTime)}</b> Uptime, `						
-         outputTelegram += `\n   <b>${data.sectorTime}</b> Sector Time, `		
+         outputTelegram += ` <b>${data.upTime}</b> Uptime, `						
+         outputTelegram += `\n   <b>${data.totalSectorTime}</b> Sector Time, `		
          outputTelegram += `\n   <b>${data.sectorHr}</b> Sectors Total, `
          outputTelegram += `\n   <b>${data.rewards}</b> Total Rewards`
          outputTelegram +=  `\n   <b>${data.totalPercentComplete}%</b>  Complete \n`

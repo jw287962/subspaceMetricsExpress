@@ -229,6 +229,32 @@ const parseData = {
         }
        
     },
+    convertSecondsMinutes: function convertSecondsMinutes(seconds){
+        try{
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const second = Math.floor(seconds % 60)
+            const formattedTime = `${minutes}m ${second}s`;
+            return formattedTime;
+        
+        }catch(err){
+            console.log('Error: convertSecondsDays', err)
+        }
+    },
+ 
+     convertSecondsDays: function convertSecondsDays(seconds){
+         try{
+             const days = Math.floor(seconds / (3600 * 24));
+             const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+             const minutes = Math.floor((seconds % 3600) / 60);
+             const second = Math.floor(seconds % 60)
+             const formattedTime = `${days}D ${hours}H ${minutes}M ${second}S`;
+             return formattedTime;
+         
+         }catch(err){
+             console.log('Error: convertSecondsDays', err)
+         }
+        
+     },
     
     
     getDiskSectorPerformance: function GetDiskSectorPerformance(io_farmer_metrics_arr = [], farmerIp,farmerIsRunning) {
@@ -387,7 +413,10 @@ const parseData = {
                 TotalETA: totalETA,
                 TotalPercentComplete: totalPercentComplete,
                 TotalDisks: total_disk_per_farmer,
-                Uptime: uptime_seconds,
+                Uptime: {
+                    Seconds: uptime_seconds,
+                    FormattedTime: this.convertSecondsDays(uptime_seconds)
+                },
                 TotalRewards: total_rewards_per_farmer,
                 TotalRewardsPerHour: totalRewardsPerHour
             }
@@ -415,7 +444,10 @@ const parseData = {
                 TotalSeconds: total_sectors_plot_time_seconds,
                 TotalDisks: total_disk_per_farmer,
                 TotalSize: totalFarmerDiskSize,
-                Uptime: uptime_seconds,
+                Uptime: {
+                        Seconds: uptime_seconds,
+                        FormattedTime: uptime_seconds
+                    },
                 TotalRewards: total_rewards_per_farmer
             };
             resp_sector_perf_arr['disk_sector_perf'] = disk_sector_perf;
