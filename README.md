@@ -1,5 +1,6 @@
 Parsing Functions derived from https://github.com/irbujam/ss_log_event_monitor written in Powershell
 But i have added my own for new summaryData that I wanted.
+I actually reorganized the design of the data structure to use objects rather than arrays in his parser function
 
 # subspaceMetricsExpress
 
@@ -29,113 +30,241 @@ app.use(cors({
 ```
 
 ## SAMPLE DATA
-```{
+```
+{
   "nodeDisplayData": {
     "nodeSyncState": "0",
     "nodePeersConnected": "11",
-    "nodeIp": "192.0.0.0:1111",
+    "nodeIp": "192.168.1.91:1111",
     "nodeIsRunningOk": true
   },
   "farmerDisplaySector": [
-    [
-      {
-        "Id": [
-          { "Id": "11111111AAAAAAAAAAAAAAA" },
-          { "Id": "11111111AAAAAAAAAAAAAAB" },
-          { "Id": "11111111AAAAAAAAAAAAAAC" },
-          { "Id": "11111111AAAAAAAAAAAAAAD" }
-        ],
-        "Performance": [
-          { "Id": "11111111AAAAAAAAAAAAAAA", "SectorsPerHour": "9.93", "MinutesPerSector": "6.04" },
-          { "Id": "11111111AAAAAAAAAAAAAAB", "SectorsPerHour": "9.93", "MinutesPerSector": "6.04" },
-          { "Id": "11111111AAAAAAAAAAAAAAC", "SectorsPerHour": "9.96", "MinutesPerSector": "6.02" },
-          { "Id": "11111111AAAAAAAAAAAAAAD", "SectorsPerHour": "9.96", "MinutesPerSector": "6.02" }
-        ],
-        "Rewards": [
-          { "Id": "11111111AAAAAAAAAAAAAAA", "Rewards": 12 },
-          { "Id": "11111111AAAAAAAAAAAAAAB", "Rewards": 15 },
-          { "Id": "11111111AAAAAAAAAAAAAAC", "Rewards": 6 },
-          { "Id": "11111111AAAAAAAAAAAAAAD", "Rewards": 14 }
-        ],
-        "Misses": [],
-        "PlotsCompleted": [
-          { "Id": "11111111AAAAAAAAAAAAAAA", "PlotState": "Plotted", "Sectors": "2324" },
-          { "Id": "11111111AAAAAAAAAAAAAAB", "PlotState": "Plotted", "Sectors": "2325" },
-          { "Id": "11111111AAAAAAAAAAAAAAC", "PlotState": "Plotted", "Sectors": "2322" },
-          { "Id": "11111111AAAAAAAAAAAAAAD", "PlotState": "Plotted", "Sectors": "2321" }
-        ],
-        "PlotsRemaining": [
-          { "Id": "11111111AAAAAAAAAAAAAAA", "PlotState": "NotPlotted", "Sectors": "1328" },
-          { "Id": "11111111AAAAAAAAAAAAAAB", "PlotState": "NotPlotted", "Sectors": "1327" },
-          { "Id": "11111111AAAAAAAAAAAAAAC", "PlotState": "NotPlotted", "Sectors": "1330" },
-          { "Id": "11111111AAAAAAAAAAAAAAD", "PlotState": "NotPlotted", "Sectors": "1331" }
-        ],
-        "FarmerIp": "0.0.0.0:2222",
-        "FarmerIsRunning": true,
-        "SummaryData": {
-          "Id": "Overall",
-          "TotalSectors": 662,
-          "TotalSeconds": 239531.611091674,
-          "TotalSize": "14.63",
-          "TotalMinutesPerSector": 90.49773755656108,
-          "TotalETA": "5.6 Days",
-          "TotalPercentComplete": "63.6",
-          "TotalDisks": 4,
-          "Uptime": "60203",
-          "TotalRewards": 47
+    {
+      "Id": "Overall",
+      "TotalSectors": 842,
+      "TotalSeconds": 305036.77548994095,
+      "TotalDisks": 4,
+      "Uptime": {
+        "Seconds": "76534",
+        "FormattedTime": "0D 21H 15M 34S"
+      },
+      "TotalSectorsPerHour": 39.75,
+      "TotalDiskSize": "14.61",
+      "TotalPercentComplete": "64.8",
+      "TotalRewards": 58,
+      "TotalRewardsPerHour": "2.73",
+      "TotalPlotsRemaining": 5136,
+      "TotalPlotsCompleted": 9472,
+      "TotalSectorTime": {
+        "sectorTime": 90.56603773584906,
+        "formattedSectorTime": "1m 30s"
+      },
+      "TotalETA": "5 Days 9 HR 12 Min",
+      "IndividualDiskDataObj": {
+        "01HPCK9T133M8D3E11E4XWNWXS": {
+          "Id": "01HPCK9T133M8D3E11E4XWNWXS",
+          "Rewards": {
+            "Rewards": 19
+          },
+          "Performance": {
+            "SectorsPerHour": "9.95",
+            "MinutesPerSector": "6.03"
+          },
+          "PlotsRemaining": {
+            "PlotState": "NotPlotted",
+            "Sectors": "1286"
+          },
+          "PlotsCompleted": {
+            "PlotState": "Plotted",
+            "Sectors": "2366"
+          }
+        },
+        "01HPCK9S5BEZRH9300N6ZZW52A": {
+          "Id": "01HPCK9S5BEZRH9300N6ZZW52A",
+          "Rewards": {
+            "Rewards": 8
+          },
+          "Performance": {
+            "SectorsPerHour": "9.95",
+            "MinutesPerSector": "6.03"
+          },
+          "PlotsCompleted": {
+            "PlotState": "Plotted",
+            "Sectors": "2367"
+          },
+          "PlotsRemaining": {
+            "PlotState": "NotPlotted",
+            "Sectors": "1285"
+          }
+        },
+        "01HPCK9RAH1V6E61NRY4NP3EHH": {
+          "Id": "01HPCK9RAH1V6E61NRY4NP3EHH",
+          "Rewards": {
+            "Rewards": 17
+          },
+          "Performance": {
+            "SectorsPerHour": "9.93",
+            "MinutesPerSector": "6.04"
+          },
+          "PlotsCompleted": {
+            "PlotState": "Plotted",
+            "Sectors": "2370"
+          },
+          "PlotsRemaining": {
+            "PlotState": "NotPlotted",
+            "Sectors": "1282"
+          }
+        },
+        "01HPCK9QEKPXBXW85M68SEH27S": {
+          "Id": "01HPCK9QEKPXBXW85M68SEH27S",
+          "Rewards": {
+            "Rewards": 14
+          },
+          "Performance": {
+            "SectorsPerHour": "9.92",
+            "MinutesPerSector": "6.05"
+          },
+          "PlotsRemaining": {
+            "PlotState": "NotPlotted",
+            "Sectors": "1283"
+          },
+          "PlotsCompleted": {
+            "PlotState": "Plotted",
+            "Sectors": "2369"
+          }
         }
       }
-    ],
-    [
-      {
-        "Id": [
-          { "Id": "11111111111111111111AAAAAA" },
-          { "Id": "222222222222AAAAAAAAAAAAA" },
-          { "Id": "AAAAAAAAAAAAAAAAAAAAAA111" }
-        ],
-        "Performance": [
-          { "Id": "11111111111111111111AAAAAA", "SectorsPerHour": "0", "MinutesPerSector": "0" },
-          { "Id": "222222222222AAAAAAAAAAAAA", "SectorsPerHour": "9.34", "MinutesPerSector": "6.42" },
-          { "Id": "AAAAAAAAAAAAAAAAAAAAAA111", "SectorsPerHour": "9.37", "MinutesPerSector": "6.40" }
-        ],
-        "Rewards": [
-          { "Id": "11111111111111111111AAAAAA", "Rewards": 25 },
-          { "Id": "222222222222AAAAAAAAAAAAA", "Rewards": 3 },
-          { "Id": "AAAAAAAAAAAAAAAAAAAAAA111", "Rewards": 9 }
-        ],
-        "Misses": [],
-        "PlotsCompleted": [
-          { "Id": "11111111111111111111AAAAAA", "PlotState": "Plotted", "Sectors": "3680" },
-          { "Id": "222222222222AAAAAAAAAAAAA", "PlotState": "Plotted", "Sectors": "1061" },
-          { "Id": "AAAAAAAAAAAAAAAAAAAAAA111", "PlotState": "Plotted", "Sectors": "1039" }
-        ],
-        PlotsRemaining":[
-          {"Id":"01HNK443JWGNNSHNHWYT2ANDVR","PlotState":"NotPlotted","Sectors":"0"},
-          {"Id":"01HPKJJFEWFNZEBBXGEN5H8XWV","PlotState":"NotPlotted","Sectors":"2591"},
-          {"Id":"01HPKJJGJ0P4BEHRW4T9S9ADEP","PlotState":"NotPlotted","Sectors":"2612"}
-        ]
-        "FarmerIp": "0.0.0.0:2222",
-        "FarmerIsRunning": true,
-        "SummaryData": {
-          "Id": "Overall",
-          "TotalSectors": 662,
-          "TotalSeconds": 239538.611091674,
-          "TotalSize": "14.61",
-          "TotalMinutesPerSector": 90.49773755656108,
-          "TotalETA": "5.6 Days",
-          "TotalPercentComplete": "63.6",
-          "TotalDisks": 4,
-          "Uptime": "60203",
-          "TotalRewards": 47
+    },
+    {
+      "Id": "Overall",
+      "TotalSectors": 432,
+      "TotalSeconds": 171873.09958357696,
+      "TotalDisks": 3,
+      "Uptime": {
+        "Seconds": "83961",
+        "FormattedTime": "0D 23H 19M 21S"
+      },
+      "TotalSectorsPerHour": 18.310000000000002,
+      "TotalDiskSize": "10.98",
+      "TotalPercentComplete": "53.3",
+      "TotalRewards": 41,
+      "TotalRewardsPerHour": "1.76",
+      "TotalPlotsRemaining": 5129,
+      "TotalPlotsCompleted": 5854,
+      "TotalSectorTime": {
+        "sectorTime": 196.61387220098305,
+        "formattedSectorTime": "3m 16s"
+      },
+      "TotalETA": "11 Days 16 HR 7 Min",
+      "IndividualDiskDataObj": {
+        "01HPKJJFEWFNZEBBXGEN5H8XWV": {
+          "Id": "01HPKJJFEWFNZEBBXGEN5H8XWV",
+          "Rewards": {
+            "Rewards": 3
+          },
+          "Performance": {
+            "SectorsPerHour": "9.16",
+            "MinutesPerSector": "6.55"
+          },
+          "PlotsRemaining": {
+            "PlotState": "NotPlotted",
+            "Sectors": "2554"
+          },
+          "PlotsCompleted": {
+            "PlotState": "Plotted",
+            "Sectors": "1098"
+          }
+        },
+        "01HNK443JWGNNSHNHWYT2ANDVR": {
+          "Id": "01HNK443JWGNNSHNHWYT2ANDVR",
+          "Rewards": {
+            "Rewards": 28
+          },
+          "Performance": {
+            "SectorsPerHour": "0",
+            "MinutesPerSector": "0"
+          },
+          "PlotsCompleted": {
+            "PlotState": "Plotted",
+            "Sectors": "3679"
+          },
+          "PlotsRemaining": {
+            "PlotState": "NotPlotted",
+            "Sectors": "0"
+          }
+        },
+        "01HPKJJGJ0P4BEHRW4T9S9ADEP": {
+          "Id": "01HPKJJGJ0P4BEHRW4T9S9ADEP",
+          "Rewards": {
+            "Rewards": 10
+          },
+          "Performance": {
+            "SectorsPerHour": "9.15",
+            "MinutesPerSector": "6.55"
+          },
+          "PlotsCompleted": {
+            "PlotState": "Plotted",
+            "Sectors": "1077"
+          },
+          "PlotsRemaining": {
+            "PlotState": "NotPlotted",
+            "Sectors": "2575"
+          }
         }
       }
-    ],
+    },
+    {
+      "Id": "Overall",
+      "TotalSectors": 593,
+      "TotalSeconds": 130022.2524927999,
+      "TotalDisks": 1,
+      "Uptime": {
+        "Seconds": "166820",
+        "FormattedTime": "1D 22H 20M 20S"
+      },
+      "TotalSectorsPerHour": 0,
+      "TotalDiskSize": "3.74",
+      "TotalPercentComplete": "100.0",
+      "TotalRewards": 45,
+      "TotalRewardsPerHour": "0.97",
+      "TotalPlotsRemaining": 0,
+      "TotalPlotsCompleted": 3736,
+      "TotalSectorTime": {
+        "sectorTime": "-",
+        "formattedSectorTime": "-"
+      },
+      "TotalETA": "-",
+      "IndividualDiskDataObj": {
+        "01HP23RHWK9M0AB2PTW0B7DAZB": {
+          "Id": "01HP23RHWK9M0AB2PTW0B7DAZB",
+          "Rewards": {
+            "Rewards": 45
+          },
+          "Misses": {
+            "Misses": 1
+          },
+          "Performance": {
+            "SectorsPerHour": "0",
+            "MinutesPerSector": "0"
+          },
+          "PlotsCompleted": {
+            "PlotState": "Plotted",
+            "Sectors": "3736"
+          },
+          "PlotsRemaining": {
+            "PlotState": "NotPlotted",
+            "Sectors": "0"
+          }
+        }
+      }
+    }
   ]
 }
-    ```
+```
     
     
-    # CRONTAB AUTOSTART BOOTUP
+
+# CRONTAB AUTOSTART BOOTUP
 
 create sh file and apply `chmod +x`
 ``` 

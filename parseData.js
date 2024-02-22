@@ -231,10 +231,15 @@ const parseData = {
     },
     convertSecondsMinutes: function convertSecondsMinutes(seconds){
         try{
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const second = Math.floor(seconds % 60)
-            const formattedTime = `${minutes}m ${second}s`;
-            return formattedTime;
+            if(seconds >0){
+
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const second = Math.floor(seconds % 60)
+                const formattedTime = `${minutes}m ${second}s`;
+                return formattedTime;
+            }else{
+                return '-'
+            }
         
         }catch(err){
             console.log('Error: convertSecondsDays', err)
@@ -261,13 +266,14 @@ const parseData = {
     try{
         let resp_disk_metrics_arr = [];
 
-        let resp_UUId_arr = [];
+        let individualDiskDataObj = {};
         let resp_sector_perf_arr = [];
         let resp_rewards_arr = [];
         let resp_misses_arr = [];
         let resp_plots_completed_arr = [];
         let resp_plots_remaining_arr = [];
     
+        
         let unit_type = "";
         let unique_farm_id = "";
         let farmer_disk_id = "";
@@ -292,18 +298,35 @@ const parseData = {
                     const sectors = metrics_obj.Value;
         
                     let plots_info = {
-                        Id: plot_id,
                         PlotState: plot_state,
                         Sectors: sectors
                     };
                     if (plot_state.toLowerCase() == "notplotted") {
                     
-                        resp_plots_remaining_arr.push(plots_info);
+                            if(individualDiskDataObj[plot_id])
+                                individualDiskDataObj[plot_id]['PlotsRemaining'] = (plots_info)
+                            else{
+                                individualDiskDataObj[plot_id] = {
+                                    "PlotsRemaining": plots_info
+                                };
+                            }
                         if(plots_info.Sectors == "0"){
-                            resp_sector_perf_arr.push({Id: plots_info.Id, SectorsPerHour: '0', MinutesPerSector: '0'})
+                            if(individualDiskDataObj[plot_id])
+                            individualDiskDataObj[plot_id]['Performance'] = { SectorsPerHour: '0', MinutesPerSector: '0'}
+                        else{
+                            individualDiskDataObj[plot_id] = {
+                                "PlotsRemaining": plots_info
+                            };
+                        }
                         }
                     } else if (plot_state.toLowerCase() === "plotted") {
-                        resp_plots_completed_arr.push(plots_info);
+                        if(individualDiskDataObj[plot_id])
+                                individualDiskDataObj[plot_id]['PlotsCompleted'] = (plots_info)
+                            else{
+                                individualDiskDataObj[plot_id] = {
+                                    "PlotsCompleted": plots_info
+                                };
+                            }
                     }
                 } else if (metrics_obj.Name.indexOf("_farmer_auditing_time_seconds_count") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
                     uptime_seconds = metrics_obj.Value;
@@ -311,7 +334,10 @@ const parseData = {
                     let farm_id_info = {
                         Id: unique_farm_id
                     };
-                    resp_UUId_arr.push(farm_id_info);
+                    if(!individualDiskDataObj[unique_farm_id])
+                        individualDiskDataObj[unique_farm_id] = (farm_id_info);
+
+
                 } else if (metrics_obj.Name.indexOf("_farmer_sector_plotting_time_seconds") >= 0) {
                         if (metrics_obj.Id.toLowerCase().indexOf("unit") >= 0 || metrics_obj.Id.toLowerCase().indexOf("type") >= 0) {
                             unit_type = metrics_obj.Value.toLowerCase();
@@ -346,11 +372,16 @@ const parseData = {
                             farmer_disk_sector_plot_count = 0;
         
                             let disk_sector_perf = {
-                                Id: farmer_disk_id,
                                 SectorsPerHour: sectors_per_hour,
                                 MinutesPerSector: minutes_per_sector,
                             };
-                            resp_sector_perf_arr.push(disk_sector_perf);
+                            if(individualDiskDataObj[farmer_disk_id])
+                                individualDiskDataObj[farmer_disk_id]['Performance'] = (disk_sector_perf)
+                            else{
+                                individualDiskDataObj[farmer_disk_id] = {
+                                    "Performance": disk_sector_perf
+                                };
+                            }
                         }
                     }
                 } else if (metrics_obj.Name.indexOf("_farmer_sector_plotted_counter_sectors_total") >= 0) {
@@ -365,18 +396,31 @@ const parseData = {
                             farmer_disk_proving_success_count = parseInt(metrics_obj.Value);
         
                             let disk_rewards_metric = {
-                                Id: farmer_disk_id_rewards,
+                                // Id: farmer_disk_id_rewards,
                                 Rewards: farmer_disk_proving_success_count
                             };
-                            resp_rewards_arr.push(disk_rewards_metric);
+                            // resp_rewards_arr.push(disk_rewards_metric);
+                             if(individualDiskDataObj[farmer_disk_id_rewards])
+                              individualDiskDataObj[farmer_disk_id_rewards]['Rewards'] = (disk_rewards_metric)
+                             else{
+                            individualDiskDataObj[farmer_disk_id_rewards] = {
+                                "Rewards": disk_rewards_metric
+                            };
+                        }
                         } else if (metrics_obj.Criteria.toLowerCase().indexOf("timeout") >= 0) {
                             farmer_disk_proving_misses_count = parseInt(metrics_obj.Value);
         
                             let disk_misses_metric = {
-                                Id: farmer_disk_id_rewards,
+                                // Id: farmer_disk_id_rewards,
                                 Misses: farmer_disk_proving_misses_count
                             };
-                            resp_misses_arr.push(disk_misses_metric);
+                            // resp_misses_arr.push(disk_misses_metric);
+                            if(individualDiskDataObj[farmer_disk_id_rewards])
+                            individualDiskDataObj[farmer_disk_id_rewards]['Misses'] = (disk_misses_metric)
+                        else{
+                            individualDiskDataObj[farmer_disk_id_rewards] = {
+                                "Misses": disk_misses_metric
+                            };
                         }
                         total_rewards_per_farmer += farmer_disk_proving_success_count;
         
@@ -385,61 +429,63 @@ const parseData = {
                     }
                 }
             }
-            resp_UUId_arr.sort((a, b) => a.Id.localeCompare(b.Id));
-            resp_sector_perf_arr.sort((a, b) => a.Id.localeCompare(b.Id));
-             resp_rewards_arr.sort((a, b) => a.Id.localeCompare(b.Id));
-            resp_misses_arr.sort((a, b) => a.Id.localeCompare(b.Id));
-            resp_plots_completed_arr.sort((a, b) => a.Id.localeCompare(b.Id));
-            resp_plots_remaining_arr.sort((a, b) => a.Id.localeCompare(b.Id));
-    
-            
-            const totalPlotsRemaining = (resp_plots_remaining_arr.reduce((a,b) => a+1*b.Sectors, 0))
-            const totalPlotsCompleted = (resp_plots_completed_arr.reduce((a,b) => a+1*b.Sectors, 0))
-            const totalSectorPerHour = resp_sector_perf_arr.reduce((acc,val) => val.SectorsPerHour*1+acc,0)
-           
-            const sectorTime = 60/totalSectorPerHour*60
-            const totalETADays = ((totalPlotsRemaining/totalSectorPerHour)/(24));
-            const totalETA = totalETADays < 1 ? `${(totalETADays * 24).toFixed(1)} Hrs` : `${Math.floor(totalETADays)} Days ${Math.floor((totalETADays% 1)*24)} HR ${Math.floor(((totalETADays * 24) % 1) * 60)} Min`;
-            const totalPercentComplete =((totalPlotsCompleted/(totalPlotsCompleted+totalPlotsRemaining))*100).toFixed(1);
-            const totalFarmerDiskSize = ((totalPlotsRemaining + totalPlotsCompleted)/1000).toFixed(2)
+        }
+     
+        const summaryData = {
+            Id: "Overall",
+            TotalSectors: total_sectors_plot_count,
+            TotalSeconds: total_sectors_plot_time_seconds,
+            TotalDisks: total_disk_per_farmer,
+            Uptime: {
+                Seconds: uptime_seconds,
+                FormattedTime: this.convertSecondsDays(uptime_seconds)
+            },
 
-            const totalRewardsPerHour = (total_rewards_per_farmer/(uptime_seconds/(60*60))).toFixed(2);
-            let summaryData = {
-                Id: "Overall",
-                TotalSectors: total_sectors_plot_count,
-                TotalSeconds: total_sectors_plot_time_seconds,
-                TotalSize: totalFarmerDiskSize,
-                TotalSectorTime: {
-                        sectorTime,
-                        formattedSectorTime: this.convertSecondsMinutes(sectorTime)
-                    },
-                TotalETA: totalETA,
-                TotalPercentComplete: totalPercentComplete,
-                TotalDisks: total_disk_per_farmer,
-                Uptime: {
-                    Seconds: uptime_seconds,
-                    FormattedTime: this.convertSecondsDays(uptime_seconds)
+            TotalSectorsPerHour: 0,
+            TotalDiskSize: 0,
+            TotalPercentComplete: 0,
+            TotalRewards: 0,
+            TotalRewardsPerHour: 0,
+            TotalPlotsRemaining: 0,
+            TotalPlotsCompleted: 0,
+            TotalSectorTime: {
+                    sectorTime: 0,
+                    formattedSectorTime: '',
                 },
-                TotalRewards: total_rewards_per_farmer,
-                TotalRewardsPerHour: totalRewardsPerHour
+            TotalETA: ""
+        }
+            for(key in individualDiskDataObj){
+                summaryData.TotalRewards += individualDiskDataObj[key].Rewards.Rewards*1
+                summaryData.TotalPlotsRemaining += individualDiskDataObj[key].PlotsRemaining.Sectors*1
+                summaryData.TotalPlotsCompleted += individualDiskDataObj[key].PlotsCompleted.Sectors*1
+                summaryData.TotalSectorsPerHour += individualDiskDataObj[key].Performance.SectorsPerHour*1
             }
-            // resp_sector_perf_arr['disk_sector_perf'] = disk_sector_perf;
-        
-            let disk_metrics = {
-                Id: resp_UUId_arr,
-                Performance: resp_sector_perf_arr,
-                Rewards: resp_rewards_arr,
-                Misses: resp_misses_arr,
-                PlotsCompleted: resp_plots_completed_arr,
-                PlotsRemaining: resp_plots_remaining_arr,
-                FarmerIp: farmerIp,
-                FarmerIsRunning: farmerIsRunning,
-                Name: farmerName,
-                SummaryData: summaryData
-            };
-            // console.log('test',disk_metrics.PlotsCompleted, disk_metrics.PlotsRemaining)
-            resp_disk_metrics_arr.push(disk_metrics);
-            return resp_disk_metrics_arr;
+            // console.log('test', summaryData);
+            const totalPlotsRemaining = summaryData.TotalPlotsRemaining
+            const totalPlotsCompleted = summaryData.TotalPlotsCompleted
+            const totalSectorPerHour = summaryData.TotalSectorsPerHour*1
+            const totalETADays = ((totalPlotsRemaining/totalSectorPerHour)/(24));
+
+            if(totalSectorPerHour === 0){
+                summaryData.TotalSectorTime.sectorTime = '-'
+                summaryData.TotalSectorTime.formattedSectorTime = "-"   
+                summaryData.TotalETA= '-'     
+            }else{
+                summaryData.TotalSectorTime.sectorTime = 60/totalSectorPerHour*60
+                summaryData.TotalSectorTime.formattedSectorTime = this.convertSecondsMinutes(summaryData.TotalSectorTime.sectorTime)
+                summaryData.TotalETA = totalETADays < 1 ? `${(totalETADays * 24).toFixed(1)} Hrs` : `${Math.floor(totalETADays)} Days ${Math.floor((totalETADays% 1)*24)} HR ${Math.floor(((totalETADays * 24) % 1) * 60)} Min`;
+
+            }
+            
+            summaryData.TotalPercentComplete =((totalPlotsCompleted/(totalPlotsCompleted+totalPlotsRemaining))*100).toFixed(1);
+            summaryData.TotalDiskSize = ((totalPlotsRemaining + totalPlotsCompleted)/1000).toFixed(2)
+
+            summaryData.TotalRewardsPerHour = (summaryData.TotalRewards/(summaryData.Uptime.Seconds/(60*60))).toFixed(2);
+
+            const allData= summaryData
+            allData['IndividualDiskDataObj'] = individualDiskDataObj;
+
+            return allData
             // return disk_metrics
         }else{
             let disk_sector_perf = {
@@ -457,7 +503,7 @@ const parseData = {
             resp_sector_perf_arr['disk_sector_perf'] = disk_sector_perf;
         
             let disk_metrics = {
-                Id: resp_UUId_arr,
+                Id: individualDiskDataObj,
                 Performance: resp_sector_perf_arr,
                 Rewards: resp_rewards_arr,
                 Misses: resp_misses_arr,

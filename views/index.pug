@@ -49,23 +49,28 @@ html(lang="en")
                   th.Reward Reward
                   th.Miss Miss
               tbody
-                each plot in detail.PlotsCompleted
+                each id in detail
                   tr
-                    td= plot.Id
-                    td= plot.Size
-                    td= plot['% Comp']
-                    td= plot['ETA(Days)']
-                    td= plot['Sectors/Hr']
-                    td= plot['Min/Sector']
-                    td= plot.Reward
-                    td= plot.Miss
-                each plot in detail.PlotsRemaining
-                  tr
-                    td= plot.Id
-                    td= plot.Size
-                    td= plot['% Comp']
-                    td= plot['ETA(Days)']
-                    td= plot['Sectors/Hr']
-                    td= plot['Min/Sector']
-                    td= plot.Reward
-                    td= plot.Miss
+                    td= id.Id
+                  each perf in detail.Performance
+                    td= perf.SectorsPerHour
+                    td= perf.MinutesPerSector
+                tr 
+                  td= 'test'
+
+                //-     td= plot['% Comp']
+                //-     td= plot['ETA(Days)']
+                //-     td= plot['Sectors/Hr']
+                //-     td= plot['Min/Sector']
+                //-     td= plot.Rewards
+                //-     td= plot.Miss
+                //- each plot in detail
+                //-   tr
+                //-     td= plot.Id
+                //-     td= plot.Size
+                //-     td= plot['% Comp']
+                //-     td= plot['ETA(Days)']
+                //-     td= plot['Sectors/Hr']
+                //-     td= plot['Min/Sector']
+                //-     td= plot.Reward
+                //-     td= plot.Miss
