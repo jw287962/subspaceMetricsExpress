@@ -139,7 +139,7 @@ const guiCliHelper = {
          getFarmerPCMetricsOutput: function getTable(summaryData){
             try{
                 let upTime = summaryData.Uptime.FormattedTime
-                let sectorHr = (summaryData.TotalSectorsPerHour)
+                let sectorHr = (summaryData.TotalSectorsPerHour).toFixed(2)
                 let totalSectorTime = summaryData.TotalSectorTime.formattedSectorTime;
                 let sectorHrAvg = ((sectorHr)/(summaryData.TotalDisks)).toFixed(2)
                 let rewards = summaryData.TotalRewards;
@@ -158,7 +158,7 @@ const guiCliHelper = {
      printsFarmerPCmetricsOutput: function printsFarmerPCmetricsOutput(data){
          let farmerString2 ="";
          farmerString2 += `|\x1b[92mSector\x1b[93m Time: \x1b[0m${data.totalSectorTime} `
-         farmerString2 += `\x1b[0m|\x1b[93m${this.replaceWithDash(data.sectorHrAvg)}\x1b[0m Sectors per Hr `
+         farmerString2 += `\x1b[0m|\x1b[93m${this.replaceWithDash(data.sectorHr)}\x1b[0m Sectors per Hr `
          farmerString2 += `|\x1b[92mRewards: \x1b[93m${data.rewards} \x1b[0mtotal, \x1b[93m${data.totalRewardsPerHour}\x1b[0m per Hr, \x1b[93m${(data.totalRewardsPerHour*24).toFixed(2)} \x1b[0mper Day\x1b[49m |\n`;
          farmerString2 += `|\x1b[0mRemain: \x1b[93m${data.totalETA} \x1b[0m`;
          farmerString2 += `|\x1b[93m${data.totalPercentComplete}%\x1b[0m Complete\x1b[49m `;
@@ -224,7 +224,8 @@ const guiCliHelper = {
                          dataString += `${data.Data.CompletePercent.toString().padEnd(8)}|`
                          dataString += `${data.Data.ETA.toString().padEnd(8)} `;
                          dataString += `|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(10) }|${(data?.Performance.MinutesPerSector || 'N/A').toString().padEnd(10)}`
-                         dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(6)}|${'0'.padEnd(4)}|` 
+                         dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(6)}|${(data?.Misses?.Misses || '0').toString().padEnd(4)}|` 
+
                          this.guiLogger(dataString)
                      }
                     }else{

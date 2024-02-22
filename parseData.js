@@ -463,10 +463,14 @@ const parseData = {
             for(key in individualDiskDataObj){
 
                 individualDiskDataObj[key]["Data"] = this.discDataMetrics(individualDiskDataObj[key])
+                if(!individualDiskDataObj[key].Misses){
+                    individualDiskDataObj[key].Misses = {Misses: 0}
+
+                }
                 summaryData.TotalRewards += individualDiskDataObj[key].Rewards.Rewards*1
                 summaryData.TotalPlotsRemaining += individualDiskDataObj[key].PlotsRemaining.Sectors*1
                 summaryData.TotalPlotsCompleted += individualDiskDataObj[key].PlotsCompleted.Sectors*1
-                summaryData.TotalSectorsPerHour += individualDiskDataObj[key].Performance.SectorsPerHour*1
+                summaryData.TotalSectorsPerHour += (individualDiskDataObj[key].Performance.SectorsPerHour*1)
             }
             // console.log('test', summaryData);
             const totalPlotsRemaining = summaryData.TotalPlotsRemaining
