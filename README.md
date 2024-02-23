@@ -82,7 +82,7 @@ Example Data:
 {
   "nodeDisplayData": {
     "nodeSyncState": "0",
-    "nodePeersConnected": "11",
+    "nodePeersConnected": "9",
     "nodeIp": "192.168.1.91:1111",
     "nodeIsRunningOk": true
   },
@@ -91,50 +91,54 @@ Example Data:
       "SummaryData": {
         "Id": "Overall",
         "Name": "7950x",
-        "TotalSectors": 0,
-        "TotalDisks": 0,
+        "TotalSectors": 65,
+        "TotalDisks": {
+          "FinishedPlotting": 4,
+          "Plotting": 0,
+          "Total": 4
+        },
         "Uptime": {
-          "Seconds": "12563",
-          "FormattedTime": "0D 3H 29M 23S"
+          "Seconds": "43147",
+          "FormattedTime": "0D 11H 59M 7S"
         },
         "FarmerIsRunning": true,
         "FarmerIp": "192.168.1.253:2222",
-        "TotalSectorsPerHour": 39.970000000000006,
+        "TotalSectorsPerHour": 39.72,
         "TotalDiskSize": "14.61",
-        "TotalPercentComplete": "72.9",
-        "TotalRewards": 17,
-        "TotalRewardsPerHour": "4.87",
-        "TotalPlotsRemaining": 3962,
-        "TotalPlotsCompleted": 10646,
+        "TotalPercentComplete": "75.2",
+        "TotalRewards": 34,
+        "TotalRewardsPerHour": "2.84",
+        "TotalPlotsRemaining": 3624,
+        "TotalPlotsCompleted": 10984,
         "TotalSectorTime": {
-          "sectorTime": 90.06755066299723,
+          "sectorTime": 90.6344410876133,
           "formattedSectorTime": "1m 30s"
         },
-        "TotalETA": "4 Days 3 HR 7 Min"
+        "TotalETA": "3 Days 19 HR 14 Min"
       },
       "IndividualDiskDataObj": {
         "01HPCK9S5BEZRH9300N6ZZW52A": {
           "Id": "01HPCK9S5BEZRH9300N6ZZW52A",
           "Rewards": {
-            "Rewards": 4
+            "Rewards": 7
           },
           "Performance": {
-            "SectorsPerHour": "10.00",
-            "SectorTime": "6m 0s",
-            "MinutesPerSector": 6.001037655071078
+            "SectorsPerHour": "9.93",
+            "SectorTime": "6m 2s",
+            "MinutesPerSector": 6.0414273455910354
           },
           "PlotsRemaining": {
             "PlotState": "NotPlotted",
-            "Sectors": "992"
+            "Sectors": "907"
           },
           "PlotsCompleted": {
             "PlotState": "Plotted",
-            "Sectors": "2660"
+            "Sectors": "2745"
           },
           "Data": {
             "DiskSize": 3.652,
-            "CompletePercent": "72.84",
-            "ETA": "4D 3H 13M"
+            "CompletePercent": "75.16",
+            "ETA": "3D 19H 19M"
           },
           "Misses": {
             "Misses": 0
@@ -143,25 +147,25 @@ Example Data:
         "01HPCK9QEKPXBXW85M68SEH27S": {
           "Id": "01HPCK9QEKPXBXW85M68SEH27S",
           "Rewards": {
-            "Rewards": 4
+            "Rewards": 8
           },
           "Performance": {
-            "SectorsPerHour": "9.85",
-            "SectorTime": "6m 5s",
-            "MinutesPerSector": 6.088357786267156
+            "SectorsPerHour": "9.89",
+            "SectorTime": "6m 3s",
+            "MinutesPerSector": 6.06624156935918
           },
           "PlotsRemaining": {
             "PlotState": "NotPlotted",
-            "Sectors": "990"
+            "Sectors": "906"
           },
           "PlotsCompleted": {
             "PlotState": "Plotted",
-            "Sectors": "2662"
+            "Sectors": "2746"
           },
           "Data": {
             "DiskSize": 3.652,
-            "CompletePercent": "72.89",
-            "ETA": "4D 4H 27M"
+            "CompletePercent": "75.19",
+            "ETA": "3D 19H 36M"
           },
           "Misses": {
             "Misses": 0
@@ -170,25 +174,25 @@ Example Data:
         "01HPCK9T133M8D3E11E4XWNWXS": {
           "Id": "01HPCK9T133M8D3E11E4XWNWXS",
           "Rewards": {
-            "Rewards": 4
+            "Rewards": 11
           },
           "Performance": {
-            "SectorsPerHour": "9.99",
-            "SectorTime": "6m 0s",
-            "MinutesPerSector": 6.0070221299142155
+            "SectorsPerHour": "9.93",
+            "SectorTime": "6m 2s",
+            "MinutesPerSector": 6.043050462983191
           },
           "PlotsRemaining": {
             "PlotState": "NotPlotted",
-            "Sectors": "993"
+            "Sectors": "908"
           },
           "PlotsCompleted": {
             "PlotState": "Plotted",
-            "Sectors": "2659"
+            "Sectors": "2744"
           },
           "Data": {
             "DiskSize": 3.652,
-            "CompletePercent": "72.81",
-            "ETA": "4D 3H 24M"
+            "CompletePercent": "75.14",
+            "ETA": "3D 19H 27M"
           },
           "Misses": {
             "Misses": 0
@@ -197,25 +201,25 @@ Example Data:
         "01HPCK9RAH1V6E61NRY4NP3EHH": {
           "Id": "01HPCK9RAH1V6E61NRY4NP3EHH",
           "Rewards": {
-            "Rewards": 5
+            "Rewards": 8
           },
           "Performance": {
-            "SectorsPerHour": "10.13",
-            "SectorTime": "5m 55s",
-            "MinutesPerSector": 5.924229316012856
+            "SectorsPerHour": "9.97",
+            "SectorTime": "6m 1s",
+            "MinutesPerSector": 6.018233643705044
           },
           "PlotsRemaining": {
             "PlotState": "NotPlotted",
-            "Sectors": "987"
+            "Sectors": "903"
           },
           "PlotsCompleted": {
             "PlotState": "Plotted",
-            "Sectors": "2665"
+            "Sectors": "2749"
           },
           "Data": {
             "DiskSize": 3.652,
-            "CompletePercent": "72.97",
-            "ETA": "4D 1H 27M"
+            "CompletePercent": "75.27",
+            "ETA": "3D 18H 34M"
           },
           "Misses": {
             "Misses": 0
@@ -227,50 +231,54 @@ Example Data:
       "SummaryData": {
         "Id": "Overall",
         "Name": "5800x ROG J",
-        "TotalSectors": 4,
-        "TotalDisks": 0,
+        "TotalSectors": 1,
+        "TotalDisks": {
+          "FinishedPlotting": 3,
+          "Plotting": 0,
+          "Total": 3
+        },
         "Uptime": {
-          "Seconds": "190749",
-          "FormattedTime": "2D 4H 59M 9S"
+          "Seconds": "221345",
+          "FormattedTime": "2D 13H 29M 5S"
         },
         "FarmerIsRunning": true,
         "FarmerIp": "192.168.1.91:2222",
-        "TotalSectorsPerHour": 18.310000000000002,
+        "TotalSectorsPerHour": 18.32,
         "TotalDiskSize": "10.98",
-        "TotalPercentComplete": "58.3",
-        "TotalRewards": 87,
-        "TotalRewardsPerHour": "1.64",
-        "TotalPlotsRemaining": 4585,
-        "TotalPlotsCompleted": 6399,
+        "TotalPercentComplete": "59.7",
+        "TotalRewards": 103,
+        "TotalRewardsPerHour": "1.68",
+        "TotalPlotsRemaining": 4430,
+        "TotalPlotsCompleted": 6554,
         "TotalSectorTime": {
-          "sectorTime": 196.61387220098305,
+          "sectorTime": 196.5065502183406,
           "formattedSectorTime": "3m 16s"
         },
-        "TotalETA": "10 Days 10 HR 24 Min"
+        "TotalETA": "10 Days 1 HR 48 Min"
       },
       "IndividualDiskDataObj": {
         "01HPKJJFEWFNZEBBXGEN5H8XWV": {
           "Id": "01HPKJJFEWFNZEBBXGEN5H8XWV",
           "Rewards": {
-            "Rewards": 9
+            "Rewards": 11
           },
           "Performance": {
-            "SectorsPerHour": "9.15",
+            "SectorsPerHour": "9.16",
             "SectorTime": "6m 33s",
-            "MinutesPerSector": 6.558811763608779
+            "MinutesPerSector": 6.552778516843653
           },
           "PlotsRemaining": {
             "PlotState": "NotPlotted",
-            "Sectors": "2282"
+            "Sectors": "2204"
           },
           "PlotsCompleted": {
             "PlotState": "Plotted",
-            "Sectors": "1370"
+            "Sectors": "1448"
           },
           "Data": {
             "DiskSize": 3.652,
-            "CompletePercent": "37.51",
-            "ETA": "10D 9H 27M"
+            "CompletePercent": "39.65",
+            "ETA": "10D 0H 42M"
           },
           "Misses": {
             "Misses": 0
@@ -279,11 +287,11 @@ Example Data:
         "01HNK443JWGNNSHNHWYT2ANDVR": {
           "Id": "01HNK443JWGNNSHNHWYT2ANDVR",
           "Rewards": {
-            "Rewards": 58
+            "Rewards": 68
           },
           "Performance": {
             "SectorsPerHour": 0,
-            "SectorTime": "11m 21s",
+            "SectorTime": "11m 31s",
             "MinutesPerSector": "0s"
           },
           "PlotsRemaining": {
@@ -306,25 +314,25 @@ Example Data:
         "01HPKJJGJ0P4BEHRW4T9S9ADEP": {
           "Id": "01HPKJJGJ0P4BEHRW4T9S9ADEP",
           "Rewards": {
-            "Rewards": 20
+            "Rewards": 24
           },
           "Performance": {
             "SectorsPerHour": "9.16",
-            "SectorTime": "6m 33s",
-            "MinutesPerSector": 6.552057927938623
+            "SectorTime": "6m 32s",
+            "MinutesPerSector": 6.547112053210734
           },
           "PlotsRemaining": {
             "PlotState": "NotPlotted",
-            "Sectors": "2303"
+            "Sectors": "2226"
           },
           "PlotsCompleted": {
             "PlotState": "Plotted",
-            "Sectors": "1349"
+            "Sectors": "1426"
           },
           "Data": {
             "DiskSize": 3.652,
-            "CompletePercent": "36.94",
-            "ETA": "10D 11H 29M"
+            "CompletePercent": "39.05",
+            "ETA": "10D 2H 53M"
           },
           "Misses": {
             "Misses": 0
@@ -336,21 +344,25 @@ Example Data:
       "SummaryData": {
         "Id": "Overall",
         "Name": "5800x ROG W",
-        "TotalSectors": 82,
-        "TotalDisks": 0,
+        "TotalSectors": 2,
+        "TotalDisks": {
+          "FinishedPlotting": 1,
+          "Plotting": 0,
+          "Total": 1
+        },
         "Uptime": {
-          "Seconds": "273625",
-          "FormattedTime": "3D 4H 0M 25S"
+          "Seconds": "304223",
+          "FormattedTime": "3D 12H 30M 23S"
         },
         "FarmerIsRunning": true,
         "FarmerIp": "192.168.1.83:2222",
         "TotalSectorsPerHour": 0,
-        "TotalDiskSize": "3.74",
+        "TotalDiskSize": "3.73",
         "TotalPercentComplete": "100.0",
-        "TotalRewards": 67,
-        "TotalRewardsPerHour": "0.88",
+        "TotalRewards": 73,
+        "TotalRewardsPerHour": "0.86",
         "TotalPlotsRemaining": 0,
-        "TotalPlotsCompleted": 3736,
+        "TotalPlotsCompleted": 3734,
         "TotalSectorTime": {
           "sectorTime": "-",
           "formattedSectorTime": "-"
@@ -361,11 +373,11 @@ Example Data:
         "01HP23RHWK9M0AB2PTW0B7DAZB": {
           "Id": "01HP23RHWK9M0AB2PTW0B7DAZB",
           "Rewards": {
-            "Rewards": 67
+            "Rewards": 73
           },
           "Performance": {
             "SectorsPerHour": 0,
-            "SectorTime": "3m 40s",
+            "SectorTime": "3m 41s",
             "MinutesPerSector": "0s"
           },
           "PlotsRemaining": {
@@ -374,10 +386,10 @@ Example Data:
           },
           "PlotsCompleted": {
             "PlotState": "Plotted",
-            "Sectors": "3736"
+            "Sectors": "3734"
           },
           "Data": {
-            "DiskSize": 3.736,
+            "DiskSize": 3.734,
             "CompletePercent": 100,
             "ETA": "-"
           },
