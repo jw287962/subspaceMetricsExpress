@@ -116,7 +116,7 @@ const guiCliHelper = {
      getFarmerPCStatusOutput: function getTableName(farmer){
          let holder = ""
          holder += `${this.dasher}\n`;
-         holder += `\x1b[96m${farmer.Name} \x1b[96mStatus:`
+         holder += `\x1b[96mName:\x1b[93m${farmer.Name} \x1b[39m| \x1b[96mStatus:`
         //  display uptime if it's running, otherwise display STOPPED 
          if(farmer.FarmerIsRunning === true)
             holder +=`\x1b[92m✔ ${farmer.Uptime.FormattedTime} \x1b[0m`
@@ -157,13 +157,12 @@ const guiCliHelper = {
     //   LINE 2 PRINT
      printsFarmerPCmetricsOutput: function printsFarmerPCmetricsOutput(data){
          let farmerString2 ="";
-         farmerString2 += `|\x1b[92mSector\x1b[93m Time: \x1b[0m${data.totalSectorTime} `
-         farmerString2 += `\x1b[0m|\x1b[93m${this.replaceWithDash(data.sectorHr)}\x1b[0m Sectors per Hr `
-         farmerString2 += `|\x1b[92mRewards: \x1b[93m${data.rewards} \x1b[0mtotal, \x1b[93m${data.totalRewardsPerHour}\x1b[0m per Hr, \x1b[93m${(data.totalRewardsPerHour*24).toFixed(2)} \x1b[0mper Day\x1b[49m |\n`;
-         farmerString2 += `|\x1b[0mRemain: \x1b[93m${data.totalETA} \x1b[0m`;
-         farmerString2 += `|\x1b[93m${data.totalPercentComplete}%\x1b[0m Complete\x1b[49m `;
-         farmerString2 += `|\x1b[93m${data.totalSize }\x1b[0mTiB `;
-         farmerString2 += `|`;
+         farmerString2 += (`\x1b[92mSector Time: \x1b[0m${data.totalSectorTime} \x1b[0m|\x1b[93m${this.replaceWithDash(data.sectorHr)}\x1b[0m Sectors/Hr`).padEnd(68)
+         farmerString2 += `|\x1b[0mRemain: \x1b[93m${data.totalETA} \x1b[0m` ;
+         farmerString2 += (`\n\x1b[92mRewards: \x1b[93m${data.rewards} \x1b[0mTotal, \x1b[93m${data.totalRewardsPerHour}\x1b[0m Hourly, \x1b[93m${(data.totalRewardsPerHour*24).toFixed(2)} \x1b[0mDaily\x1b[49m `).toString().padEnd(84);
+         farmerString2 += `|\x1b[93m${data.totalPercentComplete}%\x1b[0m Complete\x1b[49m ` + ("").padEnd(20);
+         farmerString2 += `\x1b[93m${data.totalSize }\x1b[0mTiB `;
+         farmerString2 += ``;
          
          this.guiLogger(farmerString2)
      },
@@ -176,7 +175,7 @@ const guiCliHelper = {
          outputTelegram +=  `\n   <b>${data.totalPercentComplete}%</b>  Complete \n`
          return outputTelegram
      },
-     dasher: "------------------------------------------------------------------------------------------",
+     dasher: "-------------------------------------------------------------------------------------------",
      displayData: function displayData(data, dateLastOutput) {
          let outputTelegram = ""
          let nodeString = '';
@@ -222,7 +221,8 @@ const guiCliHelper = {
                          dataString += `${data.Data.CompletePercent.toString().padEnd(8)}|`
                          dataString += `${data.Data.ETA.toString().padEnd(8)} `;
                          dataString += `|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(10) }|${(data?.Performance.MinutesPerSector || 'N/A').toString().padEnd(10)}`
-                         dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(6)}|${(data?.Misses?.Misses || '0').toString().padEnd(4)}|` 
+                         dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(6)}|`
+                         dataString += `${(data?.Misses?.Misses != 0 ? `\x1b[31m${(data.Misses.Misses).toString().padEnd(4)}\x1b[39m` : ('0').toString().padEnd(4) || ('0').toString().padEnd(4))}|` 
 
                          this.guiLogger(dataString)
                      }
