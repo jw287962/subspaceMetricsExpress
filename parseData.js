@@ -350,11 +350,8 @@ const parseData = {
                     if (plot_state.toLowerCase() == "notplotted") {
                             individualDiskDataObj[plot_id]['PlotsRemaining'] = (plots_info)
                             if(individualDiskDataObj[plot_id].PlotsRemaining.Sectors == 0 ){
-                                console.log(individualDiskDataObj[plot_id].PlotsRemaining.Sectors)
-                                
                                 summaryData.TotalDisks.Plotting--;
                                 summaryData.TotalDisks.FinishedPlotting++;
-        
                             }
                     } else if (plot_state.toLowerCase() === "plotted") {
                                 individualDiskDataObj[plot_id]['PlotsCompleted'] = (plots_info)
