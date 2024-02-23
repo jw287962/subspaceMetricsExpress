@@ -218,7 +218,7 @@ const guiCliHelper = {
                         //  will add a grouping of all disk data in parsing
                         //  const discData = this.discDataMetrics(data,data?.Performance.MinutesPerSector);
                          dataString += `|${data.Id.padEnd(27)}|${data.Data.DiskSize.toString().padEnd(8)}|`
-                         dataString += `${data.Data.CompletePercent.toString().padEnd(8)}|`
+                         dataString += `${(data.Data.CompletePercent + " %").toString().padEnd(8)}|`
                          dataString += `${data.Data.ETA.padEnd(11)} `;
                          dataString += `|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(10) }|${(data?.Performance.SectorTime || 'N/A').toString().padEnd(10)}`
                          dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(6)}|`
