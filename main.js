@@ -1,5 +1,4 @@
 // server.js
-
 const express = require('express');
 const path = require('path');
 const cors = require('cors')
@@ -16,8 +15,9 @@ const clearLog = config.Clear ;
 // MY JS
 const guiCliHelper = require('./guiCliHelper')
 const parseData = require('./parseData')
-
 const filePath = './data.json';
+
+
 app.use(express.static(__dirname + '/public'))
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -57,10 +57,15 @@ app.get('/api/data', async (req, res) => {
     }
   });
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
-});
 
+app.listen(3000, () => {
+  try{
+
+    console.log('Server running on port 3000');
+  }catch(err){
+    console.log('https err, ', err)
+  }
+});
 
 let timeToRefresh = config.Refresh
 
