@@ -104,8 +104,8 @@ const guiCliHelper = {
      getFarmerTableHeaderOutput: function getTableHeader(){
          try{
              let label =`|${'Disk Id'.padEnd(27)}|${'Size(TB)'.padEnd(8)}|`
-             label += `${'% Comp'.padEnd(8)}|${'ETA(Days)'.padEnd(7)}|`
-             label += `${'Sectors/Hr'.padEnd(8)}|${'Min/Sector'.padEnd(8)}|${'Reward|Miss'.padEnd(8)}|`;
+             label += `${'Complete'.padEnd(8)}|${'ETA(Days)'.padEnd(12)}|`
+             label += `${'Sectors/Hr'.padEnd(8)}|${'Per Sector'.padEnd(8)}|${'Reward|Miss'.padEnd(8)}|`;
              return label;
          }catch(err){
              console.log('getFarmerTableHeaderOutput err ',err)
@@ -175,7 +175,7 @@ const guiCliHelper = {
          outputTelegram +=  `\n   <b>${data.totalPercentComplete}%</b>  Complete \n`
          return outputTelegram
      },
-     dasher: "-------------------------------------------------------------------------------------------",
+     dasher: "----------------------------------------------------------------------------------------------",
      displayData: function displayData(data, dateLastOutput) {
          let outputTelegram = ""
          let nodeString = '';
@@ -219,8 +219,8 @@ const guiCliHelper = {
                         //  const discData = this.discDataMetrics(data,data?.Performance.MinutesPerSector);
                          dataString += `|${data.Id.padEnd(27)}|${data.Data.DiskSize.toString().padEnd(8)}|`
                          dataString += `${data.Data.CompletePercent.toString().padEnd(8)}|`
-                         dataString += `${data.Data.ETA.toString().padEnd(8)} `;
-                         dataString += `|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(10) }|${(data?.Performance.MinutesPerSector || 'N/A').toString().padEnd(10)}`
+                         dataString += `${data.Data.ETA.padEnd(11)} `;
+                         dataString += `|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(10) }|${(data?.Performance.SectorTime || 'N/A').toString().padEnd(10)}`
                          dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(6)}|`
                          dataString += `${(data?.Misses?.Misses != 0 ? `\x1b[31m${(data.Misses.Misses).toString().padEnd(4)}\x1b[39m` : ('0').toString().padEnd(4) || ('0').toString().padEnd(4))}|` 
 

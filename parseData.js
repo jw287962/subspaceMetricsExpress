@@ -381,17 +381,21 @@ const parseData = {
                             switch (unit_type) {
                                 case "seconds":
                                     sectors_per_hour = ((farmer_disk_sector_plot_count * 3600) / farmer_disk_sector_plot_time).toFixed(2);
-                                    minutes_per_sector = (farmer_disk_sector_plot_time / (farmer_disk_sector_plot_count * 60)).toFixed(2);
+                                    sector_time = this.convertSecondsMinutes((farmer_disk_sector_plot_time / (farmer_disk_sector_plot_count)))
+                                    minutes_per_sector =farmer_disk_sector_plot_time / (farmer_disk_sector_plot_count)/60
+                                    console.log(farmer_disk_sector_plot_time,farmer_disk_sector_plot_count)
                                     total_sectors_plot_time_seconds += farmer_disk_sector_plot_time;
                                     break;
                                 case "minutes":
                                     sectors_per_hour = (farmer_disk_sector_plot_count / farmer_disk_sector_plot_time).toFixed(2);
-                                    minutes_per_sector = (farmer_disk_sector_plot_time / farmer_disk_sector_plot_count).toFixed(2);
+                                    sector_time = this.convertSecondsMinutes((farmer_disk_sector_plot_time / farmer_disk_sector_plot_count)*60)
+                                    minutes_per_sector =farmer_disk_sector_plot_time*60 / (farmer_disk_sector_plot_count)
                                     total_sectors_plot_time_seconds += (farmer_disk_sector_plot_time * 60);
                                     break;
                                 case "hours":
                                     sectors_per_hour = (farmer_disk_sector_plot_count / (farmer_disk_sector_plot_time * 60)).toFixed(2);
-                                    minutes_per_sector = ((farmer_disk_sector_plot_time * 60) / farmer_disk_sector_plot_count).toFixed(2);
+                                    sector_time = this.convertSecondsMinutes(((farmer_disk_sector_plot_time * 60*60) / farmer_disk_sector_plot_count))
+                                    minutes_per_sector =farmer_disk_sector_plot_time *60*60 / (farmer_disk_sector_plot_count)
                                     total_sectors_plot_time_seconds += (farmer_disk_sector_plot_time * 3600);
                                     break;
                             }
@@ -404,6 +408,7 @@ const parseData = {
         
                             let disk_sector_perf = {
                                 SectorsPerHour: sectors_per_hour,
+                                SectorTime: sector_time,
                                 MinutesPerSector: minutes_per_sector,
                             };
                                 individualDiskDataObj[farmer_disk_id]['Performance'] = (disk_sector_perf)
@@ -447,8 +452,12 @@ const parseData = {
                 summaryData.TotalRewards += individualDiskDataObj[key].Rewards.Rewards*1
                 summaryData.TotalPlotsRemaining += individualDiskDataObj[key].PlotsRemaining.Sectors*1
                 summaryData.TotalPlotsCompleted += individualDiskDataObj[key].PlotsCompleted.Sectors*1
+
+                // check for NOT PLOTTING
                 if(individualDiskDataObj[key].PlotsRemaining.Sectors == 0){
                     individualDiskDataObj[key].Performance.SectorsPerHour = 0
+                    individualDiskDataObj[key].Performance.MinutesPerSector = "0s"
+
                 }
                 else if(individualDiskDataObj[key].PlotsRemaining.Sectors != 0)
                     summaryData.TotalSectorsPerHour += (individualDiskDataObj[key].Performance.SectorsPerHour*1)
@@ -499,8 +508,7 @@ const parseData = {
     discDataMetrics: function discDataMetrics(farmer){
         
         const DiskSize = (farmer.PlotsCompleted.Sectors*1+1*farmer.PlotsRemaining.Sectors)/1000
-        const CompletePercent = ((farmer.PlotsCompleted.Sectors/10)/farmer?.Performance?.MinutesPerSector).toFixed(2)
-
+        const CompletePercent = (((farmer.PlotsCompleted.Sectors)/(farmer?.PlotsRemaining.Sectors*1+1*farmer.PlotsCompleted.Sectors))*100).toFixed(2)
         const ETA = this.diskPlotETA(farmer.PlotsRemaining.Sectors,farmer?.Performance.MinutesPerSector)
         if(farmer.PlotsRemaining.Sectors == 0){
             return {DiskSize,CompletePercent: 100,ETA: "-"}
@@ -510,7 +518,8 @@ const parseData = {
     diskPlotETA: function diskPlotETA(remaining_sectors,minutes_per_sector_data_disp){
         try{
             if (minutes_per_sector_data_disp !== "-") {
-                let eta = (((parseFloat(minutes_per_sector_data_disp) * 1*remaining_sectors)) / (60*24)).toFixed(2);
+                let eta = this.convertSecondsDays(((parseFloat(minutes_per_sector_data_disp) * 1*remaining_sectors)*60))
+                eta = eta.substring(0,eta.indexOf('M')+1)
                 return eta.toString();
             }}catch(err){
                 console.log('DiskPlotETA err ', err)
