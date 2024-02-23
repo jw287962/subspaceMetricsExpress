@@ -383,7 +383,6 @@ const parseData = {
                                     sectors_per_hour = ((farmer_disk_sector_plot_count * 3600) / farmer_disk_sector_plot_time).toFixed(2);
                                     sector_time = this.convertSecondsMinutes((farmer_disk_sector_plot_time / (farmer_disk_sector_plot_count)))
                                     minutes_per_sector =farmer_disk_sector_plot_time / (farmer_disk_sector_plot_count)/60
-                                    console.log(farmer_disk_sector_plot_time,farmer_disk_sector_plot_count)
                                     total_sectors_plot_time_seconds += farmer_disk_sector_plot_time;
                                     break;
                                 case "minutes":
