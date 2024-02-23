@@ -62,10 +62,10 @@ app.use(cors({
 Data.nodeDisplayData.NodeIp
 
 #### Summary/Overall Data per PC:
-Data.farmerDisplaySector[#].SummaryData
-Data.farmerDisplaySector[#].SummaryData.FarmerIsRunning
-Data.farmerDisplaySector[#].SummaryData.TotalDiskSize
-Data.farmerDisplaySector[#].SummaryData.TotalSectorTime.formattedSectorTime
+- Data.farmerDisplaySector[#].SummaryData
+- Data.farmerDisplaySector[#].SummaryData.FarmerIsRunning
+- Data.farmerDisplaySector[#].SummaryData.TotalDiskSize
+- Data.farmerDisplaySector[#].SummaryData.TotalSectorTime.formattedSectorTime
 #### Individual Disk Data
 Most languages you can loop through Objects. So should be easy to get all the data in one loop for Front End Design...
 Data.farmerDisplaySector[#].IndividualDiskDataObj['DISKID']
