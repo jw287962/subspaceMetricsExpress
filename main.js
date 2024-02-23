@@ -107,6 +107,7 @@ const getAllData = async function () {
               // console.log('metrics', farmerMetricsRaw)
               const parsedFarmerDataArr = parseData.parseMetricsToObj(farmerMetricsRaw);
               const farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr,farmer.address,farmerIsRunning,farmer.name);
+
               farmerDisplaySector.push(farmerSectorPerformance);
             }else if(farmerIsRunning === false){
               statusDownTotal += farmerMetricsRaw + '\n'

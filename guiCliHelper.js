@@ -194,6 +194,7 @@ const guiCliHelper = {
              data.farmerDisplaySector.forEach((farmer,indexxx) => {
                  if(indexxx > 0) outputTelegram += "\n\n"
 
+                //  console.log('farmer',farmer)
                  outputTelegram += farmer.SummaryData.Name
                     currentUser = "Name: \x1b[0m" + outputTelegram || "" ;
                      
