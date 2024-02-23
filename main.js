@@ -115,9 +115,9 @@ const getAllData = async function () {
                 farmerDisplaySector.push(farmerSectorPerformance);
             }
         }
-        console.log(statusDownTotal)
         if(statusDownTotal.length != 0) {
           try {
+            guiCliHelper.guiLogger(statusDownTotal)
             // console.log('status offline')
             parseData.sendTelegramNotification(statusDownTotal)
             // await this.sendTelegramNotification(alertText);

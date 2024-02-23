@@ -21,7 +21,6 @@ const parseData = {
         } catch (error) {
             // console.error('Error Fetching Data | Offline Hostname:', ioUrl);
         }
-        // console.log('response', responseText)
         return responseText;
     },
 
@@ -42,7 +41,6 @@ const parseData = {
             } else {
                 bProcessRunningState = true;
                 respProcessStateArr.push(resp);
-                // console.log(resp)
             }
             respProcessStateArr.push(bProcessRunningState);
             
@@ -222,7 +220,6 @@ const parseData = {
             };
             resp_node_metrics_arr.push(node_metrics);
             // console.log(_resp_node_metrics_arr[0].Peers,_resp_node_metrics_arr[0].Sync)
-            // console.log(_resp_node_metrics_arr)
             return resp_node_metrics_arr;
         }catch(err){
             console.log('getNodeMetrics Error', err)
