@@ -6,3 +6,9 @@ config.json
 node_modules/
 sshLoginAlert.sh
 data.json
+
+
+# SSL certificates and private keys
+*.key
+*.crt
+
