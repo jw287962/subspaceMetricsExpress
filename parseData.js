@@ -348,15 +348,18 @@ const parseData = {
                         Sectors: sectors
                     }
                     if (plot_state.toLowerCase() == "notplotted") {
-                                individualDiskDataObj[plot_id]['PlotsRemaining'] = (plots_info)
+                            individualDiskDataObj[plot_id]['PlotsRemaining'] = (plots_info)
+                            if(individualDiskDataObj[plot_id].PlotsRemaining.Sectors == 0 ){
+                                console.log(individualDiskDataObj[plot_id].PlotsRemaining.Sectors)
+                                
                                 summaryData.TotalDisks.Plotting--;
                                 summaryData.TotalDisks.FinishedPlotting++;
-
-
-                        
+        
+                            }
                     } else if (plot_state.toLowerCase() === "plotted") {
                                 individualDiskDataObj[plot_id]['PlotsCompleted'] = (plots_info)
                     }
+                    
                 } else if (metrics_obj.Name.indexOf("_farmer_auditing_time_seconds_count") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
                     uptime_seconds = metrics_obj.Value;
                     unique_farm_id = metrics_obj.Instance;
