@@ -395,7 +395,6 @@ const parseData = {
                                     total_sectors_plot_time_seconds += (farmer_disk_sector_plot_time * 3600);
                                     break;
                             }
-                            // total_disk_per_farmer += 1;
                             summaryData.TotalDisks.Total += 1
                             summaryData.TotalDisks.Plotting+=1
         
@@ -438,8 +437,8 @@ const parseData = {
                 summaryData.Uptime.FormattedTime=this.convertSecondsDays(uptime_seconds)
 
         }
-            summaryData.TotalDisks = total_disk_per_farmer
-            for(key in individualDiskDataObj){
+        // Calculate SummaryData for some metrics
+        for(key in individualDiskDataObj){
 
                 individualDiskDataObj[key]["Data"] = this.discDataMetrics(individualDiskDataObj[key])
                 if(!individualDiskDataObj[key].Misses){
