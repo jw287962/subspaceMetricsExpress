@@ -63,7 +63,8 @@ app.get('/api/refresh', async (req , res) => {
       const jsonData = await readJsonData();
       res.render('index', { 
         nodeDisplayData: jsonData.nodeDisplayData, 
-        farmerDisplaySector: jsonData.farmerDisplaySector 
+        farmerDisplaySector: jsonData.farmerDisplaySector,
+        walletBalance: jsonData.walletBalance
       });
     } catch (error) {
       res.status(500).json({ error: 'Internal server error' });

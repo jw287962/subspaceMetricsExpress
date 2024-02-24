@@ -23,6 +23,7 @@ html(lang="en")
         div.center.header
           h3.center Name: #{pc.SummaryData.Name}
           h3 Hostname: #{pc.SummaryData.FarmerIp}
+          h3 Bal: #{walletBalance}
         div.line1
             p Status: ✔ #{pc.SummaryData.Uptime.FormattedTime}
         div.line2
@@ -55,7 +56,7 @@ html(lang="en")
                   td= ind.Data.CompletePercent 
                   td= ind.Data.ETA
                   td= ind.Performance.SectorsPerHour 
-                  td= ind.Performance.MinutesPerSector 
+                  td= ind.Performance.SectorTime
                   td= ind.Rewards.Rewards
                   td= ind.Misses.Misses
 
