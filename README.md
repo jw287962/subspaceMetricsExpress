@@ -32,7 +32,9 @@ Created Personal Metric calcuations for:
  - /api/refresh --> REFERSH & returns NEW JSON DATA
 
   
-
+Need WebUI Improvements:
+- Dynamic Viewport for mobile
+- Improved design... will spend some time making it better when i have time 
 
 # subspaceMetricsExpress
 

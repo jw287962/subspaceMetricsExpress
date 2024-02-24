@@ -10,11 +10,16 @@ html(lang="en")
     h1 Node Status
 
     if nodeDisplayData
-      .node-status
-        p Node Status: Running
-        p Hostname: #{nodeDisplayData.nodeIp}
-        p Synced: #{nodeDisplayData.nodeSyncState ? 'Yes' : 'No'}
-        p Peers: #{nodeDisplayData.nodePeersConnected}
+      .node-status.center.header
+        h3#blue Node Status: 
+          div(id=nodeDisplayData.nodeIsRunningOk ? 'green' : 'red') 
+            | #{nodeDisplayData.nodeIsRunningOk ? '✔': '✘'}
+          div#black #{nodeDisplayData.nodeIp}
+        h3#blue  Synced: 
+          div#black #{nodeDisplayData.nodeSyncState ? 'Yes' : 'No'}
+        h3  Peers: #{nodeDisplayData.nodePeersConnected}
+        h3#orange Tssc Bal: #{walletBalance}
+
 
     hr
 
@@ -23,9 +28,8 @@ html(lang="en")
         div.center.header
           h3.center Name: #{pc.SummaryData.Name}
           h3 Hostname: #{pc.SummaryData.FarmerIp}
-          h3 Bal: #{walletBalance}
         div.line1
-            p Status: ✔ #{pc.SummaryData.Uptime.FormattedTime}
+            p(id=pc.SummaryData.FarmerIsRunning ? 'green' : 'red') Status: ✔ #{pc.SummaryData.Uptime.FormattedTime}
         div.line2
           div.row
             p  Sector Time: #{pc.SummaryData.TotalSectorTime.formattedSectorTime} 
