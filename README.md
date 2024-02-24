@@ -80,11 +80,16 @@ Data.farmerDisplaySector[#].IndividualDiskDataObj['DISKID']
 .PlotsCompleted
 .PlotsRemaining
 
+
+### balance
+walletBalance for balance
+
 ### Example Object
 
 Example Data:
 ```
 {
+  "walletBalance": 10,
   "nodeDisplayData": {
     "nodeSyncState": "0",
     "nodePeersConnected": "9",
