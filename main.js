@@ -48,6 +48,16 @@ app.get('/api/data', async (req, res) => {
   }
   });
 
+app.get('/api/refresh', async (req , res) => {
+    try{
+      await getAllData()
+      const jsonData = await readJsonData();
+      res.json(jsonData);
+    }catch(err){
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
   app.get('/', async (req, res) => {
     try {
       const jsonData = await readJsonData();

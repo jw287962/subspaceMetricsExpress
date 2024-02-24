@@ -10,7 +10,7 @@ let timeToRefresh = config.Refresh
 
 
 
-
+let timerExists = false;
 
 const guiCliHelper = {
     guiLogger: function guiLogger(message) {
@@ -268,12 +268,15 @@ const guiCliHelper = {
              // 1000 milliseconds = 1 second
              this.guiLogger((`\x1b[93m Last saved to: ${filePath} \x1b[92m ${dateLastOutput.format('YYYY-MM-DD HH:mm:ss')} \x1b[0m  \n` ));
  
-
- 
-             setTimeout(() => {
+             let timer
+           
+           timer = setTimeout(() => {
+            if (timerExists){
+                clearInterval(timerExists)
+            }
              this.countdownToRefresh();
              }, 2000); 
- 
+            
          }catch(error){
                  console.log('error displayData',error);
          }
@@ -313,7 +316,7 @@ const guiCliHelper = {
                  process.stdout.cursorTo(0);
                  process.stdout.write(` ${loader} Refreshing in ${timeToRefresh} seconds`);
                  
-                 setTimeout(() => this.countdownToRefresh(), 1000); // Update countdown every second
+                 timerExists = setTimeout(() => this.countdownToRefresh(), 1000); // Update countdown every second
              }
         }catch(err){
             console.log('countDownToRefersh error ', err)
