@@ -10,9 +10,10 @@
   "Names": [
 	"name1",
 	"name2",
-	"name3", 
-  ]
+	"name3"
+  ],
   "Enable_API": "No",
-  "API_host": "0.0.0.0:0"
+  "API_host": "0.0.0.0:0",
+  "Address": ""
 }
 

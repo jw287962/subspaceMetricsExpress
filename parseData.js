@@ -1,7 +1,37 @@
 
 const axios = require('axios')
 const config = require('./config.json')
+const clear = require('console-clear')
 
+
+// POLKADOT
+const { ApiPromise, WsProvider } = require('@polkadot/api');
+const wsProvider = new WsProvider('ws://192.168.1.91:9945');
+
+const nodeSubstrate = {
+    fetchWalletbalance: async function fetchWalletbalance(){
+        try{
+          
+            const api =  await this.createAPI()
+            
+            const ADDR = config.Address;
+            const {  data: balance } = await api.query.system.account(ADDR);
+
+            return (balance.free/1000000000000000000).toFixed(1)
+        }catch(err){
+            console.log("error, fetchWallet", err)
+        }
+    },
+    createAPI: async function createAPI(){
+        const savedConsoleOutput = console.log.toString();
+        // console.log = function() {};
+        
+        const api = await ApiPromise.create({ provider: wsProvider });
+        clear()
+       return api
+    }
+
+}
 // PARSES DATA TO BE USED BY MAIN 
 const parseData = {
     pingMetricsUrl:  async function pingMetricsUrl(ioUrl) {
@@ -181,7 +211,8 @@ const parseData = {
     }
     ,
 
-    getNodeMetrics: function getNodeMetrics(io_node_metrics_arr) {
+    getNodeMetrics: async function getNodeMetrics(io_node_metrics_arr) {
+   
         try{
             let resp_node_metrics_arr = [];
     
@@ -219,7 +250,6 @@ const parseData = {
                 Peers: node_peers_obj
             };
             resp_node_metrics_arr.push(node_metrics);
-            // console.log(_resp_node_metrics_arr[0].Peers,_resp_node_metrics_arr[0].Sync)
             return resp_node_metrics_arr;
         }catch(err){
             console.log('getNodeMetrics Error', err)
@@ -289,7 +319,10 @@ const parseData = {
      },
     
     getDiskSectorPerformance: function GetDiskSectorPerformance(io_farmer_metrics_arr = [], farmerIp,farmerIsRunning,farmerName) {
+        
+      
     try{
+            
         const individualDiskDataObj = { };
     
         let unit_type = "";
@@ -301,7 +334,6 @@ const parseData = {
         let farmer_disk_sector_plot_time = 0.00;
         let farmer_disk_sector_plot_count = 0;
     
-       
         const summaryData = {
             Id: "Overall",
             Name: farmerName,
@@ -523,4 +555,4 @@ const parseData = {
 
 };
 
-module.exports = parseData;
+module.exports = {parseData, nodeSubstrate};

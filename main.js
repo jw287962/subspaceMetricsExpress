@@ -14,7 +14,7 @@ const clearLog = config.Clear ;
 
 // MY JS
 const guiCliHelper = require('./guiCliHelper')
-const parseData = require('./parseData')
+const {parseData,nodeSubstrate} = require('./parseData')
 const filePath = './data.json';
 
 
@@ -36,6 +36,9 @@ async function readJsonData() {
     throw error; // Re-throw the error to handle it in the route handlers
   }
 }
+
+
+
 app.get('/api/data', async (req, res) => {
   try {
     const jsonData = await readJsonData();
@@ -73,21 +76,26 @@ let timeToRefresh = config.Refresh
 
 // MAIN FUNCTION
 const getAllData = async function () {
-   
+        let balance = 0;
+        try{
+            balance = await nodeSubstrate.fetchWalletbalance();
+        }
+        catch(err){
+            console.log('fetch balalnce err', err)
+        }
     try {
         
         let nodeProcessArr = await parseData.getProcessState("node", config.Node, config.Node);
-        // console.log('test',nodeProcessArr) this sends the metrics base data
 
 
         const nodeIsRunningOk = nodeProcessArr[1];
-        // console.log(nodeIsRunningOk) IS BOOLEAN
         const nodeMetricsRaw = nodeProcessArr[0];
         let nodeDisplayData
         if(nodeIsRunningOk === true){
-            const parsedNodeDataArr = parseData.parseMetricsToObj(nodeMetricsRaw);
-            const nodeMetricsArr = parseData.getNodeMetrics(parsedNodeDataArr);
+            const parsedNodeDataArr = await parseData.parseMetricsToObj(nodeMetricsRaw);
+            const nodeMetricsArr = await parseData.getNodeMetrics(parsedNodeDataArr);
              nodeDisplayData = guiCliHelper.getNodeDisplayData(nodeMetricsArr, nodeIsRunningOk,config.Node);
+
     
         }else{
             nodeDisplayData = guiCliHelper.getNodeDisplayData()
@@ -134,7 +142,7 @@ const getAllData = async function () {
         const currentDate = moment();
 
         // FILE OUTPUT
-        const displayData = { nodeDisplayData, farmerDisplaySector}
+        const displayData = { nodeDisplayData, farmerDisplaySector, walletBalance: balance}
         const jsonData = JSON.stringify(displayData);
         fs.writeFileSync(filePath, jsonData);
 
@@ -162,6 +170,8 @@ getAllData()
 refreshInterval = setInterval(() =>{
       if(clearLog) clear();
         process.stdout.clearLine()
+        console.log('Server running on port 3000');
+
         getAllData()
      }, (config.Refresh+1)*1000)
 

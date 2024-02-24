@@ -1,6 +1,6 @@
 
 const moment = require('moment');
-const parseData = require('./parseData')
+const {parseData} = require('./parseData')
 const config = require('./config.json')
 
 
@@ -175,18 +175,29 @@ const guiCliHelper = {
          outputTelegram +=  `\n   <b>${data.totalPercentComplete}%</b>  Complete \n`
          return outputTelegram
      },
+     displayNodeStatus: function displayNodeStatus(data){
+        try{
+
+            let nodeString = ""
+            nodeString += `\x1b[96mNode Status: ${data.nodeDisplayData.nodeIsRunningOk === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'}, `;
+            nodeString += `\x1b[96mHostname: \x1b[93m${data.nodeDisplayData.nodeIp}, \x1b[0m`;
+            nodeString += `\x1b[96mSynced: ${data.nodeDisplayData.nodeSyncState === '0' ? '\x1b[92mYes\x1b[0m' : '\x1b[31mNo\x1b[0m'}, `;
+            nodeString += `\x1b[96mPeers: \x1b[93m${data.nodeDisplayData.nodePeersConnected},\x1b[0m `;
+            nodeString += `Balance:${data.walletBalance}`
+
+            return nodeString
+        }catch(err){
+            console.log("Node Status Update Err ", err)
+        }
+     },
+
      dasher: "----------------------------------------------------------------------------------------------",
      displayData: function displayData(data, dateLastOutput) {
-         let outputTelegram = ""
-         let nodeString = '';
- 
+         let outputTelegram = 'Balance:' + data.walletBalance + '\n'
          let dasher= this.dasher;
-     
-         nodeString += `\x1b[96mNode Status: ${data.nodeDisplayData.nodeIsRunningOk === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'}, `;
-         nodeString += `\x1b[96mHostname: \x1b[93m${data.nodeDisplayData.nodeIp}, \x1b[0m`;
-         nodeString += `\x1b[96mSynced: ${data.nodeDisplayData.nodeSyncState === '0' ? '\x1b[92mYes\x1b[0m' : '\x1b[31mNo\x1b[0m'}, `;
-         nodeString += `\x1b[96mPeers: \x1b[93m${data.nodeDisplayData.nodePeersConnected},\x1b[0m`;
-         this.guiLogger(nodeString);
+        
+         
+         this.guiLogger(this.displayNodeStatus(data));
          try{
 
             // console.log(data.farmerDisplaySector[0])
