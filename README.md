@@ -18,13 +18,18 @@ Created Personal Metric calcuations for:
  - Per Disk
   -- % Complete
   -- ETA
+ 
   
  Features:
 - Telegram Updates
+- NEW: TSSC Balance
 - CLI GUI Support (based on irbujam's design as well) 
 	- added new metrics as stated above
+- WEB UI HOSTED ON PORT 3000 (BASIC)
 
- 
+ API:
+ - /api/data --> Returns JSON DATA (does not refresh data.json 
+ - /api/refresh --> REFERSH & returns NEW JSON DATA
 
   
 
