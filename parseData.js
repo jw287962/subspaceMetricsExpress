@@ -295,6 +295,7 @@ const parseData = {
                 Performance: {
                     SectorsPerHour: 0,
                     MinutesPerSector: 0,
+                    SectorTime: 0,
                 },
                 PlotsRemaining: {
                     PlotState: "N/A",
@@ -423,7 +424,7 @@ const parseData = {
                                 case "hours":
                                     sectors_per_hour = (farmer_disk_sector_plot_count / (farmer_disk_sector_plot_time * 60)).toFixed(2);
                                     sector_time = this.convertSecondsMinutes(((farmer_disk_sector_plot_time * 60*60) / farmer_disk_sector_plot_count))
-                                    minutes_per_sector =farmer_disk_sector_plot_time *60*60 / (farmer_disk_sector_plot_count)
+                                    minutes_per_sector =farmer_disk_sector_plot_time *60*60 / (farmer_disk_sector_plot_count).toFixed(2)
                                     total_sectors_plot_time_seconds += (farmer_disk_sector_plot_time * 3600);
                                     break;
                             }
