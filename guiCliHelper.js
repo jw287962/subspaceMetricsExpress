@@ -172,7 +172,7 @@ const guiCliHelper = {
          outputTelegram += `\n   <b>${data.totalSectorTime}</b> Sector Time, `		
          outputTelegram += `\n   <b>${data.sectorHr}</b> Sectors Total, `
          outputTelegram += `\n   <b>${data.rewards}</b> Total Rewards`
-         outputTelegram +=  `\n   <b>${data.totalPercentComplete}%</b>  Complete \n`
+         outputTelegram +=  `\n   <b>${data.totalPercentComplete}%</b> Complete\n <b>${data.totalETA}</b> ETA\n`
          return outputTelegram
      },
      displayNodeStatus: function displayNodeStatus(data){
@@ -193,7 +193,7 @@ const guiCliHelper = {
 
      dasher: "----------------------------------------------------------------------------------------------",
      displayData: function displayData(data, dateLastOutput) {
-         let outputTelegram = 'Balance:' + data.walletBalance + '\n'
+         let outputTelegram = '<b>Balance:</b>' + data.walletBalance + '\n'
          let dasher= this.dasher;
         
          
