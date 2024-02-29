@@ -25,7 +25,7 @@
   .node-status>h3>div{
     margin: 0px 5px;
   }
-  .farmer-details,   .node-status{
+  .farmer-details,  .node-status{
     border: 1px solid lightgrey;
     margin: 4px;
   }
@@ -64,20 +64,20 @@ padding: 2px;
     justify-content: center;
     width: 100%;
   }
-  .line2>.row>p{
+  .line2 > .row > p{
     padding: 0px 10px;
-    border-right:black 2px solid;
     margin: 0px;
+  }
+  .line2>.row>.border{
+    border-right: 2px solid black;
 
   }
 
-
   .tablediv{
-    display: flex;
-    flex-direction: column;
     align-items: center;
     width: 100%;
     padding: 0px;
+    overflow: scroll;
   }
   table { 
 
@@ -103,7 +103,7 @@ padding: 2px;
     background-color: #ddd;
   }
   
-  .Disk-Id, .Size, .Percent-Complete, .ETA, .Sectors-Hr, .Min-Sector, .Reward, .Miss {
+  .disk-Id, .Size, .Percent-Complete, .ETA, .Sectors-Hr, .Min-Sector, .Reward, .Miss {
     text-align: center;
   }
   .Disk-Id{
@@ -133,4 +133,31 @@ padding: 2px;
 
 #orange{
   color: rgb(0, 0, 0);
+}
+
+
+
+@media (max-width: 600px) {
+  body{
+    /* width: 90%; */
+  }
+
+  .node-status,.farmer-details{
+    width: 99%;
+    overflow: scroll;
+  }
+
+  .disk-id{
+    max-width: 100px;
+    overflow:scroll;
+  }
+  .tablediv{
+  }
+  .tablediv>table{
+    width: 100%;
+  }
+  .line2>.row{
+    overflow-x: auto;
+    width: 100%;
+  }
 }

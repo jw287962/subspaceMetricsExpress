@@ -234,7 +234,6 @@ const guiCliHelper = {
                          dataString += `|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(10) }|${(data?.Performance.SectorTime || 'N/A').toString().padEnd(10)}`
                          dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(6)}|`
                          dataString += `${(data?.Misses?.Misses != 0 ? `\x1b[31m${(data.Misses.Misses).toString().padEnd(4)}\x1b[39m` : ('0').toString().padEnd(4) || ('0').toString().padEnd(4))}|` 
-
                          this.guiLogger(dataString)
                      }
 

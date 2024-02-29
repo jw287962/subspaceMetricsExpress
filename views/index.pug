@@ -32,35 +32,39 @@ html(lang="en")
             p(id=pc.SummaryData.FarmerIsRunning ? 'green' : 'red') Status: ✔ #{pc.SummaryData.Uptime.FormattedTime}
         div.line2
           div.row
-            p  Sector Time: #{pc.SummaryData.TotalSectorTime.formattedSectorTime} 
-            p #{pc.SummaryData.TotalSectorsPerHour.toFixed(2)} Sectors per Hr |
-            p Rewards: #{pc.SummaryData.TotalRewards} total, 
-            p #{pc.SummaryData.TotalRewardsPerHour} per Hr,
+            p.border Sector Time: #{pc.SummaryData.TotalSectorTime.formattedSectorTime} 
+            p #{pc.SummaryData.TotalSectorsPerHour.toFixed(2)} Sectors per Hr
+          div.row
+            p.border Rewards: #{pc.SummaryData.TotalRewards} total
+            p.border #{pc.SummaryData.TotalRewardsPerHour} per Hr
             p #{(pc.SummaryData.TotalRewardsPerHour * 24).toFixed(2)} per Day
           div.row
-            p Remain: #{pc.SummaryData.TotalETA}
+            p.border Remain: #{pc.SummaryData.TotalETA}
             p #{pc.SummaryData.TotalPercentComplete}% Complete 
-            p #{pc.SummaryData.TotalDiskSize}TiB 
+          div.row
+            p Size: #{pc.SummaryData.TotalDiskSize}TiB 
         div.tablediv
           table
             thead
               tr
-                th.Disk-Id Disk Id
+                th.disk-Id Disk Id
                 th.Size Size(TB)
                 th.Percent-Complete % Comp
                 th.ETA ETA(Days)
                 th.Sectors-Hr Sectors/Hr
                 th.Min-Sector Min/Sector
+                th.Expired Expired
                 th.Reward Reward
                 th.Miss Miss
               each ind in pc.IndividualDiskDataObj
                 tr  
-                  td= ind.Id
+                  td.disk-id #{ind.Id}
                   td= ind.Data.DiskSize 
                   td= ind.Data.CompletePercent 
                   td= ind.Data.ETA
                   td= ind.Performance.SectorsPerHour 
                   td= ind.Performance.SectorTime
+                  td= ind.Expired.Sectors
                   td= ind.Rewards.Rewards
                   td= ind.Misses.Misses
 

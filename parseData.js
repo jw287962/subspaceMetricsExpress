@@ -288,7 +288,7 @@ const parseData = {
         
      },
      
-     setUpIndividualObj: function setUpIndividualObj(plot_id,individualDiskDataObj){
+     setUpIndividualObj: function setUpIndividualObj(plot_id){
             return {
                 Id: plot_id,
                 Rewards: { Rewards: 0},
@@ -304,6 +304,10 @@ const parseData = {
                 PlotsCompleted: {
                     PlotState: "N/A",
                     Sectors: "0"
+                },
+                Expired: {
+                    Sectors: 0,
+                    PlotState: "N/A"
                 },
                 Data:{
                     DiskSize: 0,
@@ -388,16 +392,18 @@ const parseData = {
                             }
                     } else if (plot_state.toLowerCase() === "plotted") {
                                 individualDiskDataObj[plot_id]['PlotsCompleted'] = (plots_info)
+                    }else if(plot_state.toLowerCase() === 'expired'){
+                        individualDiskDataObj[plot_id]['Expired'] = (plots_info)
                     }
                     
                 } else if (metrics_obj.Name.indexOf("_farmer_auditing_time_seconds_count") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
                     uptime_seconds = metrics_obj.Value;
                     unique_farm_id = metrics_obj.Instance;
                     if(unique_farm_id && !individualDiskDataObj[unique_farm_id]){
-                        individualDiskDataObj[unique_farm_id] = this.setUpIndividualObj(unique_farm_id,individualDiskDataObj)
+                        individualDiskDataObj[unique_farm_id] = this.setUpIndividualObj(unique_farm_id)
                         }
 
-                } else if (metrics_obj.Name.indexOf("_farmer_sector_plotting_time_seconds") >= 0) {
+                }else if (metrics_obj.Name.indexOf("_farmer_sector_plotting_time_seconds") >= 0) {
                         if (metrics_obj.Id.toLowerCase().indexOf("unit") >= 0 || metrics_obj.Id.toLowerCase().indexOf("type") >= 0) {
                             unit_type = metrics_obj.Value.toLowerCase();
                             farmer_disk_id = "";
