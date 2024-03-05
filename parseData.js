@@ -323,6 +323,19 @@ const parseData = {
             }
         
      },
+
+     initializeDiskID: function initializeDiskID(metrics_obj,individualDiskDataObj){
+        const unique_farm_id = metrics_obj.Instance
+        if(metrics_obj && (metrics_obj.Name.includes('libp2p'))){
+            return;
+        }else if(unique_farm_id && (unique_farm_id.includes('farm_id') || unique_farm_id.includes(','))){
+            return
+        }else
+        if(unique_farm_id && !individualDiskDataObj[unique_farm_id]){
+
+             individualDiskDataObj[unique_farm_id] = this.setUpIndividualObj(unique_farm_id)
+            }
+     },
     
     getDiskSectorPerformance: function GetDiskSectorPerformance(io_farmer_metrics_arr = [], farmerIp,farmerIsRunning,farmerName) {
         
@@ -376,6 +389,7 @@ const parseData = {
                 let farmer_disk_proving_misses_count
                 let unique_farm_id
                 let farmer_disk_proving_success_count
+                this.initializeDiskID(metrics_obj,individualDiskDataObj)
                 if (metrics_obj.Name.indexOf("_farmer_sectors_total_sectors") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
                     const plot_id = ((metrics_obj.Instance?.split(","))[0]);
                     const plot_state = metrics_obj.Criteria.trim().split('"')[1];
@@ -396,14 +410,15 @@ const parseData = {
                         individualDiskDataObj[plot_id]['Expired'] = (plots_info)
                     }
                     
-                } else if (metrics_obj.Name.indexOf("_farmer_auditing_time_seconds_count") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
+                }
+                 else if (metrics_obj.Name.indexOf("_farmer_auditing_time_seconds_count") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
                     uptime_seconds = metrics_obj.Value;
-                    unique_farm_id = metrics_obj.Instance;
-                    if(unique_farm_id && !individualDiskDataObj[unique_farm_id]){
-                        individualDiskDataObj[unique_farm_id] = this.setUpIndividualObj(unique_farm_id)
-                        }
-
-                }else if (metrics_obj.Name.indexOf("_farmer_sector_plotting_time_seconds") >= 0) {
+                    // this.initializeDiskID(unique_farm_id,individualDiskDataObj)
+                    // if(unique_farm_id && !individualDiskDataObj[unique_farm_id]){
+                    //     individualDiskDataObj[unique_farm_id] = this.setUpIndividualObj(unique_farm_id)
+                    //     }
+                }
+                else if (metrics_obj.Name.indexOf("_farmer_sector_plotting_time_seconds") >= 0) {
                         if (metrics_obj.Id.toLowerCase().indexOf("unit") >= 0 || metrics_obj.Id.toLowerCase().indexOf("type") >= 0) {
                             unit_type = metrics_obj.Value.toLowerCase();
                             farmer_disk_id = "";
@@ -448,8 +463,10 @@ const parseData = {
                                 individualDiskDataObj[farmer_disk_id]['Performance'] = (disk_sector_perf)
                         }
                     }
-                } else if (metrics_obj.Name.indexOf("_farmer_sector_plotted_counter_sectors_total") >= 0) {
-                } else if (metrics_obj.Name.indexOf("_farmer_proving_time_seconds") >= 0) {
+                }
+                // else if (metrics_obj.Name.indexOf("_farmer_sector_plotted_counter_sectors_total") >= 0) {
+                // } 
+                else if (metrics_obj.Name.indexOf("_farmer_proving_time_seconds") >= 0) {
       
                     if (metrics_obj.Id.toLowerCase().indexOf("unit") >= 0 || metrics_obj.Id.toLowerCase().indexOf("type") >= 0) {
                         farmer_disk_id_rewards = "";
