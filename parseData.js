@@ -23,7 +23,7 @@ const nodeSubstrate = {
         }
     },
     createAPI: async function createAPI(){
-        const savedConsoleOutput = console.log.toString();
+        // const savedConsoleOutput = console.log.toString();
         // console.log = function() {};
         
         const api = await ApiPromise.create({ provider: wsProvider });
@@ -200,9 +200,10 @@ const parseData = {
             });
 
             if (response.status === 200) {
-                console.log(`Telegram Request was successful: Code ${response.status}`)
+                return `Telegram Request was successful: Code ${response.status}`
             } else {
                 console.log(`Telegram Request failed: ${response}`)
+                return `Telegram Request failed: ${response}`
             }
 
         } catch (error) {
@@ -327,7 +328,6 @@ const parseData = {
         
       
     try{
-            
         const individualDiskDataObj = { };
     
         let unit_type = "";
@@ -476,6 +476,8 @@ const parseData = {
                 summaryData.Uptime.FormattedTime=this.convertSecondsDays(uptime_seconds)
 
         }
+
+
         // Calculate SummaryData for some metrics
         for(key in individualDiskDataObj){
 
@@ -519,7 +521,6 @@ const parseData = {
 
             const allData = {SummaryData: summaryData}
             allData['IndividualDiskDataObj'] = individualDiskDataObj;
-
 
             return allData
             // return disk_metrics

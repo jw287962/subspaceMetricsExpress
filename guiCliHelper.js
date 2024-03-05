@@ -240,7 +240,6 @@ const guiCliHelper = {
                     }else{
                         
                     }
-                // }
              })
             
 
@@ -254,7 +253,7 @@ const guiCliHelper = {
                 }else{
                  gitVersion = `${data[0]} ${data[1]}`;
                 }
-                this.guiLogger(`\x1b[1m${gitVersion} \n\x1b[0m`);
+                this.guiLogger(`Version: \x1b[1m${gitVersion} \n\x1b[0m`);
 
                 outputTelegram += `Released: ${data[0]}`
                 parseData.sendTelegramNotification(outputTelegram)
@@ -265,7 +264,7 @@ const guiCliHelper = {
             
             
              // 1000 milliseconds = 1 second
-             this.guiLogger((`\x1b[93m Last saved to: ${filePath} \x1b[92m ${dateLastOutput.format('YYYY-MM-DD HH:mm:ss')} \x1b[0m  \n` ));
+             this.guiLogger((`\x1b[93m Last saved to: ${filePath} \x1b[92m ${dateLastOutput.format('YYYY-MM-DD HH:mm:ss')} \x1b[0m ` ));
  
              let timer
            
