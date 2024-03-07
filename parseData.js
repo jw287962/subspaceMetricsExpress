@@ -316,8 +316,11 @@ const parseData = {
                     ETA: "N/A"
                 },
                 Misses: {
-                    Misses: 0
+                    Misses: 0,
+                    Rejected: 0,
+                    Total: 0,
                 }
+
                 
 
             }
@@ -480,7 +483,14 @@ const parseData = {
                         // }
                         } else if (metrics_obj.Criteria.toLowerCase().indexOf("timeout") >= 0) {
                             farmer_disk_proving_misses_count = parseInt(metrics_obj.Value);
-                            individualDiskDataObj[farmer_disk_id_rewards]['Misses'] = { Misses:farmer_disk_proving_misses_count}
+                            individualDiskDataObj[farmer_disk_id_rewards]['Misses'].Misses = farmer_disk_proving_misses_count
+                            individualDiskDataObj[farmer_disk_id_rewards]['Misses']['Total'] += farmer_disk_proving_misses_count*1
+                        }
+                        else if (metrics_obj.Criteria.toLowerCase().indexOf("rejected") >= 0) {
+                            farmer_disk_proving_misses_count = parseInt(metrics_obj.Value);
+                            individualDiskDataObj[farmer_disk_id_rewards]['Misses'].Rejected = farmer_disk_proving_misses_count
+                            individualDiskDataObj[farmer_disk_id_rewards]['Misses']['Total'] += farmer_disk_proving_misses_count*1
+                        
                         }
                                 total_rewards_per_farmer += farmer_disk_proving_success_count;
                             farmer_disk_proving_success_count = 0;
