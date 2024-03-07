@@ -153,7 +153,9 @@ Example Data:
             "ETA": "3D 19H 19M"
           },
           "Misses": {
-            "Misses": 0
+            "Misses": 0,
+            "Total": 0,
+            "Rejected": 0
           }
         },
         "01HPCK9QEKPXBXW85M68SEH27S": {
@@ -207,7 +209,9 @@ Example Data:
             "ETA": "3D 19H 27M"
           },
           "Misses": {
-            "Misses": 0
+            "Misses": 0,
+            "Total": 0,
+            "Rejected": 0
           }
         },
         "01HPCK9RAH1V6E61NRY4NP3EHH": {
@@ -234,7 +238,9 @@ Example Data:
             "ETA": "3D 18H 34M"
           },
           "Misses": {
-            "Misses": 0
+           "Misses": 0,
+            "Total": 0,
+            "Rejected": 0
           }
         }
       }
@@ -293,7 +299,9 @@ Example Data:
             "ETA": "10D 0H 42M"
           },
           "Misses": {
-            "Misses": 0
+            "Misses": 0,
+            "Total": 0,
+            "Rejected": 0
           }
         },
         "01HNK443JWGNNSHNHWYT2ANDVR": {
@@ -320,7 +328,9 @@ Example Data:
             "ETA": "-"
           },
           "Misses": {
-            "Misses": 0
+            "Misses": 0,
+            "Total": 0,
+            "Rejected": 0
           }
         },
         "01HPKJJGJ0P4BEHRW4T9S9ADEP": {
@@ -347,7 +357,9 @@ Example Data:
             "ETA": "10D 2H 53M"
           },
           "Misses": {
-            "Misses": 0
+            "Misses": 0,
+            "Total": 0,
+            "Rejected": 0
           }
         }
       }
@@ -406,7 +418,9 @@ Example Data:
             "ETA": "-"
           },
           "Misses": {
-            "Misses": 1
+            "Misses": 1,
+            "Total": 0,
+            "Rejected": 0
           }
         }
       }
