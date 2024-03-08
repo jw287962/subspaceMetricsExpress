@@ -22,6 +22,8 @@ app.use(express.static(__dirname + '/public'))
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+
+let refreshInterval;
 app.use(cors({
     origin: 'http://localhost:5173'
   }));
@@ -50,13 +52,13 @@ app.get('/api/data', async (req, res) => {
 
 app.get('/api/refresh', async (req , res) => {
     try{
-      await getAllData()
-      const jsonData = await readJsonData();
-      res.json(jsonData);
+      res.json(refreshMetricsData());
     }catch(err){
       res.status(500).json({ error: 'Internal server error' });
     }
   });
+
+
 
   app.get('/', async (req, res) => {
     try {
@@ -64,7 +66,8 @@ app.get('/api/refresh', async (req , res) => {
       res.render('index', { 
         nodeDisplayData: jsonData.nodeDisplayData, 
         farmerDisplaySector: jsonData.farmerDisplaySector,
-        walletBalance: jsonData.walletBalance
+        walletBalance: jsonData.walletBalance,
+        updateStatus: ''
       });
     } catch (error) {
       res.status(500).json({ error: 'Internal server error' });
@@ -81,9 +84,18 @@ app.listen(3000, () => {
   }
 });
 
-let timeToRefresh = config.Refresh
+// let timeToRefresh = config.Refresh
 
-
+  // refreshData & refreshIntervalTimer
+  async function refreshMetricsData(){
+    refreshInterval.reset()
+      // refreshInterval = setInterval(refreshInterval,)
+    await getAllData()
+      const jsonData = await readJsonData();
+      
+        return jsonData
+    
+  }
 
 // MAIN FUNCTION
 const getAllData = async function () {
@@ -177,14 +189,34 @@ const getAllData = async function () {
 // MAIN FUNCTION: GETALLDATA
 if(clearLog) clear();
 getAllData()
-    // Call getAllData immediately
-refreshInterval = setInterval(() =>{
-      if(clearLog) clear();
-        process.stdout.clearLine()
-        console.log('Server running on port 3000');
+//     // Call getAllData immediately
+// function intervalRefresherFunction(){
+//   if(clearLog) clear();
+//   process.stdout.clearLine()
+//   // console.log('Server running on port 3000');
+//   getAllData()
+// }
+refreshInterval = new refreshMetricsObject()
+function refreshMetricsObject(){
 
-        getAllData()
-     }, (config.Refresh+1)*1000)
+  function intervalRefresherFunction(){
+    if(clearLog) clear();
+    process.stdout.clearLine()
+    // console.log('Server running on port 3000');
+    getAllData()
+  } 
+  let refreshInterval = setInterval(intervalRefresherFunction, (config.Refresh+1)*1000);
+
+ 
+  this.reset = function(){
+    clearInterval(refreshInterval);
+    
+    refreshInterval = setInterval(intervalRefresherFunction, (config.Refresh+1)*1000);
+
+  }
+
+
+}
 
 
 // Call getAllData at intervals defined by config.Refresh (in seconds)

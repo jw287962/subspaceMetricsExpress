@@ -271,6 +271,7 @@ const guiCliHelper = {
            timer = setTimeout(() => {
             if (timerExists){
                 clearInterval(timerExists)
+                timeToRefresh = config.Refresh
             }
              this.countdownToRefresh();
              }, 2000); 
@@ -319,6 +320,8 @@ const guiCliHelper = {
         }catch(err){
             console.log('countDownToRefersh error ', err)
         }
+        
+        
     }
     
  }    

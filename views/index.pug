@@ -5,10 +5,26 @@ html(lang="en")
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     title Node Status
+    script.
+      function refreshMetricsData() {
+        fetch('/api/refresh')
+          .then(response => response.json())
+          .then(data => {
+            console.log('Data refreshed:', data);
+            updateStatus = "Success"
+            window.location.reload(); // Example: Reload the page after data is refreshed
+          })
+          .catch(error => {
+            console.error('Error refreshing data:', error);
+            updateStatus = "Error"
+          });
+      }
 
   body
     h1 Node Status
-
+      button(type="button", onclick="refreshMetricsData()") &#x21bb
+    if updateStatus
+      p Updated: #{updateStatus}
     if nodeDisplayData
       .node-status.center.header
         h3#blue Node Status: 
@@ -55,7 +71,7 @@ html(lang="en")
                 th.Min-Sector Min/Sector
                 th.Expired Expired
                 th.Reward Reward
-                th.Miss Miss
+                th.Miss Miss (T/R/M)
               each ind in pc.IndividualDiskDataObj
                 tr  
                   td.disk-id #{ind.Id}
@@ -66,21 +82,5 @@ html(lang="en")
                   td= ind.Performance.SectorTime
                   td= ind.Expired.Sectors
                   td= ind.Rewards.Rewards
-                  td= ind.Misses.Total
+                  td #{ind.Misses.Total}/ #{ind.Misses.Rejected}/#{ind.Misses.Misses}
 
-              //-     td= plot['% Comp']
-              //-     td= plot['ETA(Days)']
-              //-     td= plot['Sectors/Hr']
-              //-     td= plot['Min/Sector']
-              //-     td= plot.Rewards
-              //-     td= plot.Miss
-              //- each plot in detail
-              //-   tr
-              //-     td= plot.Id
-              //-     td= plot.Size
-              //-     td= plot['% Comp']
-              //-     td= plot['ETA(Days)']
-              //-     td= plot['Sectors/Hr']
-              //-     td= plot['Min/Sector']
-              //-     td= plot.Reward
-              //-     td= plot.Miss

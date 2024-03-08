@@ -3,6 +3,15 @@
   body {
       font-family: Arial, sans-serif;
   }
+
+  button{
+    background-color: white;
+    border: 1px solid grey;
+    font-size: 30px;
+    font-weight: bold;
+    margin: 5px 10px;
+    border-radius: 50%;
+  }
   .center,.node-status, body{
     display: flex;
     flex-direction: column; 
