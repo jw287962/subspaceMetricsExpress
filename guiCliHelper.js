@@ -105,7 +105,7 @@ const guiCliHelper = {
          try{
              let label =`|${'Disk Id'.padEnd(27)}|${'Size(TB)'.padEnd(8)}|`
              label += `${'Complete'.padEnd(8)}|${'ETA(Days)'.padEnd(12)}|`
-             label += `${'Sectors/Hr'.padEnd(8)}|${'Per Sector'.padEnd(8)}|${'Reward|Miss'.padEnd(8)}|`;
+             label += `${'Sectors/Hr'.padEnd(8)}|${'Sect Time'.padEnd(8)}|${'🎁'.padEnd(3)}|${'T/R/Miss'.padEnd(8)}|`;
              return label;
          }catch(err){
              console.log('getFarmerTableHeaderOutput err ',err)
@@ -147,7 +147,8 @@ const guiCliHelper = {
                 let totalETA = summaryData.TotalETA
                 let totalPercentComplete = summaryData.TotalPercentComplete
                 let totalRewardsPerHour = summaryData.TotalRewardsPerHour
-              return {totalRewardsPerHour,totalPercentComplete,totalETA,sectorHr,totalSectorTime,sectorHrAvg,upTime,rewards,totalSize}
+                let totalMiss = summaryData.TotalMisses
+              return {totalRewardsPerHour,totalPercentComplete,totalETA,sectorHr,totalSectorTime,sectorHrAvg,upTime,rewards,totalSize,totalMiss}
                
             }catch(err){
                 console.log('getFarmerPCMetrics error ', err)
@@ -172,6 +173,7 @@ const guiCliHelper = {
          outputTelegram += `\n   <b>${data.totalSectorTime}</b> Sector Time, `		
          outputTelegram += `\n   <b>${data.sectorHr}</b> Sectors Total, `
          outputTelegram += `\n   <b>${data.rewards}</b> Total Rewards`
+         outputTelegram += `\n   <b>${data.totalMiss}</b> Total Miss`
          outputTelegram +=  `\n   <b>${data.totalPercentComplete}%</b> Complete\n <b>${data.totalETA}</b> ETA\n`
          return outputTelegram
      },
@@ -192,7 +194,7 @@ const guiCliHelper = {
      },
 
      dasher: "----------------------------------------------------------------------------------------------",
-     displayData: function displayData(data, dateLastOutput) {
+     displayData: async function displayData(data, dateLastOutput) {
          let outputTelegram = '<b>Balance:</b>' + data.walletBalance + '\n'
          let dasher= this.dasher;
         
@@ -200,6 +202,7 @@ const guiCliHelper = {
          this.guiLogger(this.displayNodeStatus(data));
          try{
 
+    
             // console.log(data.farmerDisplaySector[0])
              data.farmerDisplaySector.forEach((farmer,indexxx) => {
                  if(indexxx > 0) outputTelegram += "\n\n"
@@ -231,9 +234,17 @@ const guiCliHelper = {
                          dataString += `|${data.Id.padEnd(27)}|${data.Data.DiskSize.toString().padEnd(8)}|`
                          dataString += `${(data.Data.CompletePercent + " %").toString().padEnd(8)}|`
                          dataString += `${data.Data.ETA.padEnd(11)} `;
-                         dataString += `|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(10) }|${(data?.Performance.SectorTime || 'N/A').toString().padEnd(10)}`
-                         dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(6)}|`
-                         dataString += `${(data?.Misses?.Total != 0 ? `\x1b[31m${(data.Misses.Total).toString().padEnd(4)}\x1b[39m` : ('0').toString().padEnd(4) || ('0').toString().padEnd(4))}|` 
+                         dataString += `|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(9) }|${(data?.Performance.SectorTime || 'N/A').toString().padEnd(10)}`
+                         dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(3)}|`
+                         let missed = ""
+                         if(data.Misses.Total>0){
+                            missed = `\x1b[31m${data?.Misses?.Total}/${data.Misses.Rejected}/${data.Misses.Misses}`
+                         }else{
+                            missed = `\x1b[39m${data?.Misses?.Total}/${data.Misses.Rejected}/${data.Misses.Misses}`
+                        }
+                        
+                         missed = missed.padEnd(13) + "\x1b[39m|"
+                         dataString += missed
                          this.guiLogger(dataString)
                      }
 
@@ -241,26 +252,29 @@ const guiCliHelper = {
                         
                     }
              })
-            
-
-             this.checkGitVersion().then((data) =>{
-             let gitVersion
-
-                const hoursDifference = dateLastOutput.diff(moment(data[1], 'M/D/YYYY, h:mm:ss A'), 'hours');
-                if(hoursDifference < 10){
-                    gitVersion = `<b>${data[0]} ${data[1]}</b>`;
-                    this.guiLogger(`\x1b[31m[1m${gitVersion} \n\x1b[0m`);
-                }else{
-                 gitVersion = `${data[0]} ${data[1]}`;
-                }
-                this.guiLogger(`Version: \x1b[1m${gitVersion} \n\x1b[0m`);
-
-                outputTelegram += `Released: ${data[0]}`
-                parseData.sendTelegramNotification(outputTelegram)
-             })
 
              this.guiLogger(dasher);
-             
+
+             await this.checkGitVersion().then((data) =>{
+                let gitVersion
+    
+                   const hoursDifference = dateLastOutput.diff(moment(data[1], 'M/D/YYYY, h:mm:ss A'), 'hours');
+                   if(hoursDifference < 12){
+                       gitVersion = `${data[0]} ${data[1]}`;
+                       this.guiLogger(`\x1b[31m[1m ${gitVersion} \n \x1b[0m`);
+                       parseData.sendTelegramNotification(gitVersion)
+                       outputTelegram = `Released: ${data[0]} \n ${outputTelegram}`
+                       
+                    }else{
+                        gitVersion = `${data[0]} ${data[1]}`;
+                        this.guiLogger(`Version: \x1b[1m${gitVersion} \n\x1b[0m`);
+                        outputTelegram += `Released: ${data[0]}`
+                   }
+    
+
+                   parseData.sendTelegramNotification(outputTelegram)
+                })
+    
             
             
              // 1000 milliseconds = 1 second

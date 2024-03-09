@@ -376,6 +376,7 @@ const parseData = {
             TotalPercentComplete: 0,
             TotalRewards: 0,
             TotalRewardsPerHour: 0,
+            TotalMisses: 0,
             TotalPlotsRemaining: 0,
             TotalPlotsCompleted: 0,
             TotalSectorTime: {
@@ -515,7 +516,7 @@ const parseData = {
                 summaryData.TotalRewards += individualDiskDataObj[key].Rewards.Rewards*1
                 summaryData.TotalPlotsRemaining += individualDiskDataObj[key].PlotsRemaining.Sectors*1
                 summaryData.TotalPlotsCompleted += individualDiskDataObj[key].PlotsCompleted.Sectors*1
-
+                summaryData.TotalMisses += individualDiskDataObj[key].Misses.Total;
                 // check for NOT PLOTTING
                 if(individualDiskDataObj[key].PlotsRemaining.Sectors == 0){
                     individualDiskDataObj[key].Performance.SectorsPerHour = 0
