@@ -385,6 +385,8 @@ const parseData = {
                 },
             TotalETA: ""
         }
+        const allData = {SummaryData: summaryData}
+
         if(farmerIsRunning){
             for (let metrics_obj of io_farmer_metrics_arr) {
                 let farmer_disk_id
@@ -547,7 +549,7 @@ const parseData = {
 
             summaryData.TotalRewardsPerHour = (summaryData.TotalRewards/(summaryData.Uptime.Seconds/(60*60))).toFixed(2);
 
-            const allData = {SummaryData: summaryData}
+            allData.SummaryData = summaryData
             allData['IndividualDiskDataObj'] = individualDiskDataObj;
 
             return allData
@@ -556,7 +558,7 @@ const parseData = {
 
 
 
-            const allData = {SummaryData: summaryData}
+             allData.SummaryData = summaryData
             allData['IndividualDiskDataObj'] = individualDiskDataObj;
 
             return allData

@@ -47,7 +47,7 @@ Need WebUI Improvements:
 ```
 node ./main.js
 ```
- (bad name... ik) and it should start
+
  
 ![CLI IMG](https://raw.githubusercontent.com/jw287962/subspaceMetricsExpress/main/picture/CLI.png)
 
