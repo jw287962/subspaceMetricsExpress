@@ -104,8 +104,8 @@ const guiCliHelper = {
      getFarmerTableHeaderOutput: function getTableHeader(){
          try{
              let label =`|${'Disk Id'.padEnd(27)}|${'Size(TB)'.padEnd(8)}|`
-             label += `${'Complete'.padEnd(8)}|${'ETA(Days)'.padEnd(12)}|`
-             label += `${'Sectors/Hr'.padEnd(8)}|${'Sect Time'.padEnd(8)}|${'🎁'.padEnd(3)}|${'T/R/Miss'.padEnd(8)}|`;
+             label += `${'Complete'.padEnd(8)}|${'ETA(Days)'.padEnd(10)}|`
+             label += `${'Sect/Hr'.padEnd(8)}|${'Sect Time'.padEnd(9)}|${'🎁'.padEnd(5)}|${'T/R/Miss'.padEnd(9)}|`;
              return label;
          }catch(err){
              console.log('getFarmerTableHeaderOutput err ',err)
@@ -233,9 +233,9 @@ const guiCliHelper = {
                         //  const discData = this.discDataMetrics(data,data?.Performance.MinutesPerSector);
                          dataString += `|${data.Id.padEnd(27)}|${data.Data.DiskSize.toString().padEnd(8)}|`
                          dataString += `${(data.Data.CompletePercent + " %").toString().padEnd(8)}|`
-                         dataString += `${data.Data.ETA.padEnd(11)} `;
-                         dataString += `|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(9) }|${(data?.Performance.SectorTime || 'N/A').toString().padEnd(10)}`
-                         dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(3)}|`
+                         dataString += `${data.Data.ETA.padEnd(10)} `;
+                         dataString += `|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(7) }|${(data?.Performance.SectorTime || 'N/A').toString().padEnd(9)}`
+                         dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(5)}|`
                          let missed = ""
                          if(data.Misses.Total>0){
                             missed = `\x1b[31m${data?.Misses?.Total}/${data.Misses.Rejected}/${data.Misses.Misses}`
@@ -243,7 +243,7 @@ const guiCliHelper = {
                             missed = `\x1b[39m${data?.Misses?.Total}/${data.Misses.Rejected}/${data.Misses.Misses}`
                         }
                         
-                         missed = missed.padEnd(13) + "\x1b[39m|"
+                         missed = missed.padEnd(14) + "\x1b[39m|"
                          dataString += missed
                          this.guiLogger(dataString)
                      }
