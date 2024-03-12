@@ -109,7 +109,8 @@ app.listen(PORT, () => {
 }
 // MAIN FUNCTION
 const getAllData = async function () {
-  
+  if(clearLog) clear();
+  process.stdout.clearLine()
             nodeSubstrate.fetchWalletbalance(PORT).then((val) => {
               balance = val
             }).catch((err) => {
@@ -214,8 +215,7 @@ refreshInterval = new refreshMetricsObject()
 function refreshMetricsObject(){
 
   function intervalRefresherFunction(){
-    if(clearLog) clear();
-    process.stdout.clearLine()
+
     // console.log('Server running on port 3000');
     getAllData()
   } 
