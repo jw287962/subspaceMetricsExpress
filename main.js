@@ -1,4 +1,5 @@
 // server.js
+const PORT = 3000
 const express = require('express');
 const path = require('path');
 const cors = require('cors')
@@ -14,8 +15,11 @@ const clearLog = config.Clear ;
 
 // MY JS
 const guiCliHelper = require('./guiCliHelper')
-const {parseData,nodeSubstrate} = require('./parseData')
+const {parseData,nodeSubstrate} = require('./parseData');
+const { setTimeout } = require('timers/promises');
 const filePath = './data.json';
+
+let balance = 0;
 
 
 app.use(express.static(__dirname + '/public'))
@@ -75,9 +79,8 @@ app.get('/api/refresh', async (req , res) => {
   });
 
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   try{
-
     console.log('Server running on port 3000');
   }catch(err){
     console.log('https err, ', err)
@@ -96,16 +99,27 @@ app.listen(3000, () => {
         return jsonData
     
   }
-
+  async function delay(ms) {
+  return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve("0");
+      }, ms);
+    });
+    
+}
 // MAIN FUNCTION
 const getAllData = async function () {
-        let balance = 0;
-        try{
-            balance = await nodeSubstrate.fetchWalletbalance();
-        }
-        catch(err){
-            console.log('fetch balalnce err', err)
-        }
+  
+            nodeSubstrate.fetchWalletbalance(PORT).then((val) => {
+              balance = val
+            }).catch((err) => {
+              console.log('error')
+                balance = 0
+
+            });
+
+          // console.log(await delay(100))
+      
     try {
         
         let nodeProcessArr = await parseData.getProcessState("node", config.Node, config.Node);

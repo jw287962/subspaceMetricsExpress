@@ -6,30 +6,33 @@ const clear = require('console-clear')
 
 // POLKADOT
 const { ApiPromise, WsProvider } = require('@polkadot/api');
-const wsProvider = new WsProvider('ws://192.168.1.91:9945');
 
 const nodeSubstrate = {
-    fetchWalletbalance: async function fetchWalletbalance(){
-        try{
-          
-            const api =  await this.createAPI()
+    fetchWalletbalance: function fetchWalletbalance(string){
+        return new Promise(async (resolve, reject) => {
+            try {
+                const wsProvider = new WsProvider('ws://192.168.1.248:9944',config.Refresh*60*1000);
+                const api = new ApiPromise({ provider: wsProvider });
+                
+                
             
-            const ADDR = config.Address;
-            const {  data: balance } = await api.query.system.account(ADDR);
 
-            return (balance.free/1000000000000000000).toFixed(1)
-        }catch(err){
-            console.log("error, fetchWallet", err)
-        }
-    },
-    createAPI: async function createAPI(){
-        // const savedConsoleOutput = console.log.toString();
-        // console.log = function() {};
-        
-        const api = await ApiPromise.create({ provider: wsProvider });
-        clear()
-       return api
+                api.isReadyOrError.then(async () => {
+                        clear();
+                        console.log('Server is on Port 3000')
+                        
+                    const ADDR = config.Address;
+                    const { data: balance } = await api.query.system.account(ADDR);
+                    resolve(((balance.free || 0) / 1000000000000000000).toFixed(1));
+                }).catch((err) => {
+                })
+            } catch (err) {
+                console.log("error, fetchWallet", err);
+                reject(0);
+            }
+        });
     }
+
 
 }
 // PARSES DATA TO BE USED BY MAIN 
@@ -192,6 +195,9 @@ const parseData = {
     },
     sendTelegramNotification: async function sendTelegramNotification(message) {
         try {
+                if(!config.AllowMessages){
+                return;
+                }
         //   config.Telegram
             const response = await axios.post(config.Telegram, {
                 chat_id: config.Chat_ID,
