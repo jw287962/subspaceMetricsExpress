@@ -3,15 +3,15 @@ const axios = require('axios')
 const config = require('./config.json')
 const clear = require('console-clear')
 
-
 // POLKADOT
 const { ApiPromise, WsProvider } = require('@polkadot/api');
+const wsProvider = new WsProvider('ws://192.168.1.248:9944',config.Refresh*60*1000);
 
 const nodeSubstrate = {
     fetchWalletbalance: function fetchWalletbalance(string){
         return new Promise(async (resolve, reject) => {
             try {
-                const wsProvider = new WsProvider('ws://192.168.1.248:9944',config.Refresh*60*1000);
+              
                 const api = new ApiPromise({ provider: wsProvider });
                 
                 
