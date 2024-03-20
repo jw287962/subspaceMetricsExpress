@@ -214,7 +214,7 @@ const guiCliHelper = {
                      // Farmerstring2 is group status  2nd row (uptime, sector time, rewards for entire PC)
                      // PC status 1st LINE of data
                      this.getFarmerPCStatusOutput(farmer.SummaryData) // PC status 1st LINE
-                     if(farmer.SummaryData.FarmerIsRunning){
+                     if(farmer?.SummaryData.FarmerIsRunning){
                           // PC METRICS & DATA 2nd LINE
                      dataOutput = this.getFarmerPCMetricsOutput(farmer.SummaryData,farmer.Id) // PC METRICS & DATA 2nd LINE
                      this.printsFarmerPCmetricsOutput(dataOutput)
@@ -233,9 +233,12 @@ const guiCliHelper = {
                         //  const discData = this.discDataMetrics(data,data?.Performance.MinutesPerSector);
                          dataString += `|${data.Id.padEnd(27)}|${data.Data.DiskSize.toString().padEnd(8)}|`
                          dataString += `${(data.Data.CompletePercent + " %").toString().padEnd(8)}|`
-                         dataString += `${data.Data.ETA.padEnd(10)} `;
+                         dataString += `${data.Data.ETA.padEnd(11)}`;
                          dataString += `|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(7) }|${(data?.Performance.SectorTime || 'N/A').toString().padEnd(9)}`
                          dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(5)}|`
+                         if(data.Errors){
+                            this.guiLogger(data.Errors)
+                         }
                          let missed = ""
                          if(data.Misses.Total>0){
                             missed = `\x1b[31m${data?.Misses?.Total}/${data.Misses.Rejected}/${data.Misses.Misses}`
@@ -246,6 +249,7 @@ const guiCliHelper = {
                          missed = missed.padEnd(14) + "\x1b[39m|"
                          dataString += missed
                          this.guiLogger(dataString)
+                         
                      }
 
                     }else{

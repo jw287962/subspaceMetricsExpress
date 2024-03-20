@@ -325,7 +325,10 @@ const parseData = {
                     Misses: 0,
                     Rejected: 0,
                     Total: 0,
-                }
+                },
+                Errors: undefined
+
+                
 
                 
 
@@ -476,8 +479,17 @@ const parseData = {
                         }
                     }
                 }
-                // else if (metrics_obj.Name.indexOf("_farmer_sector_plotted_counter_sectors_total") >= 0) {
-                // } 
+                else if (metrics_obj.Name.indexOf("farmer_farming_errors") >= 0) {
+                    const farmer_disk_id = metrics_obj.Instance
+                    const criteria = metrics_obj.Criteria.trim()
+                    const value = metrics_obj.Value;
+                    const data = {
+                        criteria, value
+                    }
+                    individualDiskDataObj[farmer_disk_id]['Errors'] = data
+
+                    
+                } 
                 else if (metrics_obj.Name.indexOf("_farmer_proving_time_seconds") >= 0) {
       
                     if (metrics_obj.Id.toLowerCase().indexOf("unit") >= 0 || metrics_obj.Id.toLowerCase().indexOf("type") >= 0) {
