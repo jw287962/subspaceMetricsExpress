@@ -28,6 +28,15 @@ const guiCliHelper = {
     //  },
      checkGitVersion: async function CheckGitNewVersion() {
         try {
+            const now = new Date();
+        const currentHour = now.getHours();
+        // Check if the current time is between 2 AM and 8 AM
+        if (currentHour >= 2 && currentHour < 8) {
+            console.log('Skip Check... Sleeping');
+
+            return ['Version Check Skipped ',]; // Exit the function if it's within the restricted time
+        }
+
             const gitVersionArr = [];
             const response = await fetch("https://api.github.com/repos/subspace/subspace/releases/latest");
             if (response.ok) {
@@ -40,7 +49,7 @@ const guiCliHelper = {
             }
             return gitVersionArr;
         } catch (error) {
-            console.error("Error fetching Git version:", error);
+            console.error("Error fetching Git version:");
             return [];
         }
     },    
