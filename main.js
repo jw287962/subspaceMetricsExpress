@@ -160,6 +160,9 @@ const getAllData = async function () {
               const farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr,farmer.address,farmerIsRunning,farmer.name);
 
               farmerDisplaySector.push(farmerSectorPerformance);
+              if(farmerSectorPerformance.SummaryData.Uptime.Seconds <= 1){
+                statusDownTotal += farmerMetricsRaw + '\n'
+              }
             }else if(farmerIsRunning === false){
               statusDownTotal += farmerMetricsRaw + '\n'
                 const farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr= [],farmer.address,farmerIsRunning, farmer.name);

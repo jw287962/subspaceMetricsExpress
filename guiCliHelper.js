@@ -115,7 +115,7 @@ const guiCliHelper = {
              let label = this.dasher + '\n'
              label +=`|${'Disk Id'.padEnd(26)}|${'Size(TB)'.padEnd(9)}|`
              
-             label += `${'Comp.'.padEnd(6)}|${'ETA(Days)'.padEnd(10)}|`
+             label += `${'Prog.'.padEnd(6)}|${'ETA(Days)'.padEnd(10)}|`
              label += `${'Sect Time'.padEnd(9)}|${'Sect/Hr'.padEnd(8)}|${'🎁'.padEnd(5)}|${'T/R/Miss'.padEnd(9)}|`;
              label += `Miss %|\n`
              label += this.dasher 
