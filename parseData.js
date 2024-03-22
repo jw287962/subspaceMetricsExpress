@@ -383,6 +383,7 @@ const parseData = {
             TotalSectorsPerHour: 0,
             TotalDiskSize: 0,
             TotalPercentComplete: 0,
+            TotalRewardsPerTB: 0,
             TotalRewards: 0,
             TotalRewardsPerHour: 0,
             TotalMisses: 0,
@@ -392,7 +393,8 @@ const parseData = {
                     sectorTime: 0,
                     formattedSectorTime: '',
                 },
-            TotalETA: ""
+            TotalETA: "",
+            TotalETAShort : ""
         }
         const allData = {SummaryData: summaryData}
 
@@ -558,14 +560,25 @@ const parseData = {
             }else{
                 summaryData.TotalSectorTime.sectorTime = 60/totalSectorPerHour*60
                 summaryData.TotalSectorTime.formattedSectorTime = this.convertSecondsMinutes(summaryData.TotalSectorTime.sectorTime)
-                summaryData.TotalETA = totalETADays < 1 ? `${(totalETADays * 24).toFixed(1)} Hrs` : `${Math.floor(totalETADays)} Days ${Math.floor((totalETADays% 1)*24)} HR ${Math.floor(((totalETADays * 24) % 1) * 60)} Min`;
+                if (totalETADays < 1) {
+                    summaryData.TotalETA = `${(totalETADays * 24).toFixed(1)} Hrs`;
+                    summaryData.TotalETAShort = summaryData.TotalETA
 
+                } else {
+                    const days = Math.floor(totalETADays);
+                    const hours = Math.floor((totalETADays % 1) * 24);
+                    const minutes = Math.floor(((totalETADays * 24) % 1) * 60);
+                    summaryData.TotalETA = `${days} Days ${hours} HR ${minutes} Min`;
+                    summaryData.TotalETAShort = `${days}D ${hours}H ${minutes}M`;
+                }
+                
             }
             
             summaryData.TotalPercentComplete =((totalPlotsCompleted/(totalPlotsCompleted+totalPlotsRemaining))*100).toFixed(1);
             summaryData.TotalDiskSize = ((totalPlotsRemaining + totalPlotsCompleted)/1000).toFixed(2)
 
             summaryData.TotalRewardsPerHour = (summaryData.TotalRewards/(summaryData.Uptime.Seconds/(60*60))).toFixed(2);
+            summaryData.TotalRewardsPerTB = (summaryData.TotalRewardsPerHour/summaryData.TotalDiskSize*24).toFixed(1)
 
             allData.SummaryData = summaryData
             allData['IndividualDiskDataObj'] = individualDiskDataObj;

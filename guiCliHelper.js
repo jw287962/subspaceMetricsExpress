@@ -112,9 +112,13 @@ const guiCliHelper = {
      },
      getFarmerTableHeaderOutput: function getTableHeader(){
          try{
-             let label =`|${'Disk Id'.padEnd(27)}|${'Size(TB)'.padEnd(8)}|`
-             label += `${'Complete'.padEnd(8)}|${'ETA(Days)'.padEnd(10)}|`
-             label += `${'Sect/Hr'.padEnd(8)}|${'Sect Time'.padEnd(9)}|${'🎁'.padEnd(5)}|${'T/R/Miss'.padEnd(9)}|`;
+             let label = this.dasher + '\n'
+             label +=`|${'Disk Id'.padEnd(26)}|${'Size(TB)'.padEnd(9)}|`
+             
+             label += `${'Comp.'.padEnd(6)}|${'ETA(Days)'.padEnd(10)}|`
+             label += `${'Sect Time'.padEnd(9)}|${'Sect/Hr'.padEnd(8)}|${'🎁'.padEnd(5)}|${'T/R/Miss'.padEnd(9)}|`;
+             label += `Miss %|\n`
+             label += this.dasher 
              return label;
          }catch(err){
              console.log('getFarmerTableHeaderOutput err ',err)
@@ -153,24 +157,51 @@ const guiCliHelper = {
                 let sectorHrAvg = ((sectorHr)/(summaryData.TotalDisks)).toFixed(2)
                 let rewards = summaryData.TotalRewards;
                 let totalSize = summaryData.TotalDiskSize
-                let totalETA = summaryData.TotalETA
+                let totalETA = summaryData.TotalETAShort
                 let totalPercentComplete = summaryData.TotalPercentComplete
                 let totalRewardsPerHour = summaryData.TotalRewardsPerHour
+                let totalRewardsPerTB = summaryData.TotalRewardsPerTB
                 let totalMiss = summaryData.TotalMisses
-              return {totalRewardsPerHour,totalPercentComplete,totalETA,sectorHr,totalSectorTime,sectorHrAvg,upTime,rewards,totalSize,totalMiss}
+              return {totalRewardsPerTB,totalRewardsPerHour,totalPercentComplete,totalETA,sectorHr,totalSectorTime,
+                sectorHrAvg,upTime,rewards,totalSize,totalMiss}
                
             }catch(err){
                 console.log('getFarmerPCMetrics error ', err)
             }
            
          },
+
+         printSummaryLine: function printSummaryData(data){
+            let farmerString2 ="\x1b[92m";
+            farmerString2 += (`Summary: `).padEnd(27)
+            farmerString2 += '\x1b[0m|'
+            farmerString2 += (`${data.totalSize}TiB`).padEnd(9) 
+            farmerString2 += '|'
+            farmerString2 += (`${data.totalPercentComplete}%`).padEnd(6)
+            farmerString2 += '|'
+            farmerString2 += (`${data.totalETA}`).padEnd(11)
+            farmerString2 += '|'
+            farmerString2 += (`${data.totalSectorTime}`).padEnd(9)
+            farmerString2 += '|'
+            farmerString2 += (`${data.sectorHr}`).padEnd(7)
+            farmerString2 += '|\x1b[92m+'
+            farmerString2 += (`${data.rewards}`).padEnd(6)
+            farmerString2 += '\x1b[0m|\x1b[31m-'
+            farmerString2 += (`${data.totalMiss}`).padEnd(6)
+            farmerString2 += '\x1b[0m|'
+            farmerString2 += (`${(data.totalMiss/(data.totalMiss+data.rewards)*100).toFixed(2)}%`)
+            this.guiLogger(farmerString2)
+
+         },
     //   LINE 2 PRINT
      printsFarmerPCmetricsOutput: function printsFarmerPCmetricsOutput(data){
          let farmerString2 ="";
-         farmerString2 += (`\x1b[92mSector Time: \x1b[0m${data.totalSectorTime} \x1b[0m|\x1b[93m${this.replaceWithDash(data.sectorHr)}\x1b[0m Sectors/Hr`).padEnd(68)
-         farmerString2 += `|\x1b[0mRemain: \x1b[93m${data.totalETA} \x1b[0m` ;
-         farmerString2 += (`\n\x1b[92mRewards: \x1b[93m${data.rewards} \x1b[0mTotal, \x1b[93m${data.totalRewardsPerHour}\x1b[0m Hourly, \x1b[93m${(data.totalRewardsPerHour*24).toFixed(2)} \x1b[0mDaily\x1b[49m `).toString().padEnd(84);
-         farmerString2 += `|\x1b[93m${data.totalPercentComplete}%\x1b[0m Complete\x1b[49m ` + ("").padEnd(20);
+        //  farmerString2 += (`\x1b[92mSector Time: \x1b[0m${data.totalSectorTime} \x1b[0m|\x1b[93m${this.replaceWithDash(data.sectorHr)}\x1b[0m Sectors/Hr`).padEnd(68)
+        //  farmerString2 += `|\x1b[0mRemain: \x1b[93m${data.totalETA} \x1b[0m` ;
+         farmerString2 += (`\x1b[92mRewards: \x1b[93m${data.rewards}\x1b[0m 🎁| \x1b[93m${data.totalRewardsPerHour}\x1b[0m/Hr \x1b[93m${(data.totalRewardsPerHour*24).toFixed(2)}\x1b[0m/Day\x1b[49m,\x1b[93m${data.totalRewardsPerTB}\x1b[0m/TB`).toString().padEnd(93);
+        //  farmerString2 += 
+         farmerString2 += `|\x1b[93m${data.totalPercentComplete}%\x1b[0m Comp.\x1b[49m   `
+         farmerString2 += `|\x1b[93m${(data.totalMiss/(data.totalMiss+data.rewards)*100).toFixed(2)}\x1b[0m% Miss` + ("").padEnd(8);
          farmerString2 += `\x1b[93m${data.totalSize }\x1b[0mTiB `;
          farmerString2 += ``;
          
@@ -202,11 +233,9 @@ const guiCliHelper = {
         }
      },
 
-     dasher: "----------------------------------------------------------------------------------------------",
+     dasher: "--------------------------------------------------------------------------------------------------",
      displayData: async function displayData(data, dateLastOutput) {
          let outputTelegram = '<b>Balance:</b>' + data.walletBalance + '\n'
-         let dasher= this.dasher;
-        
          
          this.guiLogger(this.displayNodeStatus(data));
          try{
@@ -225,48 +254,55 @@ const guiCliHelper = {
                      this.getFarmerPCStatusOutput(farmer.SummaryData) // PC status 1st LINE
                      if(farmer?.SummaryData.FarmerIsRunning){
                           // PC METRICS & DATA 2nd LINE
-                     dataOutput = this.getFarmerPCMetricsOutput(farmer.SummaryData,farmer.Id) // PC METRICS & DATA 2nd LINE
-                     this.printsFarmerPCmetricsOutput(dataOutput)
-                           // send telegram notification too
-                    outputTelegram += this.sendTelegramPCmetrics(dataOutput)
-             
-                     this.guiLogger(dasher);
-                           // TABLE HEADER TEXT
-                     this.guiLogger(this.getFarmerTableHeaderOutput())
-                     this.guiLogger(dasher);
-                         // INDIVIDUAL TABLE DISK DATA 
-                         for (key in farmer.IndividualDiskDataObj){
-                        let dataString = ""
-                            const data = farmer.IndividualDiskDataObj[key] ;
-                        //  will add a grouping of all disk data in parsing
-                        //  const discData = this.discDataMetrics(data,data?.Performance.MinutesPerSector);
-                         dataString += `|${data.Id.padEnd(27)}|${data.Data.DiskSize.toString().padEnd(8)}|`
-                         dataString += `${(data.Data.CompletePercent + " %").toString().padEnd(8)}|`
-                         dataString += `${data.Data.ETA.padEnd(11)}`;
-                         dataString += `|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(7) }|${(data?.Performance.SectorTime || 'N/A').toString().padEnd(9)}`
-                         dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(5)}|`
-                         if(data.Errors){
-                            this.guiLogger(data.Errors)
-                         }
-                         let missed = ""
-                         if(data.Misses.Total>0){
-                            missed = `\x1b[31m${data?.Misses?.Total}/${data.Misses.Rejected}/${data.Misses.Misses}`
-                         }else{
-                            missed = `\x1b[39m${data?.Misses?.Total}/${data.Misses.Rejected}/${data.Misses.Misses}`
-                        }
+                        dataOutput = this.getFarmerPCMetricsOutput(farmer.SummaryData,farmer.Id) // PC METRICS & DATA 2nd LINE
+                        this.printsFarmerPCmetricsOutput(dataOutput)
+                        // send telegram notification too
+                        outputTelegram += this.sendTelegramPCmetrics(dataOutput)
                         
-                         missed = missed.padEnd(14) + "\x1b[39m|"
-                         dataString += missed
-                         this.guiLogger(dataString)
-                         
-                     }
+                        
+                        // TABLE HEADER TEXT
+                        this.guiLogger(this.getFarmerTableHeaderOutput())
+               
+                         // INDIVIDUAL TABLE DISK DATA 
+                            for (key in farmer.IndividualDiskDataObj){
+                                let dataString = ""
+                                    const data = farmer.IndividualDiskDataObj[key] ;
+                                //  will add a grouping of all disk data in parsing
+                                //  const discData = this.discDataMetrics(data,data?.Performance.MinutesPerSector);
+                                dataString += `|${data.Id.padEnd(26)}|${data.Data.DiskSize.toString().padEnd(9)}|`
+                                dataString += `${(data.Data.CompletePercent + "%").toString().padEnd(6)}|`
+                                dataString += `${data.Data.ETA.padEnd(11)}`;
+                                dataString += `|${(data?.Performance.SectorTime || 'N/A').toString().padEnd(9)}|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(7) }`
+                                dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(6)}|`
+                                if(data.Errors){
+                                    this.guiLogger(data.Errors)
+                                }
+                                let missed = ""
+                                if(data.Misses.Total>0){
+                                    missed = `\x1b[31m${data?.Misses?.Total}/${data.Misses.Rejected}/${data.Misses.Misses}`
+                                }else{
+                                    missed = `\x1b[39m${data?.Misses?.Total}/${data.Misses.Rejected}/${data.Misses.Misses}`
+                                }
+                                
+                                missed = missed.padEnd(13) + "\x1b[39m|"
+                                dataString += missed
+                                dataString += (data.Misses.Total/(data.Rewards.Rewards+data.Misses.Total)*100).toFixed(1)
+                                this.guiLogger(dataString)
+                            }
+                        this.guiLogger(this.dasher);
+                        this.printSummaryLine(dataOutput)
+
+
+                    
+
+
 
                     }else{
                         
                     }
              })
 
-             this.guiLogger(dasher);
+             this.guiLogger(this.dasher);
 
              await this.checkGitVersion().then((data) =>{
                 let gitVersion

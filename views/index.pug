@@ -59,6 +59,7 @@ html(lang="en")
             p #{pc.SummaryData.TotalPercentComplete}% Complete 
           div.row
             p Size: #{pc.SummaryData.TotalDiskSize}TiB 
+            p Miss: #{(pc.SummaryData.TotalMisses/(pc.SummaryData.TotalRewards+pc.SummaryData.TotalMisses)*100).toFixed(2)}%
         div.tablediv
           table
             thead
@@ -71,7 +72,8 @@ html(lang="en")
                 th.Min-Sector Min/Sector
                 th.Expired Expired
                 th.Reward Reward
-                th.Miss Miss (T/R/M)
+                th.Miss T/R/Miss
+                th.Miss Miss %
               each ind in pc.IndividualDiskDataObj
                 tr  
                   td.disk-id #{ind.Id}
@@ -83,4 +85,5 @@ html(lang="en")
                   td= ind.Expired.Sectors
                   td= ind.Rewards.Rewards
                   td #{ind.Misses.Total}/ #{ind.Misses.Rejected}/#{ind.Misses.Misses}
+                  td #{(ind.Misses.Total/(ind.Misses.Total+ind.Rewards.Rewards)*100).toFixed(2)}%
 
