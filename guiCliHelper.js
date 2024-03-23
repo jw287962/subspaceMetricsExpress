@@ -114,11 +114,12 @@ const guiCliHelper = {
          try{
              let label = this.dasher + '\n'
              label += `|${'Num'.padEnd(8)}`
-             label +=`|${'Size(TB)'.padEnd(9)}|`
+             label +=`|${'Size(TB)'.padEnd(9)}|${'!🎁!'.padEnd(5)}|`
+             label += `${'T/R/Miss'.padEnd(9)}|`
+             label += (`Miss`).padEnd(5) + '|'
              
-             label += `${'Prog.'.padEnd(6)}|${'ETA(Days)'.padEnd(10)}|`
-             label += `${'Sect Time'.padEnd(9)}|${'Sect/Hr'.padEnd(8)}|${'🎁'.padEnd(5)}|${'T/R/Miss'.padEnd(9)}|`;
-             label += `Miss %|`
+             label += `${'Prog.'.padEnd(6)}|${'ETA(Days)'.padEnd(11)}|`
+             label += `${'Sect Time'.padEnd(9)}|${'Sect/Hr'.padEnd(8)}|`;
              label += `${'Expired/AboutTo'.padEnd(5)}|`
 
              label += '\n' +this.dasher 
@@ -179,7 +180,13 @@ const guiCliHelper = {
             farmerString2 += (`Summary: `).padEnd(9)
             farmerString2 += '\x1b[0m|'
             farmerString2 += (`${data.totalSize}TiB`).padEnd(9) 
-            farmerString2 += '|'
+            farmerString2 += '|\x1b[92m+'
+            farmerString2 += (`${data.rewards}`).padEnd(5)
+            farmerString2 += '\x1b[0m|\x1b[31m-'
+            farmerString2 += (`${data.totalMiss}`).padEnd(6)
+            farmerString2 += '\x1b[0m|'
+            farmerString2 += (`${(data.totalMiss/(data.rewards+data.totalMiss)*100).toFixed(1)}%`).padEnd(6)
+            farmerString2 += '\x1b[0m|'
             farmerString2 += (`${data.totalPercentComplete}%`).padEnd(6)
             farmerString2 += '|'
             farmerString2 += (`${data.totalETA}`).padEnd(11)
@@ -187,12 +194,9 @@ const guiCliHelper = {
             farmerString2 += (`${data.totalSectorTime}`).padEnd(9)
             farmerString2 += '|'
             farmerString2 += (`${data.sectorHr}`).padEnd(7)
-            farmerString2 += '|\x1b[92m+'
-            farmerString2 += (`${data.rewards}`).padEnd(6)
-            farmerString2 += '\x1b[0m|\x1b[31m-'
-            farmerString2 += (`${data.totalMiss}`).padEnd(6)
-            farmerString2 += '\x1b[0m|'
+            farmerString2 += '|'
             farmerString2 += (`${(data.totalMiss/(data.totalMiss+data.rewards)*100).toFixed(2)}%`)
+            farmerString2 += '|'
             this.guiLogger(farmerString2)
 
          },
@@ -275,26 +279,32 @@ const guiCliHelper = {
                                 //  will add a grouping of all disk data in parsing
                                 //  const discData = this.discDataMetrics(data,data?.Performance.MinutesPerSector);
                                 dataString += `|${i.toString().padEnd(8)}`
-                                dataString += `|${data.Data.DiskSize.toString().padEnd(9)}|`
+                                dataString += `|${data.Data.DiskSize.toString().padEnd(9)}`
+                                dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(5)}|`
+                                // MISS 
+                                let missed = ""
+                                if(data.Misses.Total>0){
+                                    
+                                    missed = `\x1b[31m${data?.Misses?.Total}/${data.Misses.Rejected}/${data.Misses.Misses}`
+                                    missPerc = (`${(data.Misses.Total/(data.Rewards.Rewards+data.Misses.Total)*100).toFixed(1)}%`.padEnd(6))
+                                }else{
+                                    missed = `\x1b[39m${data.Misses?.Total}/${data.Misses.Rejected}/${data.Misses.Misses}`
+                                    missPerc = (`0%`.padEnd(6))
+                                }
+                                missed = missed.padEnd(13) + "\x1b[39m|"
+                                dataString += missed;
+                                dataString += missPerc;
+                                dataString += '|'
+                                // 
                                 dataString += `${(data.Data.CompletePercent + "%").toString().padEnd(6)}|`
                                 dataString += `${data.Data.ETA.padEnd(11)}`;
-                                dataString += `|${(data?.Performance.SectorTime || 'N/A').toString().padEnd(9)}|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(7) }`
-                                dataString += `|${(data.Rewards.Rewards.toString()|| '0').padEnd(6)}|`
+                                dataString += `|${(data?.Performance.SectorTime || 'N/A').toString().padEnd(10)}|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(7)}`
                                 if(data.Errors){
                                     this.guiLogger(data.Errors)
                                 }
-                                let missed = ""
-                                if(data.Misses.Total>0){
-                                    missed = `\x1b[31m${data?.Misses?.Total}/${data.Misses.Rejected}/${data.Misses.Misses}`
-                                }else{
-                                    missed = `\x1b[39m${data?.Misses?.Total}/${data.Misses.Rejected}/${data.Misses.Misses}`
-                                }
-                                
-                                missed = missed.padEnd(13) + "\x1b[39m|"
-                                dataString += missed
-                                dataString += (data.Misses.Total/(data.Rewards.Rewards+data.Misses.Total)*100).toFixed(1).padEnd(6)
+                              
                                 dataString += `|${(data.Expired.Sectors || '0')}` 
-                                dataString += `/${data.Expired.AboutToExpire||'0'.padEnd(5)}|`
+                                dataString += `/${data.Expired.AboutToExpire||'0'.padEnd(10)}|`
                                 this.guiLogger(dataString)
                             }
                         this.guiLogger(this.dasher);
