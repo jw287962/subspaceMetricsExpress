@@ -17,12 +17,24 @@
     flex-direction: column; 
     align-items: center;
   }
-  .row, .node-status, .line1{
+  .row, .node-status, .line1,.farmer-status{
     display: flex;
     flex-direction: row;
   }
-
-
+.all-status,.node-status{
+  width:100%;
+  max-width: 900px;
+}
+.farmer-status{
+  display: flex;
+  flex-direction: row;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  justify-content: center;
+  }
+  .farmer-status > p{
+    font-weight: bold;
+  }
   .node-status > h3{
     display: flex;
     flex-direction: row;
@@ -34,9 +46,8 @@
   .node-status>h3>div{
     margin: 0px 5px;
   }
-  .farmer-details,  .node-status{
+  .farmer-details,  .node-status,.farmer-status{
     border: 1px solid lightgrey;
-    margin: 4px;
   }
   .farmer-details > .header {
       flex-direction: row;

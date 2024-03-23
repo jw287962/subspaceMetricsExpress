@@ -313,8 +313,12 @@ const parseData = {
                     Sectors: "0"
                 },
                 Expired: {
-                    Sectors: 0,
-                    PlotState: "N/A"
+                    Sectors: '0',
+                    PlotState: "N/A",
+                },
+                AboutToExpire: {
+                    Sectors: '0',
+                    PlotState: "N/A",
                 },
                 Data:{
                     DiskSize: 0,
@@ -413,7 +417,7 @@ const parseData = {
                     const sectors = metrics_obj.Value;
                     let plots_info = {
                         PlotState: plot_state,
-                        Sectors: sectors
+                        Sectors: sectors,
                     }
                     if (plot_state.toLowerCase() == "notplotted") {
                             individualDiskDataObj[plot_id]['PlotsRemaining'] = (plots_info)
@@ -424,7 +428,10 @@ const parseData = {
                     } else if (plot_state.toLowerCase() === "plotted") {
                                 individualDiskDataObj[plot_id]['PlotsCompleted'] = (plots_info)
                     }else if(plot_state.toLowerCase() === 'expired'){
+                    
                         individualDiskDataObj[plot_id]['Expired'] = (plots_info)
+                    }else if(plot_state.toLowerCase() === 'abouttoexpire'){
+                        individualDiskDataObj[plot_id]['AboutToExpire'] = (plots_info)
                     }
                     
                 }

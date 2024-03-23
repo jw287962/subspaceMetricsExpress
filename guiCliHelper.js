@@ -113,12 +113,15 @@ const guiCliHelper = {
      getFarmerTableHeaderOutput: function getTableHeader(){
          try{
              let label = this.dasher + '\n'
-             label +=`|${'Disk Id'.padEnd(26)}|${'Size(TB)'.padEnd(9)}|`
+             label += `|${'Num'.padEnd(8)}`
+             label +=`|${'Size(TB)'.padEnd(9)}|`
              
              label += `${'Prog.'.padEnd(6)}|${'ETA(Days)'.padEnd(10)}|`
              label += `${'Sect Time'.padEnd(9)}|${'Sect/Hr'.padEnd(8)}|${'🎁'.padEnd(5)}|${'T/R/Miss'.padEnd(9)}|`;
-             label += `Miss %|\n`
-             label += this.dasher 
+             label += `Miss %|`
+             label += `${'Expired/AboutTo'.padEnd(5)}|`
+
+             label += '\n' +this.dasher 
              return label;
          }catch(err){
              console.log('getFarmerTableHeaderOutput err ',err)
@@ -173,7 +176,7 @@ const guiCliHelper = {
 
          printSummaryLine: function printSummaryData(data){
             let farmerString2 ="\x1b[92m";
-            farmerString2 += (`Summary: `).padEnd(27)
+            farmerString2 += (`Summary: `).padEnd(9)
             farmerString2 += '\x1b[0m|'
             farmerString2 += (`${data.totalSize}TiB`).padEnd(9) 
             farmerString2 += '|'
@@ -264,12 +267,15 @@ const guiCliHelper = {
                         this.guiLogger(this.getFarmerTableHeaderOutput())
                
                          // INDIVIDUAL TABLE DISK DATA 
+                         let i = 0;
                             for (key in farmer.IndividualDiskDataObj){
+                                i++;
                                 let dataString = ""
                                     const data = farmer.IndividualDiskDataObj[key] ;
                                 //  will add a grouping of all disk data in parsing
                                 //  const discData = this.discDataMetrics(data,data?.Performance.MinutesPerSector);
-                                dataString += `|${data.Id.padEnd(26)}|${data.Data.DiskSize.toString().padEnd(9)}|`
+                                dataString += `|${i.toString().padEnd(8)}`
+                                dataString += `|${data.Data.DiskSize.toString().padEnd(9)}|`
                                 dataString += `${(data.Data.CompletePercent + "%").toString().padEnd(6)}|`
                                 dataString += `${data.Data.ETA.padEnd(11)}`;
                                 dataString += `|${(data?.Performance.SectorTime || 'N/A').toString().padEnd(9)}|${(data?.Performance.SectorsPerHour|| 'N/A').toString().padEnd(7) }`
@@ -286,7 +292,9 @@ const guiCliHelper = {
                                 
                                 missed = missed.padEnd(13) + "\x1b[39m|"
                                 dataString += missed
-                                dataString += (data.Misses.Total/(data.Rewards.Rewards+data.Misses.Total)*100).toFixed(1)
+                                dataString += (data.Misses.Total/(data.Rewards.Rewards+data.Misses.Total)*100).toFixed(1).padEnd(6)
+                                dataString += `|${(data.Expired.Sectors || '0')}` 
+                                dataString += `/${data.Expired.AboutToExpire||'0'.padEnd(5)}|`
                                 this.guiLogger(dataString)
                             }
                         this.guiLogger(this.dasher);

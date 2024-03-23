@@ -27,6 +27,7 @@ html(lang="en")
       p Updated: #{updateStatus}
     if nodeDisplayData
       .node-status.center.header
+        h3#orange Tssc Bal: #{walletBalance}
         h3#blue Node Status: 
           div(id=nodeDisplayData.nodeIsRunningOk ? 'green' : 'red') 
             | #{nodeDisplayData.nodeIsRunningOk ? '✔': '✘'}
@@ -34,11 +35,14 @@ html(lang="en")
         h3#blue  Synced: 
           div#black #{nodeDisplayData.nodeSyncState ? 'Yes' : 'No'}
         h3  Peers: #{nodeDisplayData.nodePeersConnected}
-        h3#orange Tssc Bal: #{walletBalance}
 
-
-    hr
-
+    //- hr
+    div.all-status
+      each pc in farmerDisplaySector
+        .farmer-status
+          p.center Name: #{pc.SummaryData.Name}
+          p(id=pc.SummaryData.FarmerIsRunning ? 'green' : 'red') &nbsp  ✔ #{pc.SummaryData.Uptime.FormattedTime}
+              
     each pc in farmerDisplaySector
       .farmer-details
         div.center.header
@@ -64,26 +68,27 @@ html(lang="en")
           table
             thead
               tr
-                th.disk-Id Disk Id
+                //- th.disk-Id Disk Id
                 th.Size Size(TB)
                 th.Percent-Complete % Comp
                 th.ETA ETA(Days)
                 th.Sectors-Hr Sectors/Hr
                 th.Min-Sector Min/Sector
-                th.Expired Expired
                 th.Reward Reward
                 th.Miss T/R/Miss
                 th.Miss Miss %
+                th.Expired Expired/AboutToExpire
+
               each ind in pc.IndividualDiskDataObj
                 tr  
-                  td.disk-id #{ind.Id}
+                  //- td.disk-id #{ind.Id}
                   td= ind.Data.DiskSize 
                   td= ind.Data.CompletePercent 
                   td= ind.Data.ETA
                   td= ind.Performance.SectorsPerHour 
                   td= ind.Performance.SectorTime
-                  td= ind.Expired.Sectors
                   td= ind.Rewards.Rewards
                   td #{ind.Misses.Total}/ #{ind.Misses.Rejected}/#{ind.Misses.Misses}
                   td #{(ind.Misses.Total/(ind.Misses.Total+ind.Rewards.Rewards)*100).toFixed(2)}%
+                  td #{ind.Expired.Sectors}/ #{ind.AboutToExpire.Sectors}
 
