@@ -1,7 +1,7 @@
 {
   "Telegram": "https://api.telegram.org/bot<token:>/sendMessage",
   "Chat_ID": 60000000,
-  "Node": "0.0.0.0:0",
+  "Node": ["0.0.0.0:0"],
   "Farmers": [
         "0.0.0.0:0",
         "0.0.0.0:0",

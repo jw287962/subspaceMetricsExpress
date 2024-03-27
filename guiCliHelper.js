@@ -224,17 +224,22 @@ const guiCliHelper = {
          outputTelegram +=  `\n   <b>${data.totalPercentComplete}%</b> Complete\n <b>${data.totalETA}</b> ETA\n`
          return outputTelegram
      },
-     displayNodeStatus: function displayNodeStatus(data){
-        try{
+     displayNodeStatus: function displayNodeStatus(nodeDisplayData,walletBalance){
+        try{    
+            for(let i = 0; i <nodeDisplayData.length;i++){
+                let nodeString = ""
+                nodeString += `\x1b[96mNode Status: ${nodeDisplayData[i].nodeIsRunningOk === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'}, `;
+                nodeString += `\x1b[96mHostname: \x1b[93m${nodeDisplayData[i].nodeIp}, \x1b[0m`;
+                nodeString += `\x1b[96mSynced: ${nodeDisplayData[i].nodeSyncState === '0' ? '\x1b[92mYes\x1b[0m' : '\x1b[31mNo\x1b[0m'}, `;
+                nodeString += `\x1b[96mPeers: \x1b[93m${nodeDisplayData[i].nodePeersConnected},\x1b[0m `;
+                if(i ==0)
+                nodeString += `Balance:${walletBalance}`
+                
+                
+                this.guiLogger(nodeString);
+            }
 
-            let nodeString = ""
-            nodeString += `\x1b[96mNode Status: ${data.nodeDisplayData.nodeIsRunningOk === true ? '\x1b[92mRunning\x1b[0m' : '\x1b[31mStopped\x1b[0m'}, `;
-            nodeString += `\x1b[96mHostname: \x1b[93m${data.nodeDisplayData.nodeIp}, \x1b[0m`;
-            nodeString += `\x1b[96mSynced: ${data.nodeDisplayData.nodeSyncState === '0' ? '\x1b[92mYes\x1b[0m' : '\x1b[31mNo\x1b[0m'}, `;
-            nodeString += `\x1b[96mPeers: \x1b[93m${data.nodeDisplayData.nodePeersConnected},\x1b[0m `;
-            nodeString += `Balance:${data.walletBalance}`
-
-            return nodeString
+            
         }catch(err){
             console.log("Node Status Update Err ", err)
         }
@@ -244,7 +249,7 @@ const guiCliHelper = {
      displayData: async function displayData(data, dateLastOutput) {
          let outputTelegram = '<b>Balance:</b>' + data.walletBalance + '\n'
          
-         this.guiLogger(this.displayNodeStatus(data));
+         this.displayNodeStatus(data.nodeDisplayData,data.walletBalance)
          try{
 
     

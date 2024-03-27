@@ -122,22 +122,25 @@ const getAllData = async function () {
           // console.log(await delay(100))
       
     try {
-        
-        let nodeProcessArr = await parseData.getProcessState("node", config.Node, config.Node);
+      let nodeDisplayData = []
+
+      for (let i =0; i < config.Node.length;i++){
+
+        let nodeProcessArr = await parseData.getProcessState("node", config.Node[i], config.Node[i]);
 
 
         const nodeIsRunningOk = nodeProcessArr[1];
         const nodeMetricsRaw = nodeProcessArr[0];
-        let nodeDisplayData
         if(nodeIsRunningOk === true){
             const parsedNodeDataArr = await parseData.parseMetricsToObj(nodeMetricsRaw);
             const nodeMetricsArr = await parseData.getNodeMetrics(parsedNodeDataArr);
-             nodeDisplayData = guiCliHelper.getNodeDisplayData(nodeMetricsArr, nodeIsRunningOk,config.Node);
+             nodeDisplayData.push(guiCliHelper.getNodeDisplayData(nodeMetricsArr, nodeIsRunningOk,config.Node[i]))
 
     
         }else{
-            nodeDisplayData = guiCliHelper.getNodeDisplayData()
+            nodeDisplayData.push(guiCliHelper.getNodeDisplayData())
         }
+      }
       
         const farmersArrIp = config.Farmers;
         const namesArr = config.Names;

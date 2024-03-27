@@ -23,18 +23,20 @@ html(lang="en")
   body
     h1 Node Status
       button(type="button", onclick="refreshMetricsData()") &#x21bb
-    if updateStatus
-      p Updated: #{updateStatus}
-    if nodeDisplayData
-      .node-status.center.header
-        h3#orange Tssc Bal: #{walletBalance}
-        h3#blue Node Status: 
-          div(id=nodeDisplayData.nodeIsRunningOk ? 'green' : 'red') 
-            | #{nodeDisplayData.nodeIsRunningOk ? '✔': '✘'}
-          div#black #{nodeDisplayData.nodeIp}
-        h3#blue  Synced: 
-          div#black #{nodeDisplayData.nodeSyncState ? 'Yes' : 'No'}
-        h3  Peers: #{nodeDisplayData.nodePeersConnected}
+    h3 Tssc Bal: #{walletBalance}
+    div
+      if updateStatus
+        p Updated: #{updateStatus}
+      each data in nodeDisplayData
+        if data
+          .node-status.center.header
+            h3#blue Node Status: 
+              div(id=data.nodeIsRunningOk ? 'green' : 'red') 
+                | #{data.nodeIsRunningOk ? '✔': '✘'}
+              div#black #{data.nodeIp}
+            h3#blue  Synced: 
+              div#black #{data.nodeSyncState ? 'Yes' : 'No'}
+            h3  Peers: #{data.nodePeersConnected}
 
     //- hr
     div.all-status
@@ -54,7 +56,7 @@ html(lang="en")
           h3.center Name: #{pc.SummaryData.Name}
           h3 Hostname: #{pc.SummaryData.FarmerIp}
         div.line1
-            p(id=pc.SummaryData.FarmerIsRunning ? 'green' : 'red') Status: ✔ #{pc.SummaryData.Uptime.FormattedTime}
+            p(id=pc.SummaryData.FarmerIsRunning ? 'blue' : 'red') Status: ✔ #{pc.SummaryData.Uptime.FormattedTime}
         div.line2
           div.row
             p.border Sector Time: #{pc.SummaryData.TotalSectorTime.formattedSectorTime} 
