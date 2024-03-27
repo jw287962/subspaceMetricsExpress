@@ -14,7 +14,7 @@
   ],
   "Enable_API": "No",
   "API_host": "0.0.0.0:0",
-  "Address": "",
+  "Address": "Wallet Address",
   "Refresh": "(in seconds)"
 }
 
