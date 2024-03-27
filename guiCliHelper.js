@@ -258,7 +258,7 @@ const guiCliHelper = {
                  if(indexxx > 0) outputTelegram += "\n\n"
 
                 //  console.log('farmer',farmer)
-                 outputTelegram += farmer.SummaryData.Name
+                 outputTelegram += farmer?.SummaryData?.Name
                     currentUser = "Name: \x1b[0m" + outputTelegram || "" ;
                      
                      // Farmerstring2 is group status  2nd row (uptime, sector time, rewards for entire PC)
