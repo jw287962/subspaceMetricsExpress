@@ -20,6 +20,7 @@
   .row, .node-status, .line1,.farmer-status{
     display: flex;
     flex-direction: row;
+
   }
 .all-status,.node-status{
   width:100%;
@@ -142,7 +143,7 @@ padding: 2px;
   color: rgb(56, 205, 255);
 }
 #green{
-  color: rgb(0, 218, 0)
+  color: rgb(0, 175, 0)
 }
 #black{
   color: black;
@@ -155,7 +156,9 @@ padding: 2px;
   color: rgb(0, 0, 0);
 }
 
-
+#red{
+  color:red
+}
 
 @media (max-width: 600px) {
   body{

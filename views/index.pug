@@ -41,8 +41,13 @@ html(lang="en")
       each pc in farmerDisplaySector
         .farmer-status
           p.center Name: #{pc.SummaryData.Name}
-          p(id=pc.SummaryData.FarmerIsRunning ? 'green' : 'red') &nbsp  ✔ #{pc.SummaryData.Uptime.FormattedTime}
-              
+          p(id=pc.SummaryData.FarmerIsRunning ? 'blue' : 'red') &nbsp; ✔ #{pc.SummaryData.Uptime.FormattedTime}
+          p |
+          p#green +#{pc.SummaryData.TotalRewards} 
+          p /
+          p#red - #{pc.SummaryData.TotalMisses}
+
+      
     each pc in farmerDisplaySector
       .farmer-details
         div.center.header
@@ -71,24 +76,24 @@ html(lang="en")
                 //- th.disk-Id Disk Id
                 th.Size Size(TB)
                 th.Percent-Complete % Comp
-                th.ETA ETA(Days)
-                th.Sectors-Hr Sectors/Hr
-                th.Min-Sector Min/Sector
                 th.Reward Reward
                 th.Miss T/R/Miss
                 th.Miss Miss %
+                th.ETA ETA(Days)
+                th.Sectors-Hr Sectors/Hr
+                th.Min-Sector Min/Sector
                 th.Expired Expired/AboutToExpire
 
               each ind in pc.IndividualDiskDataObj
                 tr  
                   //- td.disk-id #{ind.Id}
                   td= ind.Data.DiskSize 
-                  td= ind.Data.CompletePercent 
+                  td #{ind.Data.CompletePercent}%
+                  td +#{ind.Rewards.Rewards}
+                  td - #{ind.Misses.Total}/ #{ind.Misses.Rejected}/#{ind.Misses.Misses}
+                  td #{(ind.Misses.Total/(ind.Misses.Total+ind.Rewards.Rewards)*100).toFixed(2)}%
                   td= ind.Data.ETA
                   td= ind.Performance.SectorsPerHour 
                   td= ind.Performance.SectorTime
-                  td= ind.Rewards.Rewards
-                  td #{ind.Misses.Total}/ #{ind.Misses.Rejected}/#{ind.Misses.Misses}
-                  td #{(ind.Misses.Total/(ind.Misses.Total+ind.Rewards.Rewards)*100).toFixed(2)}%
                   td #{ind.Expired.Sectors}/ #{ind.AboutToExpire.Sectors}
 
