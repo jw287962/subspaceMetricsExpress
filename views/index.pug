@@ -24,7 +24,7 @@ html(lang="en")
     h1 Node Status
       button(type="button", onclick="refreshMetricsData()") &#x21bb
     h3 Tssc Bal: #{walletBalance}
-    div
+    div.all-status
       if updateStatus
         p Updated: #{updateStatus}
       each data in nodeDisplayData
