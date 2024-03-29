@@ -309,7 +309,7 @@ const guiCliHelper = {
                                 }
                               
                                 dataString += `|${(data.Expired.Sectors || '0')}` 
-                                dataString += `/${data.Expired.AboutToExpire||'0'.padEnd(10)}|`
+                                dataString += `/${data.AboutToExpire.Sectors||'0'.padEnd(10)}|`
                                 this.guiLogger(dataString)
                             }
                         this.guiLogger(this.dasher);
