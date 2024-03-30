@@ -419,18 +419,18 @@ const parseData = {
                         PlotState: plot_state,
                         Sectors: sectors,
                     }
-                    if (plot_state.toLowerCase() == "notplotted") {
+                    if (plot_state.toLowerCase() == "notplotted" && individualDiskDataObj[plot_id]) {
                             individualDiskDataObj[plot_id]['PlotsRemaining'] = (plots_info)
                             if(individualDiskDataObj[plot_id].PlotsRemaining.Sectors == 0 ){
                                 summaryData.TotalDisks.Plotting--;
                                 summaryData.TotalDisks.FinishedPlotting++;
                             }
-                    } else if (plot_state.toLowerCase() === "plotted") {
+                    } else if (plot_state.toLowerCase() === "plotted" && individualDiskDataObj[plot_id]) {
                                 individualDiskDataObj[plot_id]['PlotsCompleted'] = (plots_info)
                     }else if(plot_state.toLowerCase() === 'expired'){
                     
                         individualDiskDataObj[plot_id]['Expired'] = (plots_info)
-                    }else if(plot_state.toLowerCase() === 'abouttoexpire'){
+                    }else if(plot_state.toLowerCase() === 'abouttoexpire' && individualDiskDataObj[plot_id]){
                         individualDiskDataObj[plot_id]['AboutToExpire'] = (plots_info)
                     }
                     
