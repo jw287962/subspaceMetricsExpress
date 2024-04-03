@@ -42,12 +42,14 @@ html(lang="en")
     div.all-status
       each pc in farmerDisplaySector
         .farmer-status
-          p.center Name: #{pc.SummaryData.Name}
+          p.center #{pc.SummaryData.Name}
           p(id=pc.SummaryData.FarmerIsRunning ? 'blue' : 'red') &nbsp; ✔ #{pc.SummaryData.Uptime.FormattedTime}
           p |
+          p +#{pc.SummaryData.TotalRewardsPerTB} /TB |
           p#green +#{pc.SummaryData.TotalRewards} 
           p /
           p#red - #{pc.SummaryData.TotalMisses}
+
 
       
     each pc in farmerDisplaySector
@@ -62,8 +64,8 @@ html(lang="en")
             p.border Sector Time: #{pc.SummaryData.TotalSectorTime.formattedSectorTime} 
             p #{pc.SummaryData.TotalSectorsPerHour.toFixed(2)} Sectors per Hr
           div.row
-            p.border Rewards: #{pc.SummaryData.TotalRewards} total
-            p.border #{pc.SummaryData.TotalRewardsPerHour} per Hr
+            p.border Rewards: #{pc.SummaryData.TotalRewards}
+            //- p.border #{pc.SummaryData.TotalRewardsPerHour} per Hr
             p.border #{(pc.SummaryData.TotalRewardsPerHour * 24).toFixed(2)} per Day
             p #{pc.SummaryData.TotalRewardsPerTB} per TB
           div.row
