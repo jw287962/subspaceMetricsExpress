@@ -64,7 +64,8 @@ html(lang="en")
           div.row
             p.border Rewards: #{pc.SummaryData.TotalRewards} total
             p.border #{pc.SummaryData.TotalRewardsPerHour} per Hr
-            p #{(pc.SummaryData.TotalRewardsPerHour * 24).toFixed(2)} per Day
+            p.border #{(pc.SummaryData.TotalRewardsPerHour * 24).toFixed(2)} per Day
+            p #{pc.SummaryData.TotalRewardsPerTB} per TB
           div.row
             p.border Remain: #{pc.SummaryData.TotalETA}
             p #{pc.SummaryData.TotalPercentComplete}% Complete 
