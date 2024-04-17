@@ -614,6 +614,8 @@ const parseData = {
             summaryData.TotalRewardsPerHour = (summaryData.TotalRewards/(summaryData.Uptime.Seconds/(60*60))).toFixed(2);
             summaryData.TotalRewardsPerTB = (summaryData.TotalRewardsPerHour/(totalPlotsCompleted/1000)*24).toFixed(1)
 
+
+ 
             allData.SummaryData = summaryData
             allData['IndividualDiskDataObj'] = individualDiskDataObj;
 

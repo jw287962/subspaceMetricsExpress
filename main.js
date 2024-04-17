@@ -71,7 +71,9 @@ app.get('/api/refresh', async (req , res) => {
         nodeDisplayData: jsonData.nodeDisplayData, 
         farmerDisplaySector: jsonData.farmerDisplaySector,
         walletBalance: jsonData.walletBalance,
-        updateStatus: ''
+        updateStatus: '',
+        timeToRefresh: guiCliHelper.timeToRefresh,
+        resetTimer: jsonData.timer*60*1000
       });
     } catch (error) {
       res.status(500).json({ error: 'Internal server error' });
@@ -186,7 +188,8 @@ const getAllData = async function () {
         const currentDate = moment();
 
         // FILE OUTPUT
-        const displayData = { nodeDisplayData, farmerDisplaySector, walletBalance: balance}
+        const timer = (config.Refresh+1)
+        const displayData = { nodeDisplayData, farmerDisplaySector, walletBalance: balance,timer}
         const jsonData = JSON.stringify(displayData);
         fs.writeFileSync(filePath, jsonData);
 

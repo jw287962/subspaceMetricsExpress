@@ -6,13 +6,14 @@ const config = require('./config.json')
 
 
 const filePath = './data.json';
-let timeToRefresh = config.Refresh
+// let timeToRefresh = config.Refresh
 
 
 
 let timerExists = false;
 
 const guiCliHelper = {
+    timeToRefresh: config.Refresh,
     guiLogger: function guiLogger(message) {
          console.log(message);
      },
@@ -357,7 +358,7 @@ const guiCliHelper = {
            timer = setTimeout(() => {
             if (timerExists){
                 clearInterval(timerExists)
-                timeToRefresh = config.Refresh
+                this.timeToRefresh = config.Refresh
             }
              this.countdownToRefresh();
              }, 2000); 
@@ -370,9 +371,9 @@ const guiCliHelper = {
      },
      countdownToRefresh: function countdownToRefresh() {
         try{
-            timeToRefresh--;
+            this.timeToRefresh--;
          loader = '';
-         switch(timeToRefresh%4){
+         switch(this.timeToRefresh%4){
              case 0:{
                  loader='—'
                  break
@@ -391,15 +392,15 @@ const guiCliHelper = {
              }
          }
        
-             if (timeToRefresh < 1) {
+             if (this.timeToRefresh < 1) {
                  // Trigger data refresh when countdown reaches 0
                  process.stdout.clearLine();
-                 timeToRefresh = config.Refresh
+                 this.timeToRefresh = config.Refresh
                  return;
              } else {
                  process.stdout.clearLine();
                  process.stdout.cursorTo(0);
-                 process.stdout.write(` ${loader} Refreshing in ${timeToRefresh} seconds`);
+                 process.stdout.write(` ${loader} Refreshing in ${this.timeToRefresh} seconds`);
                  
                  timerExists = setTimeout(() => this.countdownToRefresh(), 1000); // Update countdown every second
              }

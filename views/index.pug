@@ -6,6 +6,9 @@ html(lang="en")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     title Node Status
     script.
+      let timeToRefresh = #{timeToRefresh};
+      let resetTimer = #{resetTimer};
+
       function refreshMetricsData() {
         fetch('/api/refresh')
           .then(response => response.json())
@@ -19,14 +22,20 @@ html(lang="en")
             updateStatus = "Error"
           });
       }
+      setInterval(function(){
+        timeToRefresh--;
+         document.getElementById('timer').textContent = timeToRefresh;
+      },1000)
       setTimeout(function() {
         window.location.reload();
-      }, 30000); 
+        timer=resetTimer
+      }, resetTimer); 
 
   body
     h1 Node Status
       button(type="button", onclick="refreshMetricsData()") &#x21bb
-    h3 Tssc Bal: #{walletBalance}
+    h3 Tssc Bal: #{walletBalance} | Timer:
+      span(id="timer") #{timeToRefresh}
     div.all-status
       if updateStatus
         p Updated: #{updateStatus}
