@@ -553,12 +553,12 @@ const parseData = {
                     
 
         }
-        if(oldStatus[summaryData.FarmerIp] >= uptime_seconds){
+        if(oldStatus[farmerIp] >= uptime_seconds*1){
             summaryData.ERROR = `CONSTANT UPTIME! ERROR`
-            parseData.sendTelegramNotification(`${summaryData.FarmerIp} ${summaryData.ERROR}`)
+            parseData.sendTelegramNotification(`${farmerIp} ${summaryData.ERROR} | ${oldStatus[farmerIp]}>=${uptime_seconds}`)
         }
 
-            oldStatus[summaryData.FarmerIp] = uptime_seconds;
+            oldStatus[farmerIp] = uptime_seconds*1;
 
 
         // Calculate SummaryData for some metrics
