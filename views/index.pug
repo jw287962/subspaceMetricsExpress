@@ -43,12 +43,17 @@ html(lang="en")
       each pc in farmerDisplaySector
         .farmer-status
           p.center #{pc.SummaryData.Name}
-          p(id=pc.SummaryData.FarmerIsRunning ? 'blue' : 'red') &nbsp; ✔ #{pc.SummaryData.Uptime.FormattedTime}
+          if pc.SummaryData.FarmerIsRunning 
+            p#blue &nbsp; ✔ 
+            p #{pc.SummaryData.Uptime.FormattedTime}
+          else 
+            p#red &nbsp; ✘ #{pc.SummaryData.Uptime.FormattedTime}
           p |
           p +#{pc.SummaryData.TotalRewardsPerTB} /TB |
           p#green +#{pc.SummaryData.TotalRewards} 
           p /
           p#red - #{pc.SummaryData.TotalMisses}
+          p | #{pc.SummaryData.TotalDiskSize} Tib
 
 
       
