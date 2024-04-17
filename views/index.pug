@@ -24,12 +24,16 @@ html(lang="en")
       }
       setInterval(function(){
         timeToRefresh--;
-         document.getElementById('timer').textContent = timeToRefresh;
-      },1000)
-      setTimeout(function() {
+        if(timeToRefresh <=0){
         window.location.reload();
         timer=resetTimer
-      }, timeToRefresh*60*1000); 
+        }
+         document.getElementById('timer').textContent = timeToRefresh;
+      },1000)
+      //- setTimeout(function() {
+      //-   window.location.reload();
+      //-   timer=resetTimer
+      //- }, timeToRefresh*60*1000); 
 
   body
     h1 Node Status
