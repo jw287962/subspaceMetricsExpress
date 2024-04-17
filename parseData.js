@@ -406,7 +406,7 @@ const parseData = {
                 },
             TotalETA: "",
             TotalETAShort : "",
-            IdentifyErrors: 0
+            ERROR: ""
         }
         const allData = {SummaryData: summaryData}
         if(!oldStatus[summaryData.FarmerIp])
@@ -554,8 +554,8 @@ const parseData = {
 
         }
         if(oldStatus[summaryData.FarmerIp] >= uptime_seconds){
-            console.log(oldStatus, uptime_seconds)
-            parseData.sendTelegramNotification(`${summaryData.FarmerIp} uptime did not change! ERROR`)
+            summaryData.ERROR = `CONSTANT UPTIME! ERROR`
+            parseData.sendTelegramNotification(`${summaryData.FarmerIp} ${summaryData.ERROR}`)
         }
 
             oldStatus[summaryData.FarmerIp] = uptime_seconds;

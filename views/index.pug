@@ -46,7 +46,7 @@ html(lang="en")
       each pc in farmerDisplaySector
         .farmer-status
           p.center #{pc.SummaryData.Name}
-          if pc.SummaryData.FarmerIsRunning 
+          if pc.SummaryData.FarmerIsRunning && pc.SummaryData.ERROR == ""
             p#blue &nbsp; ✔ 
             p #{pc.SummaryData.Uptime.FormattedTime}
           else 
