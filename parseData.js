@@ -2,7 +2,7 @@
 const axios = require('axios')
 const config = require('./config.json')
 const clear = require('console-clear')
-
+const oldStatus = {};
 // POLKADOT
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const wsProvider = new WsProvider('ws://192.168.1.248:9944',config.Refresh*60*1000);
@@ -286,8 +286,14 @@ const parseData = {
              const hours = Math.floor((seconds % (3600 * 24)) / 3600);
              const minutes = Math.floor((seconds % 3600) / 60);
              const second = Math.floor(seconds % 60)
-             const formattedTime = `${days}D ${hours}H ${minutes}M ${second}S`;
-             return formattedTime;
+
+            //  let formattedTime 
+             if(days == 0 && hours ==0){
+                return `${minutes}M ${second}S`
+             }else{
+                return `${days}D ${hours}H ${minutes}M`;
+             }
+             
          
          }catch(err){
              console.log('Error: convertSecondsDays', err)
@@ -350,6 +356,7 @@ const parseData = {
         if(unique_farm_id && !individualDiskDataObj[unique_farm_id]){
 
              individualDiskDataObj[unique_farm_id] = this.setUpIndividualObj(unique_farm_id)
+            
             }
      },
     
@@ -398,9 +405,12 @@ const parseData = {
                     formattedSectorTime: '',
                 },
             TotalETA: "",
-            TotalETAShort : ""
+            TotalETAShort : "",
+            IdentifyErrors: 0
         }
         const allData = {SummaryData: summaryData}
+        if(!oldStatus[summaryData.FarmerIp])
+        oldStatus[summaryData.FarmerIp] = -1
 
         if(farmerIsRunning){
             for (let metrics_obj of io_farmer_metrics_arr) {
@@ -411,6 +421,14 @@ const parseData = {
                 let unique_farm_id
                 let farmer_disk_proving_success_count
                 this.initializeDiskID(metrics_obj,individualDiskDataObj)
+                // if (metrics_obj.Name.indexOf("libp2p_identify_errors_total") >= 0) {
+                //     const plot_id = ((metrics_obj.Instance?.split(","))[0]);
+                //     // const plot_state = metrics_obj.Criteria.trim().split('"')[1];
+                //     const errors = metrics_obj.Value;
+                //     let identify_errors = errors;
+                //     summaryData.IdentifyErrors = identify_errors
+                    
+                // }else
                 if (metrics_obj.Name.indexOf("_farmer_sectors_total_sectors") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
                     const plot_id = ((metrics_obj.Instance?.split(","))[0]);
                     const plot_state = metrics_obj.Criteria.trim().split('"')[1];
@@ -531,8 +549,16 @@ const parseData = {
                 summaryData.TotalSectors = parseInt(metrics_obj.Value)
                 summaryData.Uptime.Seconds = uptime_seconds;
                 summaryData.Uptime.FormattedTime=this.convertSecondsDays(uptime_seconds)
+                
+                    
 
         }
+        if(oldStatus[summaryData.FarmerIp] >= uptime_seconds){
+            console.log(oldStatus, uptime_seconds)
+            parseData.sendTelegramNotification(`${summaryData.FarmerIp} uptime did not change! ERROR`)
+        }
+
+            oldStatus[summaryData.FarmerIp] = uptime_seconds;
 
 
         // Calculate SummaryData for some metrics
