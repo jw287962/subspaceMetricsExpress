@@ -216,13 +216,6 @@ const getAllData = async function () {
 // MAIN FUNCTION: GETALLDATA
 if(clearLog) clear();
 getAllData()
-//     // Call getAllData immediately
-// function intervalRefresherFunction(){
-//   if(clearLog) clear();
-//   process.stdout.clearLine()
-//   // console.log('Server running on port 3000');
-//   getAllData()
-// }
 refreshInterval = new refreshMetricsObject()
 function refreshMetricsObject(){
 
@@ -243,6 +236,3 @@ function refreshMetricsObject(){
 
 
 }
-
-
-// Call getAllData at intervals defined by config.Refresh (in seconds)

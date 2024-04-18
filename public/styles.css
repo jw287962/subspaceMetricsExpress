@@ -33,6 +33,7 @@
 
   }
 
+
 .all-status,.node-status{
   width:100%;
   max-width: 900px;
@@ -45,13 +46,14 @@
   justify-content: space-between;
 
   }
+  .farmersummary > .farmersummarydata {
+    border-left: 1px solid grey;
+  }
 
-
-  .farmer-status > div > div:not(:last-child) {
+  .farmer-status > div > div {
  
-    border-right: 2px solid lightgrey;
     margin: 0px;
-    padding: 4px;
+    padding: 4px 8px;
   }
   .node-status > h3{
     display: flex;
@@ -67,10 +69,11 @@
   .farmer-details,  .node-status,.farmer-status{
     border: 1px solid lightgrey;
   }
+
+
   .farmer-details > .header {
       flex-direction: row;
   justify-content: center;
-  padding: 2px;
     }
 
     /* for rewards +0 / -0 */
@@ -82,11 +85,19 @@
     padding: 0px 10px;
   }
   .farmersummary{
+    min-width: 480px;
+  }
+  .farmersummarydata{
     height: 30px;
     align-items: center;
     justify-content: center;
     padding: 4px;
     font-weight: bold;
+    min-width: 30px;
+  }
+
+  #uptime{
+    min-width: 50px;
   }
 
     .header{
@@ -179,6 +190,25 @@
 @media (max-width: 700px) {
   body{
     /* width: 90%; */
+  } 
+
+  .farmer-status{
+    flex-direction: column;
+    position: relative;
+  }
+  .arrow{
+    position: absolute;
+    top: 0px
+  }
+  .farmersummary{
+    border-top: 1px solid grey;
+  }
+  .farmersummary > .farmersummarydata {
+    border-left: 1px solid grey;
+  }
+  .name{
+    border: none;
+    color: rgb(56, 205, 255);
   }
 
   .node-status,.farmer-details{

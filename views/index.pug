@@ -58,47 +58,49 @@ html(lang="en")
     div.all-status
       each pc,index in farmerDisplaySector
         div.farmer-status(onclick=`showData(${index})`)
-          div.row.farmersummary
           div.row
-            div.row.farmersummary #{pc.SummaryData.Name} 
+            div.row.farmersummarydata.name #{pc.SummaryData.Name}
+          div.row.farmersummary
             if pc.SummaryData.FarmerIsRunning && pc.SummaryData.ERROR == ""
-              div#blue.row.farmersummary &nbsp; ✔ 
+              div.row.farmersummarydata#uptime
+                p#blue &nbsp; ✔ 
                 p #{pc.SummaryData.Uptime.FormattedTime}
             else 
               p#red &nbsp; ✘ #{pc.SummaryData.Uptime.FormattedTime}
-            div.row.farmersummary +#{pc.SummaryData.TotalRewardsPerTB} /TB 
-            div.row.farmersummary 
-              p#green +#{pc.SummaryData.TotalRewards} 
+            div.row.farmersummarydata +#{pc.SummaryData.TotalRewardsPerTB} /TB 
+            div.row.farmersummarydata 
+              p#green +#{pc.SummaryData.TotalRewards}
               p.spacing /
-              p#red -#{pc.SummaryData.TotalMisses}
-            div.row.farmersummary #{pc.SummaryData.TotalDiskSize} Tib
-            div.row.farmersummary 
-              p #{pc.SummaryData.TotalExpired.Expired}💀
+              p#red #{pc.SummaryData.TotalMisses}
+            div.row.farmersummarydata #{pc.SummaryData.TotalDiskSize} Tib
+            div.row.farmersummarydata 
+              p #{pc.SummaryData.TotalExpired.Expired}
               p.spacing /
               p #{pc.SummaryData.TotalExpired.AboutToExpire}
-            div.row.farmersummary 
+            div.row.farmersummarydata 
               p #{pc.SummaryData.TotalSectorTime.formattedSectorTime}
-          div ⌄
+          div.arrow ⌄
         
 
         .farmer-details.hidden(id=`farmerStatus${index}`)
-          div.line1
-              //- p(id=pc.SummaryData.FarmerIsRunning ? 'blue' : 'red') Status: ✔ #{pc.SummaryData.Uptime.FormattedTime}
-              p Hostname: #{pc.SummaryData.FarmerIp}
+          //- div.line1
           div.line2
             div.row
-              p.border Sector Time: #{pc.SummaryData.TotalSectorTime.formattedSectorTime} 
-              p #{pc.SummaryData.TotalSectorsPerHour.toFixed(2)} Sectors per Hr
+              h3 Hostname: #{pc.SummaryData.FarmerIp}
             div.row
-              p.border Rewards: #{pc.SummaryData.TotalRewards}
+              p Sectors/Hr: 
+              p #{pc.SummaryData.TotalSectorsPerHour.toFixed(2)}
+            div.row
+              p Rewards: 
+              p #{pc.SummaryData.TotalRewards} |
               //- p.border #{pc.SummaryData.TotalRewardsPerHour} per Hr
               p.border #{(pc.SummaryData.TotalRewardsPerHour * 24).toFixed(2)} per Day
               p #{pc.SummaryData.TotalRewardsPerTB} per TB
             div.row
-              p.border Remain: #{pc.SummaryData.TotalETA}
+              p Remain:
+              p #{pc.SummaryData.TotalETA}
               p #{pc.SummaryData.TotalPercentComplete}% Complete 
             div.row
-              p Size: #{pc.SummaryData.TotalDiskSize}TiB 
               p Miss: #{(pc.SummaryData.TotalMisses/(pc.SummaryData.TotalRewards+pc.SummaryData.TotalMisses)*100).toFixed(2)}%
           div.tablediv
             table
