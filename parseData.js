@@ -404,6 +404,10 @@ const parseData = {
                     sectorTime: 0,
                     formattedSectorTime: '',
                 },
+            TotalExpired:{
+                Expired: 0,
+                AboutToExpire: 0
+            },
             TotalETA: "",
             TotalETAShort : "",
             ERROR: ""
@@ -572,7 +576,9 @@ const parseData = {
                     summaryData.TotalPlotsRemaining += individualDiskDataObj[key].PlotsRemaining.Sectors*1
                     summaryData.TotalPlotsCompleted += individualDiskDataObj[key].PlotsCompleted.Sectors*1
                     summaryData.TotalMisses += individualDiskDataObj[key].Misses.Total;
-                    // check for NOT PLOTTING
+                    summaryData.TotalExpired.Expired += individualDiskDataObj[key].Expired.Sectors*1
+                    summaryData.TotalExpired.AboutToExpire += individualDiskDataObj[key].AboutToExpire.Sectors*1
+
                     if(individualDiskDataObj[key].PlotsRemaining.Sectors == 0){
                         individualDiskDataObj[key].Performance.SectorsPerHour = 0
                         individualDiskDataObj[key].Performance.MinutesPerSector = "0s"

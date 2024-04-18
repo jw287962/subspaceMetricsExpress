@@ -30,10 +30,10 @@ html(lang="en")
         }
          document.getElementById('timer').textContent = timeToRefresh;
       },1000)
-      //- setTimeout(function() {
-      //-   window.location.reload();
-      //-   timer=resetTimer
-      //- }, timeToRefresh*60*1000); 
+      function showData(index){
+        const elem = document.querySelector(`#farmerStatus${index}`)
+        elem.classList.toggle('hidden')
+      }
 
   body
     h1 Node Status
@@ -56,70 +56,76 @@ html(lang="en")
 
     //- hr
     div.all-status
-      each pc in farmerDisplaySector
-        .farmer-status
-          p.center #{pc.SummaryData.Name}
-          if pc.SummaryData.FarmerIsRunning && pc.SummaryData.ERROR == ""
-            p#blue &nbsp; ✔ 
-            p #{pc.SummaryData.Uptime.FormattedTime}
-          else 
-            p#red &nbsp; ✘ #{pc.SummaryData.Uptime.FormattedTime}
-          p |
-          p +#{pc.SummaryData.TotalRewardsPerTB} /TB |
-          p#green +#{pc.SummaryData.TotalRewards} 
-          p /
-          p#red - #{pc.SummaryData.TotalMisses}
-          p | #{pc.SummaryData.TotalDiskSize} Tib
+      each pc,index in farmerDisplaySector
+        div.farmer-status(onclick=`showData(${index})`)
+          div.row.farmersummary
+          div.row
+            div.row.farmersummary #{pc.SummaryData.Name} 
+            if pc.SummaryData.FarmerIsRunning && pc.SummaryData.ERROR == ""
+              div#blue.row.farmersummary &nbsp; ✔ 
+                p #{pc.SummaryData.Uptime.FormattedTime}
+            else 
+              p#red &nbsp; ✘ #{pc.SummaryData.Uptime.FormattedTime}
+            div.row.farmersummary +#{pc.SummaryData.TotalRewardsPerTB} /TB 
+            div.row.farmersummary 
+              p#green +#{pc.SummaryData.TotalRewards} 
+              p.spacing /
+              p#red -#{pc.SummaryData.TotalMisses}
+            div.row.farmersummary #{pc.SummaryData.TotalDiskSize} Tib
+            div.row.farmersummary 
+              p #{pc.SummaryData.TotalExpired.Expired}💀
+              p.spacing /
+              p #{pc.SummaryData.TotalExpired.AboutToExpire}
+            div.row.farmersummary 
+              p #{pc.SummaryData.TotalSectorTime.formattedSectorTime}
+          div ⌄
+        
 
+        .farmer-details.hidden(id=`farmerStatus${index}`)
+          div.line1
+              //- p(id=pc.SummaryData.FarmerIsRunning ? 'blue' : 'red') Status: ✔ #{pc.SummaryData.Uptime.FormattedTime}
+              p Hostname: #{pc.SummaryData.FarmerIp}
+          div.line2
+            div.row
+              p.border Sector Time: #{pc.SummaryData.TotalSectorTime.formattedSectorTime} 
+              p #{pc.SummaryData.TotalSectorsPerHour.toFixed(2)} Sectors per Hr
+            div.row
+              p.border Rewards: #{pc.SummaryData.TotalRewards}
+              //- p.border #{pc.SummaryData.TotalRewardsPerHour} per Hr
+              p.border #{(pc.SummaryData.TotalRewardsPerHour * 24).toFixed(2)} per Day
+              p #{pc.SummaryData.TotalRewardsPerTB} per TB
+            div.row
+              p.border Remain: #{pc.SummaryData.TotalETA}
+              p #{pc.SummaryData.TotalPercentComplete}% Complete 
+            div.row
+              p Size: #{pc.SummaryData.TotalDiskSize}TiB 
+              p Miss: #{(pc.SummaryData.TotalMisses/(pc.SummaryData.TotalRewards+pc.SummaryData.TotalMisses)*100).toFixed(2)}%
+          div.tablediv
+            table
+              thead
+                tr
+                  //- th.disk-Id Disk Id
+                  th.Size Size(TB)
+                  th.Percent-Complete % Comp
+                  th.Reward Reward
+                  th.Miss T/R/Miss
+                  th.Miss Miss %
+                  th.ETA ETA(Days)
+                  th.Sectors-Hr Sectors/Hr
+                  th.Min-Sector Min/Sector
+                  th.Expired Expired/AboutToExpire
 
+                each ind in pc.IndividualDiskDataObj
+                  tr  
+                    //- td.disk-id #{ind.Id}
+                    td= ind.Data.DiskSize 
+                    td #{ind.Data.CompletePercent}%
+                    td +#{ind.Rewards.Rewards}
+                    td - #{ind.Misses.Total}/ #{ind.Misses.Rejected}/#{ind.Misses.Misses}
+                    td #{(ind.Misses.Total/(ind.Misses.Total+ind.Rewards.Rewards)*100).toFixed(2)}%
+                    td= ind.Data.ETA
+                    td= ind.Performance.SectorsPerHour 
+                    td= ind.Performance.SectorTime
+                    td #{ind.Expired.Sectors}/ #{ind.AboutToExpire.Sectors}
       
-    each pc in farmerDisplaySector
-      .farmer-details
-        div.center.header
-          h3.center Name: #{pc.SummaryData.Name}
-          h3 Hostname: #{pc.SummaryData.FarmerIp}
-        div.line1
-            p(id=pc.SummaryData.FarmerIsRunning ? 'blue' : 'red') Status: ✔ #{pc.SummaryData.Uptime.FormattedTime}
-        div.line2
-          div.row
-            p.border Sector Time: #{pc.SummaryData.TotalSectorTime.formattedSectorTime} 
-            p #{pc.SummaryData.TotalSectorsPerHour.toFixed(2)} Sectors per Hr
-          div.row
-            p.border Rewards: #{pc.SummaryData.TotalRewards}
-            //- p.border #{pc.SummaryData.TotalRewardsPerHour} per Hr
-            p.border #{(pc.SummaryData.TotalRewardsPerHour * 24).toFixed(2)} per Day
-            p #{pc.SummaryData.TotalRewardsPerTB} per TB
-          div.row
-            p.border Remain: #{pc.SummaryData.TotalETA}
-            p #{pc.SummaryData.TotalPercentComplete}% Complete 
-          div.row
-            p Size: #{pc.SummaryData.TotalDiskSize}TiB 
-            p Miss: #{(pc.SummaryData.TotalMisses/(pc.SummaryData.TotalRewards+pc.SummaryData.TotalMisses)*100).toFixed(2)}%
-        div.tablediv
-          table
-            thead
-              tr
-                //- th.disk-Id Disk Id
-                th.Size Size(TB)
-                th.Percent-Complete % Comp
-                th.Reward Reward
-                th.Miss T/R/Miss
-                th.Miss Miss %
-                th.ETA ETA(Days)
-                th.Sectors-Hr Sectors/Hr
-                th.Min-Sector Min/Sector
-                th.Expired Expired/AboutToExpire
-
-              each ind in pc.IndividualDiskDataObj
-                tr  
-                  //- td.disk-id #{ind.Id}
-                  td= ind.Data.DiskSize 
-                  td #{ind.Data.CompletePercent}%
-                  td +#{ind.Rewards.Rewards}
-                  td - #{ind.Misses.Total}/ #{ind.Misses.Rejected}/#{ind.Misses.Misses}
-                  td #{(ind.Misses.Total/(ind.Misses.Total+ind.Rewards.Rewards)*100).toFixed(2)}%
-                  td= ind.Data.ETA
-                  td= ind.Performance.SectorsPerHour 
-                  td= ind.Performance.SectorTime
-                  td #{ind.Expired.Sectors}/ #{ind.AboutToExpire.Sectors}
 

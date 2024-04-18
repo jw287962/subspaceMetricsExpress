@@ -4,6 +4,10 @@
       font-family: Arial, sans-serif;
   }
 
+  .hidden{
+    display: none;
+  }
+
   button{
     background-color: white;
     border: 1px solid grey;
@@ -12,12 +16,10 @@
     margin: 5px 10px;
     border-radius: 50%;
   }
-  h1{
+  h1,h3{
     margin: 5px;
   }
-  h3{
-    margin: 5px;
-  }
+
 
   .center,.node-status, body{
     display: flex;
@@ -27,8 +29,10 @@
   .row, .node-status, .line1,.farmer-status{
     display: flex;
     flex-direction: row;
+    justify-content: center;
 
   }
+
 .all-status,.node-status{
   width:100%;
   max-width: 900px;
@@ -38,10 +42,16 @@
   flex-direction: row;
   margin-top: 5px;
   margin-bottom: 5px;
-  justify-content: center;
+  justify-content: space-between;
+
   }
-  .farmer-status > p{
-    font-weight: bold;
+
+
+  .farmer-status > div > div:not(:last-child) {
+ 
+    border-right: 2px solid lightgrey;
+    margin: 0px;
+    padding: 4px;
   }
   .node-status > h3{
     display: flex;
@@ -59,22 +69,28 @@
   }
   .farmer-details > .header {
       flex-direction: row;
-justify-content: center;
-padding: 2px;
+  justify-content: center;
+  padding: 2px;
+    }
+
+    /* for rewards +0 / -0 */
+  .spacing{
+      margin: 3px;
   }
-  .farmer-details{
-  }
+
   .header > h3{
     padding: 0px 10px;
   }
-  
-  p{
-      margin: 3px;
-    }
+  .farmersummary{
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    font-weight: bold;
+  }
 
     .header{
-    border-bottom: 1px solid grey;
-      
+    border-bottom: 1px solid grey; 
     }
   .line1 {
     justify-content: center;      
@@ -86,12 +102,7 @@ padding: 2px;
     align-items: center;
     margin: 0px;
   }
-  .row{
-    height: 30px;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-  }
+
   .line2 > .row > p{
     padding: 0px 10px;
     margin: 0px;
@@ -108,11 +119,9 @@ padding: 2px;
     overflow: scroll;
   }
   table { 
-
     width: 100%;
     border-collapse: collapse;
   }
-  
   th, td {
     border: 1px solid #ddd;
     padding: 8px;

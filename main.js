@@ -67,13 +67,16 @@ app.get('/api/refresh', async (req , res) => {
   app.get('/', async (req, res) => {
     try {
       const jsonData = await readJsonData();
+      let toggle = Array.apply(null, Array(5)).map(function () {return false})
+
       res.render('index', { 
         nodeDisplayData: jsonData.nodeDisplayData, 
         farmerDisplaySector: jsonData.farmerDisplaySector,
         walletBalance: jsonData.walletBalance,
         updateStatus: '',
         timeToRefresh: guiCliHelper.timeToRefresh,
-        resetTimer: jsonData.timer*60*1000
+        resetTimer: jsonData.timer*60*1000,
+        toggle
       });
     } catch (error) {
       res.status(500).json({ error: 'Internal server error' });
