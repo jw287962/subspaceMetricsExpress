@@ -60,13 +60,14 @@ html(lang="en")
         div.farmer-status(onclick=`showData(${index})`)
           div.row
             div.row.farmersummarydata.name #{pc.SummaryData.Name}
-          div.row.farmersummary
             if pc.SummaryData.FarmerIsRunning && pc.SummaryData.ERROR == ""
               div.row.farmersummarydata#uptime
                 p#blue &nbsp; ✔ 
                 p #{pc.SummaryData.Uptime.FormattedTime}
             else 
               p#red &nbsp; ✘ #{pc.SummaryData.Uptime.FormattedTime}
+          div.row.farmersummary
+            
             div.row.farmersummarydata +#{pc.SummaryData.TotalRewardsPerTB} /TB 
             div.row.farmersummarydata 
               p#green +#{pc.SummaryData.TotalRewards}
@@ -107,14 +108,14 @@ html(lang="en")
               thead
                 tr
                   //- th.disk-Id Disk Id
-                  th.Size Size(TB)
+                  th.Size Tib
                   th.Percent-Complete % Comp
-                  th.Reward Reward
-                  th.Miss T/R/Miss
-                  th.Miss Miss %
+                  th.Reward 🎁
+                  th.Miss T/R/M
+                  th.Miss Miss%
                   th.ETA ETA(Days)
-                  th.Sectors-Hr Sectors/Hr
-                  th.Min-Sector Min/Sector
+                  th.Sectors-Hr Sect/Hr
+                  th.Min-Sector Min/Sect
                   th.Expired Expired/AboutToExpire
 
                 each ind in pc.IndividualDiskDataObj
