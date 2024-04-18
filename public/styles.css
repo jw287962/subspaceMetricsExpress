@@ -41,8 +41,7 @@
 .farmer-status{
   display: flex;
   flex-direction: row;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin: 15px 0px;
   justify-content: space-between;
 
   }
@@ -89,7 +88,7 @@ justify-content: center;
     margin: 0px 5px;
   }
   .farmer-details,  .node-status,.farmer-status{
-    border: 1px solid lightgrey;
+    border: 2px solid lightgrey;
   }
 
 

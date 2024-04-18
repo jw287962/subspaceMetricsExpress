@@ -216,6 +216,7 @@ const getAllData = async function () {
 // MAIN FUNCTION: GETALLDATA
 if(clearLog) clear();
 getAllData()
+
 refreshInterval = new refreshMetricsObject()
 function refreshMetricsObject(){
 
