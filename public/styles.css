@@ -46,7 +46,7 @@
   justify-content: space-between;
 
   }
-  .farmersummary > .farmersummarydata {
+  .farmersummary > .farmersummarydata:not(:first-child) {
     border-left: 1px solid grey;
   }
 
@@ -55,6 +55,28 @@
     margin: 0px;
     padding: 4px 8px;
   }
+
+  .farmer-details > .header {
+    flex-direction: row;
+justify-content: center;
+  }
+
+.farmersummarydata{
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  font-weight: bold;
+  min-width: 30px;
+}
+
+.arrow{
+  width: 10%;
+  display: flex;
+  justify-content: end;
+  right: 0px;
+  
+}
   .node-status > h3{
     display: flex;
     flex-direction: row;
@@ -71,35 +93,17 @@
   }
 
 
-  .farmer-details > .header {
-      flex-direction: row;
-  justify-content: center;
-    }
-
+  #uptime{
+    min-width: 50px;
+  }
     /* for rewards +0 / -0 */
-  .spacing{
+    .spacing{
       margin: 3px;
   }
 
   .header > h3{
     padding: 0px 10px;
   }
-  .farmersummary{
-    min-width: 480px;
-  }
-  .farmersummarydata{
-    height: 30px;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    font-weight: bold;
-    min-width: 30px;
-  }
-
-  #uptime{
-    min-width: 50px;
-  }
-
     .header{
     border-bottom: 1px solid grey; 
     }
@@ -188,9 +192,8 @@
 }
 
 @media (max-width: 700px) {
-  body{
-    /* width: 90%; */
-  } 
+  /* body{
+  }  */
 
   .farmer-status{
     flex-direction: column;
@@ -203,7 +206,7 @@
   .farmersummary{
     border-top: 1px solid grey;
   }
-  .farmersummary > .farmersummarydata {
+  .farmersummary > .farmersummarydata:not(:first-child) {
     border-left: 1px solid grey;
   }
   .name{
@@ -220,8 +223,7 @@
     max-width: 100px;
     overflow:scroll;
   }
-  .tablediv{
-  }
+ 
   .tablediv>table{
     width: 100%;
   }
