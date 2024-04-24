@@ -470,7 +470,7 @@ const parseData = {
                             farmer_disk_id = "";
                         } else if (metrics_obj.Id.indexOf("farm_id") >= 0) {
                         farmer_disk_id = metrics_obj.Instance;
-                        if (metrics_obj.Name.toLowerCase().indexOf("sum") >= 0) { farmer_disk_sector_plot_time = parseFloat(metrics_obj.Value); }
+                        if (metrics_obj.Name.toLowerCase().indexOf("sum") >= 0) { farmer_disk_sector_plot_time = uptime_seconds; }
                         if (metrics_obj.Name.toLowerCase().indexOf("count") >= 0) { farmer_disk_sector_plot_count = parseInt(metrics_obj.Value); }
                         if (farmer_disk_sector_plot_time > 0 && farmer_disk_sector_plot_count > 0) {
                             let sectors_per_hour = 0.0;
@@ -482,18 +482,18 @@ const parseData = {
                                     minutes_per_sector =farmer_disk_sector_plot_time / (farmer_disk_sector_plot_count)/60
                                     total_sectors_plot_time_seconds += farmer_disk_sector_plot_time;
                                     break;
-                                case "minutes":
-                                    sectors_per_hour = (farmer_disk_sector_plot_count / farmer_disk_sector_plot_time).toFixed(2);
-                                    sector_time = this.convertSecondsMinutes((farmer_disk_sector_plot_time / farmer_disk_sector_plot_count)*60)
-                                    minutes_per_sector =farmer_disk_sector_plot_time*60 / (farmer_disk_sector_plot_count)
-                                    total_sectors_plot_time_seconds += (farmer_disk_sector_plot_time * 60);
-                                    break;
-                                case "hours":
-                                    sectors_per_hour = (farmer_disk_sector_plot_count / (farmer_disk_sector_plot_time * 60)).toFixed(2);
-                                    sector_time = this.convertSecondsMinutes(((farmer_disk_sector_plot_time * 60*60) / farmer_disk_sector_plot_count))
-                                    minutes_per_sector =farmer_disk_sector_plot_time *60*60 / (farmer_disk_sector_plot_count).toFixed(2)
-                                    total_sectors_plot_time_seconds += (farmer_disk_sector_plot_time * 3600);
-                                    break;
+                                // case "minutes":
+                                //     sectors_per_hour = (farmer_disk_sector_plot_count / farmer_disk_sector_plot_time).toFixed(2);
+                                //     sector_time = this.convertSecondsMinutes((farmer_disk_sector_plot_time / farmer_disk_sector_plot_count)*60)
+                                //     minutes_per_sector =farmer_disk_sector_plot_time*60 / (farmer_disk_sector_plot_count)
+                                //     total_sectors_plot_time_seconds += (farmer_disk_sector_plot_time * 60);
+                                //     break;
+                                // case "hours":
+                                //     sectors_per_hour = (farmer_disk_sector_plot_count / (farmer_disk_sector_plot_time * 60)).toFixed(2);
+                                //     sector_time = this.convertSecondsMinutes(((farmer_disk_sector_plot_time * 60*60) / farmer_disk_sector_plot_count))
+                                //     minutes_per_sector =farmer_disk_sector_plot_time *60*60 / (farmer_disk_sector_plot_count).toFixed(2)
+                                //     total_sectors_plot_time_seconds += (farmer_disk_sector_plot_time * 3600);
+                                //     break;
                             }
                             summaryData.TotalDisks.Total += 1
                             summaryData.TotalDisks.Plotting+=1
