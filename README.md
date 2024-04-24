@@ -50,7 +50,8 @@ node ./main.js
 
  
 ![CLI IMG](https://raw.githubusercontent.com/jw287962/subspaceMetricsExpress/main/picture/CLI.png)
-
+![Browser](https://raw.githubusercontent.com/jw287962/subspaceMetricsExpress/main/picture/Browser.png)
+![Mobile](https://raw.githubusercontent.com/jw287962/subspaceMetricsExpress/main/picture/mobile.png)
  
 ## Frontend
 1)you can get the data from GET REQUEST: 
