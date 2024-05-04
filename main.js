@@ -194,8 +194,16 @@ const getAllData = async function () {
         const timer = (config.Refresh+1)
         const displayData = { nodeDisplayData, farmerDisplaySector, walletBalance: balance,timer}
         const jsonData = JSON.stringify(displayData);
-        fs.writeFileSync(filePath, jsonData);
-
+        // fs.writeFileSync(filePath, jsonData);
+        let fd = 0;
+        try {
+           fd = fs.openSync( filePath, 'w', 0o666  );  
+           let writen = fs.writeSync( fd, jsonData, 0, 'utf8' );
+        } catch ( e ) {
+        } finally {
+           if ( fd )
+             fs.closeSync(fd);
+        }
         // CONSOLE OUTPUT
         guiCliHelper.displayData(displayData, currentDate)
 
