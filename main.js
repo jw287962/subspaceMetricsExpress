@@ -34,12 +34,16 @@ app.use(cors({
 
 // Function to read JSON data from file
 async function readJsonData() {
+  let d1 = 0
   try {
-    const data = await fs.readFileSync('data.json');
+     d1 = fs.openSync('data.json', 'r')
+    const data = await fs.readFileSync(d1);
     return JSON.parse(data);
   } catch (error) {
     console.error('Error reading or parsing JSON data:', error);
     throw error; // Re-throw the error to handle it in the route handlers
+  }finally{
+    fs.closeSync(d1)
   }
 }
 

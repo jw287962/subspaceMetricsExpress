@@ -350,10 +350,12 @@ const parseData = {
         const unique_farm_id = metrics_obj.Instance
         if(metrics_obj && (metrics_obj.Name.includes('libp2p'))){
             return;
-        }else if(unique_farm_id && (unique_farm_id.includes('farm_id') || unique_farm_id.includes(','))){
+        }else if(unique_farm_id && (unique_farm_id.includes('farm_id') || unique_farm_id.includes(',') || unique_farm_id.includes('chia'))){
             return
         }else
         if(unique_farm_id && !individualDiskDataObj[unique_farm_id]){
+        console.log(metrics_obj.Instance, "unmique",  unique_farm_id)
+
 
              individualDiskDataObj[unique_farm_id] = this.setUpIndividualObj(unique_farm_id)
             
@@ -364,6 +366,7 @@ const parseData = {
         
       
     try{
+
         const individualDiskDataObj = { };
     
         let unit_type = "";
@@ -433,7 +436,7 @@ const parseData = {
                 //     summaryData.IdentifyErrors = identify_errors
                     
                 // }else
-                if (metrics_obj.Name.indexOf("_farmer_sectors_total_sectors") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
+                if (metrics_obj.Name.indexOf("farm_sectors_total_Sectors") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
                     const plot_id = ((metrics_obj.Instance?.split(","))[0]);
                     const plot_state = metrics_obj.Criteria.trim().split('"')[1];
                     const sectors = metrics_obj.Value;
@@ -457,14 +460,14 @@ const parseData = {
                     }
                     
                 }
-                 else if (metrics_obj.Name.indexOf("_farmer_auditing_time_seconds_count") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
+                 else if (metrics_obj.Name.indexOf("_farm_auditing_time_seconds_count") >= 0 && metrics_obj.Id.indexOf("farm_id") >= 0) {
                     uptime_seconds = metrics_obj.Value;
                     // this.initializeDiskID(unique_farm_id,individualDiskDataObj)
                     // if(unique_farm_id && !individualDiskDataObj[unique_farm_id]){
                     //     individualDiskDataObj[unique_farm_id] = this.setUpIndividualObj(unique_farm_id)
                     //     }
                 }
-                else if (metrics_obj.Name.indexOf("_farmer_sector_plotting_time_seconds") >= 0) {
+                else if (metrics_obj.Name.indexOf("_farm_sector_plotting_time_seconds") >= 0) {
                         if (metrics_obj.Id.toLowerCase().indexOf("unit") >= 0 || metrics_obj.Id.toLowerCase().indexOf("type") >= 0) {
                             unit_type = metrics_obj.Value.toLowerCase();
                             farmer_disk_id = "";
@@ -510,7 +513,7 @@ const parseData = {
                         }
                     }
                 }
-                else if (metrics_obj.Name.indexOf("farmer_farming_errors") >= 0) {
+                else if (metrics_obj.Name.indexOf("farm_farming_errors") >= 0) {
                     const farmer_disk_id = metrics_obj.Instance
                     const criteria = metrics_obj.Criteria.trim()
                     const value = metrics_obj.Value;
@@ -521,7 +524,7 @@ const parseData = {
 
                     
                 } 
-                else if (metrics_obj.Name.indexOf("_farmer_proving_time_seconds") >= 0) {
+                else if (metrics_obj.Name.indexOf("_farm_proving_time_seconds") >= 0) {
       
                     if (metrics_obj.Id.toLowerCase().indexOf("unit") >= 0 || metrics_obj.Id.toLowerCase().indexOf("type") >= 0) {
                         farmer_disk_id_rewards = "";
