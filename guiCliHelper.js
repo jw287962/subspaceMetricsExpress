@@ -252,7 +252,6 @@ const guiCliHelper = {
          
          this.displayNodeStatus(data.nodeDisplayData,data.walletBalance)
          try{
-
     
             // console.log(data.farmerDisplaySector[0])
              data.farmerDisplaySector.forEach((farmer,indexxx) => {

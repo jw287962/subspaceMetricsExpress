@@ -102,7 +102,7 @@ app.listen(PORT, () => {
   async function refreshMetricsData(){
     refreshInterval.reset()
       // refreshInterval = setInterval(refreshInterval,)
-    await getAllData()
+    const data = await getAllData()
       const jsonData = await readJsonData();
       
         return jsonData
@@ -117,7 +117,18 @@ app.listen(PORT, () => {
     
 }
 // MAIN FUNCTION
+
+const farmersArrIp = config.Farmers;
+const namesArr = config.Names;
+const nodeDisplayData = []
+const farmerDisplaySector = [];
+const parsedFarmerDataArr = []
+
+let farmerSectorPerformance = {}
 const getAllData = async function () {
+  
+  farmerDisplaySector.length =0
+  nodeDisplayData.length = 0
   if(clearLog) clear();
   process.stdout.clearLine()
             nodeSubstrate.fetchWalletbalance(PORT).then((val) => {
@@ -131,11 +142,14 @@ const getAllData = async function () {
           // console.log(await delay(100))
       
     try {
-      let nodeDisplayData = []
+      
 
-      for (let i =0; i < config.Node.length;i++){
+      for (let i =0;nodeDisplayData.length <=config.Node.length &&  i < config.Node.length;i++){
 
-        let nodeProcessArr = await parseData.getProcessState("node", config.Node[i], config.Node[i]);
+
+        
+
+        const nodeProcessArr = await parseData.getProcessState("node", config.Node[i], config.Node[i]);
 
 
         const nodeIsRunningOk = nodeProcessArr[1];
@@ -151,34 +165,34 @@ const getAllData = async function () {
         }
       }
       
-        const farmersArrIp = config.Farmers;
-        const namesArr = config.Names;
         
-        const farmerDisplaySector = [];
+        
         let statusDownTotal = ""
         // for (const farmer of farmersArrIp)
+
         for (let i =0; i < farmersArrIp.length;i++)
          {
-          
             let farmer = {address:  farmersArrIp[i], name: namesArr[i] || "Unknown"}
-            let farmerProcessArr = await parseData.getProcessState("farmer", farmer.address, farmer.address);
+            const farmerProcessArr = await parseData.getProcessState("farmer", farmer.address, farmer.address);
            
             // console.log(farmerProcessArr)
             const farmerMetricsRaw = farmerProcessArr[0];
             const farmerIsRunning = farmerProcessArr[1];
            if (farmerIsRunning === true){
-              // console.log('metrics', farmerMetricsRaw)
-              const parsedFarmerDataArr = parseData.parseMetricsToObj(farmerMetricsRaw);
-              const farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr,farmer.address,farmerIsRunning,farmer.name);
 
+              // console.log('metrics', farmerMetricsRaw)
+              parsedFarmerDataArr.length = 0; 
+              parsedFarmerDataArr.push(...(parseData.parseMetricsToObj(farmerMetricsRaw)));
+             farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr,farmer.address,farmerIsRunning,farmer.name)
               farmerDisplaySector.push(farmerSectorPerformance);
-              if(farmerSectorPerformance?.SummaryData?.Uptime?.Seconds <= 1 && farmerMetricsRaw?.length <= 50){
+              if(farmerDisplaySector?.SummaryData?.Uptime?.Seconds <= 1 && farmerMetricsRaw?.length <= 50){
                 statusDownTotal += farmerMetricsRaw + '\n'
               }
             }else if(farmerIsRunning === false){
               statusDownTotal += farmerMetricsRaw + '\n'
-                const farmerSectorPerformance = await parseData.getDiskSectorPerformance(parsedFarmerDataArr= [],farmer.address,farmerIsRunning, farmer.name);
-                farmerDisplaySector.push(farmerSectorPerformance);
+              // Object.assign(farmerSectorPerformance,);
+                 
+                farmerDisplaySector.push(await parseData.getDiskSectorPerformance(parsedFarmerDataArr1= [],farmer.address,farmerIsRunning, farmer.name));
             }
         }
         if(statusDownTotal.length != 0) {

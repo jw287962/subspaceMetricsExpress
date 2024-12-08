@@ -354,7 +354,6 @@ const parseData = {
             return
         }else
         if(unique_farm_id && !individualDiskDataObj[unique_farm_id]){
-        console.log(metrics_obj.Instance, "unmique",  unique_farm_id)
 
 
              individualDiskDataObj[unique_farm_id] = this.setUpIndividualObj(unique_farm_id)
